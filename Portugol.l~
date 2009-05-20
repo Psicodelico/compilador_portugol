@@ -22,7 +22,7 @@ sqrt            {return SQRT;}
 
 			struct symtab* sp = lookup(yytext,0);
 			yylval.sp = sp;						
-			return IDENTIFICADOR;//Teste
+			return IDENTIFICADOR;
 			
 		     }
 
