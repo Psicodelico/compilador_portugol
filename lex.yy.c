@@ -783,7 +783,7 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 14 "Portugol.l"
-{ return INICIO; }
+{ return INICIO;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
@@ -815,57 +815,56 @@ YY_RULE_SETUP
 #line 21 "Portugol.l"
 { 
 
-			struct symtab* sp = lookup(yytext,0);
-			yylval.sp = sp;						
-			return IDENTIFICADOR;
-			
-		     }
+                        struct symtab* sp = lookup(yytext,0);
+                        yylval.sp = sp;
+                        return IDENTIFICADOR;//Teste
+                    }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 29 "Portugol.l"
+#line 28 "Portugol.l"
 {
                                                 yylval.valor = atof(yytext);
                                                 return VALOR;
-                }
+                                            }
 	YY_BREAK
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 34 "Portugol.l"
+#line 33 "Portugol.l"
 { return *yytext; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 36 "Portugol.l"
+#line 35 "Portugol.l"
 {return MENORIGUAL;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 37 "Portugol.l"
+#line 36 "Portugol.l"
 {return MAIORIGUAL;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 38 "Portugol.l"
+#line 37 "Portugol.l"
 {return IGUAL;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 40 "Portugol.l"
+#line 39 "Portugol.l"
 ;       /*Ignora espaço em branco */
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 44 "Portugol.l"
+#line 43 "Portugol.l"
 yyerror("Caracter Desconhecido");
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 46 "Portugol.l"
+#line 45 "Portugol.l"
 ECHO;
 	YY_BREAK
-#line 869 "lex.yy.c"
+#line 868 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1863,7 +1862,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 46 "Portugol.l"
+#line 45 "Portugol.l"
 
 
 

@@ -70,7 +70,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 11 "Portugol.y"
+#line 13 "Portugol.y"
 {
     double valor;
     struct symtab* sp;

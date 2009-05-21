@@ -1,3 +1,6 @@
+State 54 conflicts: 1 shift/reduce
+
+
 Grammar
 
     0 $accept: programa $end
@@ -20,8 +23,8 @@ Grammar
    14          | SQRT '(' expressao ')'
    15          | '(' expressao ')'
 
-   16 selecao: IF '(' expressao ')' THEN expressao
-   17        | IF '(' expressao ')' THEN expressao ELSE expressao
+   16 selecao: IF '(' expressao ')' THEN instrucao
+   17        | IF '(' expressao ')' THEN instrucao ELSE instrucao
 
    18 instrucao: selecao
    19          | afirmacao
@@ -77,7 +80,7 @@ expressao (28)
 selecao (29)
     on left: 16 17, on right: 18
 instrucao (30)
-    on left: 18 19 20 21, on right: 1 2 22 23
+    on left: 18 19 20 21, on right: 1 2 16 17 22 23
 conjunto_instrucao (31)
     on left: 22 23, on right: 23 25
 bloco_instrucao (32)
@@ -134,8 +137,8 @@ state 4
 
 state 5
 
-   16 selecao: IF . '(' expressao ')' THEN expressao
-   17        | IF . '(' expressao ')' THEN expressao ELSE expressao
+   16 selecao: IF . '(' expressao ')' THEN instrucao
+   17        | IF . '(' expressao ')' THEN instrucao ELSE instrucao
 
     '('  shift, and go to state 16
 
@@ -270,8 +273,8 @@ state 15
 
 state 16
 
-   16 selecao: IF '(' . expressao ')' THEN expressao
-   17        | IF '(' . expressao ')' THEN expressao ELSE expressao
+   16 selecao: IF '(' . expressao ')' THEN instrucao
+   17        | IF '(' . expressao ')' THEN instrucao ELSE instrucao
 
     VALOR  shift, and go to state 3
     SQRT   shift, and go to state 4
@@ -521,8 +524,8 @@ state 35
    11          | expressao . '-' expressao
    12          | expressao . '*' expressao
    13          | expressao . '/' expressao
-   16 selecao: IF '(' expressao . ')' THEN expressao
-   17        | IF '(' expressao . ')' THEN expressao ELSE expressao
+   16 selecao: IF '(' expressao . ')' THEN instrucao
+   17        | IF '(' expressao . ')' THEN instrucao ELSE instrucao
 
     MAIORIGUAL  shift, and go to state 20
     IGUAL       shift, and go to state 21
@@ -755,8 +758,8 @@ state 50
 
 state 51
 
-   16 selecao: IF '(' expressao ')' . THEN expressao
-   17        | IF '(' expressao ')' . THEN expressao ELSE expressao
+   16 selecao: IF '(' expressao ')' . THEN instrucao
+   17        | IF '(' expressao ')' . THEN instrucao ELSE instrucao
 
     THEN  shift, and go to state 53
 
@@ -770,76 +773,54 @@ state 52
 
 state 53
 
-   16 selecao: IF '(' expressao ')' THEN . expressao
-   17        | IF '(' expressao ')' THEN . expressao ELSE expressao
+   16 selecao: IF '(' expressao ')' THEN . instrucao
+   17        | IF '(' expressao ')' THEN . instrucao ELSE instrucao
 
-    VALOR  shift, and go to state 3
-    SQRT   shift, and go to state 4
-    '('    shift, and go to state 6
+    IDENTIFICADOR  shift, and go to state 1
+    INICIO         shift, and go to state 2
+    VALOR          shift, and go to state 3
+    SQRT           shift, and go to state 4
+    IF             shift, and go to state 5
+    '('            shift, and go to state 6
 
-    expressao  go to state 54
+    afirmacao        go to state 8
+    expressao        go to state 9
+    selecao          go to state 10
+    instrucao        go to state 54
+    bloco_instrucao  go to state 12
 
 
 state 54
 
-    5 expressao: expressao . '>' expressao
-    6          | expressao . '<' expressao
-    7          | expressao . MENORIGUAL expressao
-    8          | expressao . MAIORIGUAL expressao
-    9          | expressao . IGUAL expressao
-   10          | expressao . '+' expressao
-   11          | expressao . '-' expressao
-   12          | expressao . '*' expressao
-   13          | expressao . '/' expressao
-   16 selecao: IF '(' expressao ')' THEN expressao .
-   17        | IF '(' expressao ')' THEN expressao . ELSE expressao
+   16 selecao: IF '(' expressao ')' THEN instrucao .
+   17        | IF '(' expressao ')' THEN instrucao . ELSE instrucao
 
-    ELSE        shift, and go to state 55
-    MAIORIGUAL  shift, and go to state 20
-    IGUAL       shift, and go to state 21
-    MENORIGUAL  shift, and go to state 22
-    '<'         shift, and go to state 23
-    '>'         shift, and go to state 24
-    '+'         shift, and go to state 25
-    '-'         shift, and go to state 26
-    '*'         shift, and go to state 27
-    '/'         shift, and go to state 28
+    ELSE  shift, and go to state 55
 
+    ELSE      [reduce using rule 16 (selecao)]
     $default  reduce using rule 16 (selecao)
 
 
 state 55
 
-   17 selecao: IF '(' expressao ')' THEN expressao ELSE . expressao
+   17 selecao: IF '(' expressao ')' THEN instrucao ELSE . instrucao
 
-    VALOR  shift, and go to state 3
-    SQRT   shift, and go to state 4
-    '('    shift, and go to state 6
+    IDENTIFICADOR  shift, and go to state 1
+    INICIO         shift, and go to state 2
+    VALOR          shift, and go to state 3
+    SQRT           shift, and go to state 4
+    IF             shift, and go to state 5
+    '('            shift, and go to state 6
 
-    expressao  go to state 56
+    afirmacao        go to state 8
+    expressao        go to state 9
+    selecao          go to state 10
+    instrucao        go to state 56
+    bloco_instrucao  go to state 12
 
 
 state 56
 
-    5 expressao: expressao . '>' expressao
-    6          | expressao . '<' expressao
-    7          | expressao . MENORIGUAL expressao
-    8          | expressao . MAIORIGUAL expressao
-    9          | expressao . IGUAL expressao
-   10          | expressao . '+' expressao
-   11          | expressao . '-' expressao
-   12          | expressao . '*' expressao
-   13          | expressao . '/' expressao
-   17 selecao: IF '(' expressao ')' THEN expressao ELSE expressao .
-
-    MAIORIGUAL  shift, and go to state 20
-    IGUAL       shift, and go to state 21
-    MENORIGUAL  shift, and go to state 22
-    '<'         shift, and go to state 23
-    '>'         shift, and go to state 24
-    '+'         shift, and go to state 25
-    '-'         shift, and go to state 26
-    '*'         shift, and go to state 27
-    '/'         shift, and go to state 28
+   17 selecao: IF '(' expressao ')' THEN instrucao ELSE instrucao .
 
     $default  reduce using rule 17 (selecao)

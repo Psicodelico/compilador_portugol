@@ -9,39 +9,38 @@
 
 "//"(.)*\n {;}
 
-sqrt            {return SQRT;}
+sqrt        {return SQRT;}
 
-"inicio"		{ return INICIO; }
-"fim"			{ return FIM; }
-"se"			{ return IF; }
-"entao"			{ return THEN; }
-"senao"			{ return ELSE; }
-;			{ return *yytext;}
+"inicio"    { return INICIO;}
+"fim"       { return FIM; }
+"se"        { return IF; }
+"entao"     { return THEN; }
+"senao"     { return ELSE; }
+;           { return *yytext;}
 
 [A-Za-z][A-Za-z0-9]* { 
 
-			struct symtab* sp = lookup(yytext,0);
-			yylval.sp = sp;						
-			return IDENTIFICADOR;//Teste
-			
-		     }
+                        struct symtab* sp = lookup(yytext,0);
+                        yylval.sp = sp;
+                        return IDENTIFICADOR;//Teste
+                    }
 
 ([0-9]+|([0-9]*\.[0-9]+)([eE][+-]?[0-9]+)?) {
                                                 yylval.valor = atof(yytext);
                                                 return VALOR;
-                }
+                                            }
 
 [-+><()=/*\n]     { return *yytext; }
 
-"<="		  {return MENORIGUAL;}
-">="		  {return MAIORIGUAL;}
-"=="		  {return IGUAL;}
+"<="        {return MENORIGUAL;}
+">="        {return MAIORIGUAL;}
+"=="        {return IGUAL;}
 
-[ \t]   ;       /*Ignora espaço em branco */
+[ \t]       ;       /*Ignora espaço em branco */
 
 
 
-.               yyerror("Caracter Desconhecido");
+.           yyerror("Caracter Desconhecido");
 
 %%
 

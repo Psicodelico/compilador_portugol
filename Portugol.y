@@ -2,8 +2,10 @@
     #include <stdio.h>
     #include <math.h>
     #include <string.h>
+    #include <stdlib.h>
     #include "Tabela.h"
 
+    FILE* file;
     void yyerror(char *);
     int yylex(void);
 %}
@@ -23,7 +25,10 @@
 %left '+' '-'
 %left '*' '/'
 %left VALOR
+//%left ELSE
+//%nonassoc ELSE
 %type <valor> expressao
+%expect 1
 %%
 
 programa:
@@ -67,8 +72,8 @@ expressao:
         ;
 
 selecao: 
-	IF '(' expressao ')' THEN expressao {printf("IF (xxxx) yyyy");}
-	| IF '(' expressao ')' THEN expressao ELSE expressao {printf("IF (xxxx) yyyy else zzz");}
+	IF '(' expressao ')' THEN instrucao %prec ELSE { fprintf(file,"IF-THEN"); fflush(file); }
+	| IF '(' expressao ')' THEN instrucao ELSE instrucao {printf("IF (xxxx) yyyy else zzz");}
 	;
 
 instrucao:
@@ -127,7 +132,14 @@ struct symtab* lookup(char *s, int key){
 int main(void) {
 //as primeiras palavras que forem adicionadas serao as palavras chaves, isso antes do lex entrar em acao
 //enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
-    lookup("inicio",1);
-    lookup("fim",1);
+    //lookup("inicio",1);
+    //lookup("fim",1);
+    file = fopen("Portugol.out","a+");
+
+    if(!file){
+        printf("O arquivo nao pode ser aberto!!");
+        exit(1);
+    }
     yyparse();
+    fclose(file);
 }
