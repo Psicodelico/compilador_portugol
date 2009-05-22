@@ -16,6 +16,7 @@ sqrt        {return SQRT;}
 "se"        { return IF; }
 "entao"     { return THEN; }
 "senao"     { return ELSE; }
+"imprima"   { return IMPRIMA; }
 ;           { return *yytext;}
 
 [A-Za-z][A-Za-z0-9]* { 
@@ -30,7 +31,16 @@ sqrt        {return SQRT;}
                                                 return VALOR;
                                             }
 
+
 [-+><()=/*\n]     { return *yytext; }
+
+\"[^\"\n]*[\"\n]    { yylval.texto = strdup(yytext+1); // Pula a primeira aspas
+                      if (yylval.texto[yyleng-2] != '"')
+                        ;//warning("Cadeia de caracteres nao terminada.", (char *)0);
+                      else
+                        yylval.texto[yyleng-2] = '\0'; // Remove a ultima aspas
+                      return TEXTO;
+                    }
 
 "<="        {return MENORIGUAL;}
 ">="        {return MAIORIGUAL;}

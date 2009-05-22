@@ -12,14 +12,17 @@
 
 %union{
     double valor;
+    char *texto;
     struct symtab* sp;
 }
 
 %token <sp> IDENTIFICADOR
 %token INICIO FIM
 %token <valor> VALOR
+%token <texto> TEXTO
 %token SQRT
 %token IF THEN ELSE
+%token <texto> IMPRIMA
 %token MAIORIGUAL IGUAL MENORIGUAL
 %left '<' '>' MENORIGUAL MAIORIGUAL IGUAL
 %left '+' '-'
@@ -28,6 +31,7 @@
 //%left ELSE
 //%nonassoc ELSE
 %type <valor> expressao
+%type <texto> sentenca
 %expect 1
 %%
 
@@ -71,6 +75,10 @@ expressao:
         | '(' expressao ')'            { $$ = $2; }
         ;
 
+sentenca:
+        IMPRIMA '(' TEXTO ')' { $$ = $3; }
+        ;
+
 selecao: 
 	IF '(' expressao ')' THEN instrucao %prec ELSE { fprintf(file,"IF-THEN"); fflush(file); }
 	| IF '(' expressao ')' THEN instrucao ELSE instrucao {printf("IF (xxxx) yyyy else zzz");}
@@ -78,6 +86,7 @@ selecao:
 
 instrucao:
 	selecao
+        |sentenca { printf("%s", $1); }
 	|afirmacao
         |expressao { printf("= %g\n", $1); }
 	//|declaracao

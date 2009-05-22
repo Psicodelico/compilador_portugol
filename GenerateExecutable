@@ -1,5 +1,5 @@
 #/bin/sh
-bison -y -v -d Portugol.y
 flex Portugol.l
+bison -y -v -d Portugol.y
 gcc -c y.tab.c lex.yy.c
 gcc -lm y.tab.o lex.yy.o -o Portugol

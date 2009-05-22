@@ -43,13 +43,15 @@
      INICIO = 259,
      FIM = 260,
      VALOR = 261,
-     SQRT = 262,
-     IF = 263,
-     THEN = 264,
-     ELSE = 265,
-     MAIORIGUAL = 266,
-     IGUAL = 267,
-     MENORIGUAL = 268
+     TEXTO = 262,
+     SQRT = 263,
+     IF = 264,
+     THEN = 265,
+     ELSE = 266,
+     IMPRIMA = 267,
+     MAIORIGUAL = 268,
+     IGUAL = 269,
+     MENORIGUAL = 270
    };
 #endif
 /* Tokens.  */
@@ -57,13 +59,15 @@
 #define INICIO 259
 #define FIM 260
 #define VALOR 261
-#define SQRT 262
-#define IF 263
-#define THEN 264
-#define ELSE 265
-#define MAIORIGUAL 266
-#define IGUAL 267
-#define MENORIGUAL 268
+#define TEXTO 262
+#define SQRT 263
+#define IF 264
+#define THEN 265
+#define ELSE 266
+#define IMPRIMA 267
+#define MAIORIGUAL 268
+#define IGUAL 269
+#define MENORIGUAL 270
 
 
 
@@ -73,10 +77,11 @@ typedef union YYSTYPE
 #line 13 "Portugol.y"
 {
     double valor;
+    char *texto;
     struct symtab* sp;
 }
 /* Line 1489 of yacc.c.  */
-#line 80 "y.tab.h"
+#line 85 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
