@@ -37,10 +37,7 @@ sqrt        {return SQRT;}
                     }
 
 ([0-9]+|([0-9]*\.[0-9]+)) {
-                            double a = atof(yytext);
-                            char buf[40];
-                            sprintf(buf, "%.2f", a);
-                            yylval.texto = buf;
+                            yylval.texto = strdup(yytext);
                             return TEXTO;
                           }
 

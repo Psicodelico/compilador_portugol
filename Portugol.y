@@ -5,23 +5,20 @@
     #include <stdlib.h>
     #include "Tabela.h"
 
-    FILE* file;
+    FILE *file;
     void yyerror(char *);
     int yylex(void);
     int tp_count = 0;
 %}
 
 %union{
-    double valor;
     char *texto;
     int sp;
 }
 
 %token <sp> IDENTIFICADOR
 %token INICIO FIM
-%token <valor> VALOR
 %token <texto> TEXTO
-//%token <texto> TEXTO
 %token SQRT
 %token IF THEN ELSE
 %token IMPRIMA
@@ -29,68 +26,81 @@
 %left '<' '>' MENORIGUAL MAIORIGUAL IGUAL
 %left '+' '-'
 %left '*' '/'
-%left VALOR
-//%left ELSE
-//%nonassoc ELSE
+%nonassoc UMINUS
 %type <texto> expressao
-%type <valor> sentenca
-%expect 1
+%expect 2
 %%
 
 programa:
-	//afirmacao '\n'	
 	instrucao '\n'
-	//|selecao'\n'
         |programa instrucao '\n'
         ;
 
 afirmacao:
         IDENTIFICADOR '=' expressao ';' {
-                                fprintf(file, "mov(%s, NULL, &ts[%d])\n", $3, $1);
-                                fflush(file);
-				//	if($1->key != 1){
-				//		$1 -> valor = $3;
-				//	}else{
-				//		printf("Palavra-Chave, impossivel atribuir");
-				//	}
-				  }
+                                            fprintf(file, "mov(%s, NULL, &ts[%d]);\n", $3, $1);
+                                            fflush(file);
+				        }
 	//|  COMENTARIO {;}
 	//|  expressao COMENTARIO { printf("= %g\n", $1); }
 	//|  declaracao
         ;
 
 expressao:
-        //VALOR
         TEXTO
-/*        | IDENTIFICADOR               { 
-                                        if ($1->valor)
-                                            $$ = $1->valor;
-                                        else
-                                            printf("erro: variavel inexistente");
-                                    }*/
-	//| expressao '>' expressao {$$ = $1 > $3;}	
-	//| expressao '<' expressao {$$ = $1 < $3;}
-	//| expressao MENORIGUAL expressao {$$ = $1 <= $3;}
-	//| expressao MAIORIGUAL expressao {$$ = $1 >= $3;}
-	//| expressao IGUAL expressao {$$ = $1 == $3;}
+        | IDENTIFICADOR             { 
+                                        char buf[40];
+                                        sprintf(buf, "ts[%d]", $1);
+                                        $$ = strdup(buf);
+                                    }
+	| expressao '>' expressao {
+                                        fprintf(file, "comp_gt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = strdup(buf);
+                                  //      $$ = $1 > $3;
+                                  }	
+	| expressao '<' expressao {
+                                        fprintf(file, "comp_lt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = strdup(buf);
+                                    //$$ = $1 < $3;
+                                  }
+	| expressao MENORIGUAL expressao {
+                                        fprintf(file, "comp_le(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = strdup(buf);
+                                    //$$ = $1 <= $3;
+                                         }
+	| expressao MAIORIGUAL expressao {
+                                        fprintf(file, "comp_ge(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = strdup(buf);
+                                    //$$ = $1 >= $3;
+                                         }
+	| expressao IGUAL expressao {
+                                        fprintf(file, "comp_eq(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = strdup(buf);
+                                    //$$ = $1 == $3;
+                                    }
         | expressao '+' expressao     {
-                                        $1[strlen($1)-1] = '\0';
-                                        //$3[strlen($3)-1] = '\0';
                                         fprintf(file, "add(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         fflush(file);
                                         char buf[40];
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = strdup(buf);
-                                        printf("\n--\n");
-                                        printf("%s %s %s", $1, $3, $$);
-                                        printf("\n--\n");
-                                        //$$ = t; 
-                                        //$$ = "temp[3]";
-                                        //$$ = $1 + $3;
                                       }
         | expressao '-' expressao     {
-                                        $3[strlen($3)-1] = '\0';
-                                        //$3[strlen($3)-1] = '\0';
                                         fprintf(file, "sub(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         fflush(file);
                                         char buf[40];
@@ -105,29 +115,38 @@ expressao:
                                         $$ = strdup(buf);
                                       }
         | expressao '/' expressao     {
-                                        fprintf(file, "div(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        fprintf(file, "divi(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         fflush(file);
                                         char buf[40];
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = buf;
-        //                                  if($3 == 0 ){
-           //                                     yyerror("Divisão por zero!");
-          //                                  } else{ 
-          //                                      $$ = $1 / $3;
-          //                                  }
                                       }
-        //| SQRT '(' expressao ')' { $$ = sqrt($3); }
-        //| '(' expressao ')'            { $$ = $2; }
+        | '-' expressao %prec UMINUS  {
+                                        fprintf(file, "uminus(%s, NULL, &temp[%d]);\n", $2, tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = buf;
+                                      }
+        | '(' expressao ')'            { $$ = $2; }
         ;
 
 sentenca:
-        IMPRIMA VALOR { printf("%g\n", $2); }
-/*        | IMPRIMA IDENTIFICADOR    { 
-                                        if ($2->valor)
-                                            printf("%g\n", $2->valor);
-                                        else
-                                            printf("erro: variavel inexistente\n");
-                                    }*/
+        IMPRIMA TEXTO {
+                            fprintf(file, "param(%s, NULL, NULL);\n", $2); 
+                            fprintf(file, "call(\"imprima\", 1, NULL);\n");
+                            fflush(file);
+                            //printf("%g\n", $2); 
+                      }
+        | IMPRIMA IDENTIFICADOR { 
+                            fprintf(file, "param(ts[%d], NULL, NULL);\n", $2); 
+                            fprintf(file, "call(\"imprima\", 1, NULL);\n");
+                            fflush(file);
+                                    //if ($2->valor)
+                                    //        printf("%g\n", $2->valor);
+                                    //    else
+                                    //        printf("erro: variavel inexistente\n");
+                                }
         ;
 
 selecao: 
@@ -140,7 +159,6 @@ instrucao:
         |sentenca
 	|afirmacao
         |expressao
-	//|declaracao
 	|bloco_instrucao
 	;
 conjunto_instrucao:
@@ -151,12 +169,6 @@ bloco_instrucao:
 	INICIO ';' FIM ';' {printf("Teste inicio FIM");}
 	| INICIO ';' conjunto_instrucao FIM ';'
 	;
-
-
-//declaracao:
-//	| IDENTIFICADOR ';'
-//	;
-
 %%
 
 void yyerror(char *s) {
