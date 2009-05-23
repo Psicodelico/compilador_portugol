@@ -9,6 +9,7 @@
     void yyerror(char *);
     int yylex(void);
     int tp_count = 0;
+    int l = 0;
 %}
 
 %union{
@@ -20,20 +21,22 @@
 %token INICIO FIM
 %token <texto> TEXTO
 %token SQRT
-%token IF THEN ELSE
+%token IF //ELSE
 %token IMPRIMA
 %token MAIORIGUAL IGUAL MENORIGUAL
 %left '<' '>' MENORIGUAL MAIORIGUAL IGUAL
 %left '+' '-'
 %left '*' '/'
 %nonassoc UMINUS
+%nonassoc THEN
+%nonassoc ELSE
 %type <texto> expressao
-%expect 2
+%expect 1
 %%
 
 programa:
 	instrucao '\n'
-        |programa instrucao '\n'
+        | programa instrucao '\n'
         ;
 
 afirmacao:
@@ -136,21 +139,19 @@ sentenca:
                             fprintf(file, "param(%s, NULL, NULL);\n", $2); 
                             fprintf(file, "call(\"imprima\", 1, NULL);\n");
                             fflush(file);
-                            //printf("%g\n", $2); 
                       }
         | IMPRIMA IDENTIFICADOR { 
-                            fprintf(file, "param(ts[%d], NULL, NULL);\n", $2); 
-                            fprintf(file, "call(\"imprima\", 1, NULL);\n");
-                            fflush(file);
-                                    //if ($2->valor)
-                                    //        printf("%g\n", $2->valor);
-                                    //    else
-                                    //        printf("erro: variavel inexistente\n");
+                                    fprintf(file, "param(ts[%d], NULL, NULL);\n", $2); 
+                                    fprintf(file, "call(\"imprima\", 1, NULL);\n");
+                                    fflush(file);
                                 }
         ;
 
 selecao: 
-	IF '(' expressao ')' THEN instrucao %prec ELSE { fprintf(file,"IF-THEN"); fflush(file); }
+	IF '(' expressao ')' THEN instrucao {
+                fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+                fflush(file);
+            }
 	| IF '(' expressao ')' THEN instrucao ELSE instrucao {printf("IF (xxxx) yyyy else zzz");}
 	;
 
@@ -166,8 +167,14 @@ conjunto_instrucao:
 	| conjunto_instrucao instrucao
 	;
 bloco_instrucao:
-	INICIO ';' FIM ';' {printf("Teste inicio FIM");}
-	| INICIO ';' conjunto_instrucao FIM ';'
+	INICIO ';' FIM ';' {
+                                fprintf(file, "l%d:\n", l++);
+                                fflush(file);
+                           }
+	| INICIO ';' conjunto_instrucao FIM ';' {
+                                                    fprintf(file, "l%d:\n", l++);
+                                                    fflush(file);
+                                                }
 	;
 %%
 
@@ -175,37 +182,6 @@ void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
 }
  
-/* Procura na tabela de simbolos, nela iremos colocar nossas palavras reservadas e variaveis que estao sendo criadas */
-/* se a palavra nao for encontrada ela e adicionada a tabela de simbolos*/
-struct symtab* lookup(char *s, int key){
-	
-	char *p;
-	struct symtab *sp;
-
-	for(sp = symtab; sp < &symtab[NSYMS]; sp++){ 
-	
-		/* Existe? */
-		if (sp->nome && !strcmp(sp->nome, s))
-			return sp;
-
-		/* ta livre? */
-		if(!sp->nome) { 
-			sp->nome = strdup(s); //coloca na tabela de simbolos
-			sp->key = key;			
-			return sp; 
-		}
-  	}
-        
-	//a tabela de simbolos tem uma quantidade max, cuidado para n estourar
-	yyerror("Too many symbols");
-	return 0;
-}
-
-void print(char *text) {
-    fprintf(file, "%s", text);
-    fflush(file);
-}
-
 int main(void) {
 //as primeiras palavras que forem adicionadas serao as palavras chaves, isso antes do lex entrar em acao
 //enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel

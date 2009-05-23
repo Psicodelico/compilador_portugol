@@ -4,7 +4,6 @@ Terminals which are not used
 
 
 State 10 conflicts: 1 shift/reduce
-State 58 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -70,13 +69,13 @@ FIM (260) 28 29
 TEXTO (261) 4 17
 SQRT (262)
 IF (263) 19 20
-THEN (264) 19 20
-ELSE (265) 20
-IMPRIMA (266) 17 18
-MAIORIGUAL (267) 9
-IGUAL (268) 10
-MENORIGUAL (269) 8
-UMINUS (270)
+IMPRIMA (264) 17 18
+MAIORIGUAL (265) 9
+IGUAL (266) 10
+MENORIGUAL (267) 8
+UMINUS (268)
+THEN (269) 19 20
+ELSE (270) 20
 
 
 Nonterminals, with rules where they appear
@@ -859,7 +858,6 @@ state 58
 
     ELSE  shift, and go to state 59
 
-    ELSE      [reduce using rule 19 (selecao)]
     $default  reduce using rule 19 (selecao)
 
 
