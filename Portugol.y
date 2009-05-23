@@ -74,21 +74,48 @@ expressao:
 	//| expressao MAIORIGUAL expressao {$$ = $1 >= $3;}
 	//| expressao IGUAL expressao {$$ = $1 == $3;}
         | expressao '+' expressao     {
-                                        //fprintf(file, "mov(%.2f, NULL, &temp[%d])\n", $1, tp_count++);
-                                        //fprintf(file, "mov(%.2f, NULL, &temp[%d])\n", $3, tp_count++);
-                                        fprintf(file, "add(%s, %s, &temp[%d])\n", $1, $3, tp_count++);
+                                        $1[strlen($1)-1] = '\0';
+                                        //$3[strlen($3)-1] = '\0';
+                                        fprintf(file, "add(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = strdup(buf);
+                                        printf("\n--\n");
+                                        printf("%s %s %s", $1, $3, $$);
+                                        printf("\n--\n");
+                                        //$$ = t; 
+                                        //$$ = "temp[3]";
                                         //$$ = $1 + $3;
                                       }
-        //| expressao '-' expressao     { $$ = $1 - $3; }
-        //| expressao '*' expressao     { $$ = $1 * $3; }
-        //| expressao '/' expressao     { 
-          //                                  if($3 == 0 ){
+        | expressao '-' expressao     {
+                                        $3[strlen($3)-1] = '\0';
+                                        //$3[strlen($3)-1] = '\0';
+                                        fprintf(file, "sub(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = buf;
+                                      }
+        | expressao '*' expressao     { 
+                                        fprintf(file, "mult(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = strdup(buf);
+                                      }
+        | expressao '/' expressao     {
+                                        fprintf(file, "div(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        $$ = buf;
+        //                                  if($3 == 0 ){
            //                                     yyerror("Divisão por zero!");
           //                                  } else{ 
           //                                      $$ = $1 / $3;
           //                                  }
-          //                            }
+                                      }
         //| SQRT '(' expressao ')' { $$ = sqrt($3); }
         //| '(' expressao ')'            { $$ = $2; }
         ;
@@ -172,7 +199,7 @@ int main(void) {
 //enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
     //lookup("inicio",1);
     //lookup("fim",1);
-    file = fopen("Portugol.out","a+");
+    file = fopen("Portugol.out","w");
 
     if(!file){
         printf("O arquivo nao pode ser aberto!!");

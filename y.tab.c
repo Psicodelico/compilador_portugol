@@ -369,16 +369,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  17
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   46
+#define YYLAST   65
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  27
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  9
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  18
+#define YYNRULES  21
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  38
+#define YYNSTATES  44
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -425,8 +425,9 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     6,    10,    15,    17,    21,    24,    31,
-      40,    42,    44,    46,    48,    50,    52,    55,    60
+       0,     0,     3,     6,    10,    15,    17,    21,    25,    29,
+      33,    36,    43,    52,    54,    56,    58,    60,    62,    64,
+      67,    72
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
@@ -434,18 +435,20 @@ static const yytype_int8 yyrhs[] =
 {
       28,     0,    -1,    33,    22,    -1,    28,    33,    22,    -1,
        3,    23,    30,    24,    -1,     7,    -1,    30,    18,    30,
-      -1,    12,     6,    -1,     9,    25,    30,    26,    10,    33,
-      -1,     9,    25,    30,    26,    10,    33,    11,    33,    -1,
-      32,    -1,    31,    -1,    29,    -1,    30,    -1,    35,    -1,
-      33,    -1,    34,    33,    -1,     4,    24,     5,    24,    -1,
-       4,    24,    34,     5,    24,    -1
+      -1,    30,    19,    30,    -1,    30,    20,    30,    -1,    30,
+      21,    30,    -1,    12,     6,    -1,     9,    25,    30,    26,
+      10,    33,    -1,     9,    25,    30,    26,    10,    33,    11,
+      33,    -1,    32,    -1,    31,    -1,    29,    -1,    30,    -1,
+      35,    -1,    33,    -1,    34,    33,    -1,     4,    24,     5,
+      24,    -1,     4,    24,    34,     5,    24,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    42,    42,    44,    48,    64,    76,    97,   107,   108,
-     112,   113,   114,   115,   117,   120,   121,   124,   125
+       0,    42,    42,    44,    48,    64,    76,    91,   100,   107,
+     124,   134,   135,   139,   140,   141,   142,   144,   147,   148,
+     151,   152
 };
 #endif
 
@@ -477,15 +480,17 @@ static const yytype_uint16 yytoknum[] =
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    27,    28,    28,    29,    30,    30,    31,    32,    32,
-      33,    33,    33,    33,    33,    34,    34,    35,    35
+       0,    27,    28,    28,    29,    30,    30,    30,    30,    30,
+      31,    32,    32,    33,    33,    33,    33,    33,    34,    34,
+      35,    35
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     2,     3,     4,     1,     3,     2,     6,     8,
-       1,     1,     1,     1,     1,     1,     2,     4,     5
+       0,     2,     2,     3,     4,     1,     3,     3,     3,     3,
+       2,     6,     8,     1,     1,     1,     1,     1,     1,     2,
+       4,     5
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -493,33 +498,35 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,     0,     0,     5,     0,     0,     0,    12,    13,    11,
-      10,     0,    14,     0,     0,     0,     7,     1,     0,     0,
-       2,     0,     0,    15,     0,     0,     3,     6,     4,    17,
-       0,    16,     0,    18,     0,     8,     0,     9
+       0,     0,     0,     5,     0,     0,     0,    15,    16,    14,
+      13,     0,    17,     0,     0,     0,    10,     1,     0,     0,
+       0,     0,     0,     2,     0,     0,    18,     0,     0,     3,
+       6,     7,     8,     9,     4,    20,     0,    19,     0,    21,
+       0,    11,     0,    12
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     6,     7,     8,     9,    10,    11,    24,    12
+      -1,     6,     7,     8,     9,    10,    11,    27,    12
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -15
+#define YYPACT_NINF -23
 static const yytype_int8 yypact[] =
 {
-      29,   -13,   -11,   -15,    -5,    16,     2,   -15,     5,   -15,
-     -15,    13,   -15,    32,    12,    32,   -15,   -15,    18,    32,
-     -15,    19,    20,   -15,    22,   -14,   -15,   -15,   -15,   -15,
-      21,   -15,    36,   -15,    29,    31,    29,   -15
+      38,   -22,   -14,   -23,   -18,     6,     2,   -23,    44,   -23,
+     -23,    -9,   -23,     8,    13,     8,   -23,   -23,    -3,     8,
+       8,     8,     8,   -23,    37,    -1,   -23,    23,    33,   -23,
+     -17,   -17,   -23,   -23,   -23,   -23,     0,   -23,    19,   -23,
+      38,    32,    38,   -23
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -15,   -15,   -15,   -12,   -15,   -15,    -6,   -15,   -15
+     -23,   -23,   -23,    18,   -23,   -23,    -6,   -23,   -23
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -529,20 +536,24 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      18,    21,    17,    25,    19,     1,     2,    27,    23,     3,
-      13,     4,    32,    14,     5,     1,     2,    22,    31,     3,
-      15,     4,    16,    19,     5,     1,     2,    30,    35,     3,
-      37,     4,     1,     2,     5,    20,     3,    19,     4,     3,
-      26,     5,    36,    28,    29,    33,    34
+      18,    13,    17,    21,    22,     1,     2,    15,    26,     3,
+      14,     4,    16,    23,     5,     3,     1,     2,    25,    29,
+       3,    37,     4,    35,    39,     5,     1,     2,    36,    40,
+       3,    24,     4,    28,    41,     5,    43,    30,    31,    32,
+      33,     1,     2,    42,     0,     3,     0,     4,     0,     0,
+       5,    19,    20,    21,    22,    19,    20,    21,    22,    38,
+       0,    34,    19,    20,    21,    22
 };
 
-static const yytype_uint8 yycheck[] =
+static const yytype_int8 yycheck[] =
 {
-       6,    13,     0,    15,    18,     3,     4,    19,    14,     7,
-      23,     9,    26,    24,    12,     3,     4,     5,    24,     7,
-      25,     9,     6,    18,    12,     3,     4,     5,    34,     7,
-      36,     9,     3,     4,    12,    22,     7,    18,     9,     7,
-      22,    12,    11,    24,    24,    24,    10
+       6,    23,     0,    20,    21,     3,     4,    25,    14,     7,
+      24,     9,     6,    22,    12,     7,     3,     4,     5,    22,
+       7,    27,     9,    24,    24,    12,     3,     4,     5,    10,
+       7,    13,     9,    15,    40,    12,    42,    19,    20,    21,
+      22,     3,     4,    11,    -1,     7,    -1,     9,    -1,    -1,
+      12,    18,    19,    20,    21,    18,    19,    20,    21,    26,
+      -1,    24,    18,    19,    20,    21
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -551,8 +562,9 @@ static const yytype_uint8 yystos[] =
 {
        0,     3,     4,     7,     9,    12,    28,    29,    30,    31,
       32,    33,    35,    23,    24,    25,     6,     0,    33,    18,
-      22,    30,     5,    33,    34,    30,    22,    30,    24,    24,
-       5,    33,    26,    24,    10,    33,    11,    33
+      19,    20,    21,    22,    30,     5,    33,    34,    30,    22,
+      30,    30,    30,    30,    24,    24,     5,    33,    26,    24,
+      10,    33,    11,    33
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1382,37 +1394,85 @@ yyreduce:
   case 6:
 #line 76 "Portugol.y"
     {
-                                        //fprintf(file, "mov(%.2f, NULL, &temp[%d])\n", $1, tp_count++);
-                                        //fprintf(file, "mov(%.2f, NULL, &temp[%d])\n", $3, tp_count++);
-                                        fprintf(file, "add(%s, %s, &temp[%d])\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        (yyvsp[(1) - (3)].texto)[strlen((yyvsp[(1) - (3)].texto))-1] = '\0';
+                                        //$3[strlen($3)-1] = '\0';
+                                        fprintf(file, "add(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = strdup(buf);
+                                        printf("\n--\n");
+                                        printf("%s %s %s", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), (yyval.texto));
+                                        printf("\n--\n");
+                                        //$$ = t; 
+                                        //$$ = "temp[3]";
                                         //$$ = $1 + $3;
                                       }
     break;
 
   case 7:
-#line 97 "Portugol.y"
-    { printf("%g\n", (yyvsp[(2) - (2)].valor)); }
+#line 91 "Portugol.y"
+    {
+                                        (yyvsp[(3) - (3)].texto)[strlen((yyvsp[(3) - (3)].texto))-1] = '\0';
+                                        //$3[strlen($3)-1] = '\0';
+                                        fprintf(file, "sub(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = buf;
+                                      }
     break;
 
   case 8:
-#line 107 "Portugol.y"
-    { fprintf(file,"IF-THEN"); fflush(file); }
+#line 100 "Portugol.y"
+    { 
+                                        fprintf(file, "mult(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = strdup(buf);
+                                      }
     break;
 
   case 9:
-#line 108 "Portugol.y"
+#line 107 "Portugol.y"
+    {
+                                        fprintf(file, "div(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        fflush(file);
+                                        char buf[40];
+                                        sprintf(buf, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = buf;
+        //                                  if($3 == 0 ){
+           //                                     yyerror("Divisão por zero!");
+          //                                  } else{ 
+          //                                      $$ = $1 / $3;
+          //                                  }
+                                      }
+    break;
+
+  case 10:
+#line 124 "Portugol.y"
+    { printf("%g\n", (yyvsp[(2) - (2)].valor)); }
+    break;
+
+  case 11:
+#line 134 "Portugol.y"
+    { fprintf(file,"IF-THEN"); fflush(file); }
+    break;
+
+  case 12:
+#line 135 "Portugol.y"
     {printf("IF (xxxx) yyyy else zzz");}
     break;
 
-  case 17:
-#line 124 "Portugol.y"
+  case 20:
+#line 151 "Portugol.y"
     {printf("Teste inicio FIM");}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1416 "y.tab.c"
+#line 1476 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1626,7 +1686,7 @@ yyreturn:
 }
 
 
-#line 133 "Portugol.y"
+#line 160 "Portugol.y"
 
 
 void yyerror(char *s) {
@@ -1669,7 +1729,7 @@ int main(void) {
 //enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
     //lookup("inicio",1);
     //lookup("fim",1);
-    file = fopen("Portugol.out","a+");
+    file = fopen("Portugol.out","w");
 
     if(!file){
         printf("O arquivo nao pode ser aberto!!");

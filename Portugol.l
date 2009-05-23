@@ -36,10 +36,13 @@ sqrt        {return SQRT;}
                         return IDENTIFICADOR;//Teste
                     }
 
-([0-9]+|([0-9]*\.[0-9]+)([eE][+-]?[0-9]+)?) {
-                                                yylval.texto = yytext;
-                                                return TEXTO;
-                                            }
+([0-9]+|([0-9]*\.[0-9]+)) {
+                            double a = atof(yytext);
+                            char buf[40];
+                            sprintf(buf, "%.2f", a);
+                            yylval.texto = buf;
+                            return TEXTO;
+                          }
 
 
 [-+><()=/*\n]     { return *yytext; }
