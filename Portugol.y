@@ -12,17 +12,17 @@
 
 %union{
     double valor;
-    char *texto;
+/*    char *texto;*/
     struct symtab* sp;
 }
 
 %token <sp> IDENTIFICADOR
 %token INICIO FIM
 %token <valor> VALOR
-%token <texto> TEXTO
+//%token <texto> TEXTO
 %token SQRT
 %token IF THEN ELSE
-%token <texto> IMPRIMA
+%token IMPRIMA
 %token MAIORIGUAL IGUAL MENORIGUAL
 %left '<' '>' MENORIGUAL MAIORIGUAL IGUAL
 %left '+' '-'
@@ -31,7 +31,7 @@
 //%left ELSE
 //%nonassoc ELSE
 %type <valor> expressao
-%type <texto> sentenca
+%type <valor> sentenca
 %expect 1
 %%
 
@@ -42,7 +42,8 @@ programa:
         |programa instrucao '\n'
         ;
 
-afirmacao: IDENTIFICADOR '=' expressao {
+afirmacao:
+        IDENTIFICADOR '=' expressao {
 					if($1->key != 1){
 						$1 -> valor = $3;
 					}else{
@@ -56,6 +57,12 @@ afirmacao: IDENTIFICADOR '=' expressao {
 
 expressao:
         VALOR
+        | IDENTIFICADOR               { 
+                                        if ($1->valor)
+                                            $$ = $1->valor;
+                                        else
+                                            printf("erro: variavel inexistente");
+                                    }
 	| expressao '>' expressao {$$ = $1 > $3;}	
 	| expressao '<' expressao {$$ = $1 < $3;}
 	| expressao MENORIGUAL expressao {$$ = $1 <= $3;}
@@ -76,7 +83,13 @@ expressao:
         ;
 
 sentenca:
-        IMPRIMA '(' TEXTO ')' { $$ = $3; }
+        IMPRIMA VALOR { printf("%g\n", $2); }
+        | IMPRIMA IDENTIFICADOR    { 
+                                        if ($2->valor)
+                                            printf("%g\n", $2->valor);
+                                        else
+                                            printf("erro: variavel inexistente\n");
+                                    }
         ;
 
 selecao: 
@@ -86,7 +99,7 @@ selecao:
 
 instrucao:
 	selecao
-        |sentenca { printf("%s", $1); }
+        |sentenca
 	|afirmacao
         |expressao { printf("= %g\n", $1); }
 	//|declaracao

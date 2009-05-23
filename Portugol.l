@@ -3,8 +3,17 @@
     #include "Tabela.h"
     #include <stdlib.h>
     void yyerror(char *);
-%}
+    /*
 
+    \"[^\"\n]*[\"\n]    { yylval.texto = strdup(yytext+1); // Pula a primeira aspas
+                      if (yylval.texto[yyleng-2] != '"')
+                        ;//warning("Cadeia de caracteres nao terminada.", (char *)0);
+                      else
+                        yylval.texto[yyleng-2] = '\0'; // Remove a ultima aspas
+                      return TEXTO;
+                    }
+    */
+%}
 %%
 
 "//"(.)*\n {;}
@@ -34,13 +43,6 @@ sqrt        {return SQRT;}
 
 [-+><()=/*\n]     { return *yytext; }
 
-\"[^\"\n]*[\"\n]    { yylval.texto = strdup(yytext+1); // Pula a primeira aspas
-                      if (yylval.texto[yyleng-2] != '"')
-                        ;//warning("Cadeia de caracteres nao terminada.", (char *)0);
-                      else
-                        yylval.texto[yyleng-2] = '\0'; // Remove a ultima aspas
-                      return TEXTO;
-                    }
 
 "<="        {return MENORIGUAL;}
 ">="        {return MAIORIGUAL;}
