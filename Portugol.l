@@ -2,6 +2,7 @@
     #include "y.tab.h"
     #include "Tabela.h"
     #include <stdlib.h>
+    #include "quadruplas-v1q.h"
     void yyerror(char *);
     /*
 
@@ -28,16 +29,16 @@ sqrt        {return SQRT;}
 "imprima"   { return IMPRIMA; }
 ;           { return *yytext;}
 
-[A-Za-z][A-Za-z0-9]* { 
+[A-Z] { 
+                        //struct symtab* sp = lookup(yytext,0);
 
-                        struct symtab* sp = lookup(yytext,0);
-                        yylval.sp = sp;
+                        yylval.sp = ((char) *yytext) - 65;
                         return IDENTIFICADOR;//Teste
                     }
 
 ([0-9]+|([0-9]*\.[0-9]+)([eE][+-]?[0-9]+)?) {
-                                                yylval.valor = atof(yytext);
-                                                return VALOR;
+                                                yylval.texto = yytext;
+                                                return TEXTO;
                                             }
 
 
