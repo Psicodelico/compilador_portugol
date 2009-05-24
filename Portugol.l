@@ -42,14 +42,14 @@ sqrt        {return SQRT;}
                           }
 
 
-[-+><()=/*\n]     { return *yytext; }
+[-+><()=/*]     { return *yytext; }
 
 
 "<="        {return MENORIGUAL;}
 ">="        {return MAIORIGUAL;}
 "=="        {return IGUAL;}
 
-[ \t]       ;       /*Ignora espaço em branco */
+[ \t\n]       ;       /*Ignora espaço em branco */
 
 
 

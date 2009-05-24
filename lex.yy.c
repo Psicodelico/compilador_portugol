@@ -379,7 +379,7 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[54] =
     {   0,
-        0,    0,   19,   17,   16,   12,   12,   17,   12,   11,
+        0,    0,   19,   17,   16,   16,   12,   17,   12,   11,
         9,   12,   12,   12,   10,   17,   17,   17,   17,   11,
         0,    0,   11,   13,   15,   14,    0,    0,    0,    0,
         5,    0,    0,    1,    0,    4,    0,    0,    0,    0,
@@ -841,7 +841,6 @@ YY_RULE_SETUP
                           }
 	YY_BREAK
 case 12:
-/* rule 12 can match eol */
 YY_RULE_SETUP
 #line 45 "Portugol.l"
 { return *yytext; }
@@ -862,6 +861,7 @@ YY_RULE_SETUP
 {return IGUAL;}
 	YY_BREAK
 case 16:
+/* rule 16 can match eol */
 YY_RULE_SETUP
 #line 52 "Portugol.l"
 ;       /*Ignora espaço em branco */

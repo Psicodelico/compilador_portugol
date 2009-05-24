@@ -4,12 +4,15 @@
     #include <string.h>
     #include <stdlib.h>
     #include "Tabela.h"
+    #include "Queue.h"
 
     FILE *file;
     void yyerror(char *);
     int yylex(void);
+    void escreverLabel(void);
     int tp_count = 0;
     int l = 0;
+    int flag = 0;
 %}
 
 %union{
@@ -31,32 +34,30 @@
 %nonassoc THEN
 %nonassoc ELSE
 %type <texto> expressao
+%type <texto> expressao_relacional
 //%expect 1
 %%
 
 programa:
-	instrucao '\n'
-        | programa instrucao '\n'
+	instrucao 
+        | programa instrucao 
         ;
 
 afirmacao:
         IDENTIFICADOR '=' expressao ';' {
                                             fprintf(file, "mov(%s, NULL, &ts[%d]);\n", $3, $1);
                                             fflush(file);
+                                            //char* command = sprintf("mov(%s, NULL, &ts[%d]);\n", $3, $1);
+                                            //enqueue( command );
 				        }
 	//|  COMENTARIO {;}
 	//|  expressao COMENTARIO { printf("= %g\n", $1); }
 	//|  declaracao
         ;
 
-expressao:
-        TEXTO
-        | IDENTIFICADOR             { 
-                                        char buf[40];
-                                        sprintf(buf, "ts[%d]", $1);
-                                        $$ = strdup(buf);
-                                    }
-	| expressao '>' expressao {
+expressao_relacional:
+        
+        expressao '>' expressao {
                                         fprintf(file, "comp_gt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         fflush(file);
                                         char buf[40];
@@ -95,6 +96,15 @@ expressao:
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = strdup(buf);
                                     //$$ = $1 == $3;
+                                    }
+        ;
+
+expressao:
+        TEXTO
+        | IDENTIFICADOR             { 
+                                        char buf[40];
+                                        sprintf(buf, "ts[%d]", $1);
+                                        $$ = strdup(buf);
                                     }
         | expressao '+' expressao     {
                                         fprintf(file, "add(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
@@ -148,19 +158,24 @@ sentenca:
         ;
 
 selecao: 
-	IF '(' expressao ')' THEN instrucao {
-                fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
-                fprintf(file, "l%d:\n", l-1);
-                fflush(file);
+	IF '(' expressao_relacional ')' THEN instrucao {
+                //fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+                //fprintf(file, "l%d:\n", l-1);
+                //fflush(file);
             }
-	| IF '(' expressao ')' THEN instrucao ELSE instrucao {printf("IF (xxxx) yyyy else zzz");}
+	| IF '(' expressao_relacional ')' THEN instrucao ELSE instrucao {  
+                fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+                flag = 1;
+                fflush(file); 
+            }
 	;
 
 instrucao:
 	selecao
-        |sentenca
+        |sentenca 
 	|afirmacao
         |expressao ';'
+        |expressao_relacional ';'
 	|bloco_instrucao
 	;
 conjunto_instrucao:
@@ -183,6 +198,13 @@ void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
 }
  
+void escreverLabel(){
+    if(flag){
+        fprintf(file, "l%d:\n", l-1);//Quem Escreve isso eh a instrucao do else
+        flag = 0;
+    }
+}
+
 int main(int argc, char **argv) {
 //as primeiras palavras que forem adicionadas serao as palavras chaves, isso antes do lex entrar em acao
 //enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
