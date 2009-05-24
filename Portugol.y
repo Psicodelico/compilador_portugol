@@ -31,7 +31,7 @@
 %nonassoc THEN
 %nonassoc ELSE
 %type <texto> expressao
-%expect 1
+//%expect 1
 %%
 
 programa:
@@ -135,12 +135,12 @@ expressao:
         ;
 
 sentenca:
-        IMPRIMA TEXTO {
+        IMPRIMA TEXTO ';' {
                             fprintf(file, "param(%s, NULL, NULL);\n", $2); 
                             fprintf(file, "call(\"imprima\", 1, NULL);\n");
                             fflush(file);
                       }
-        | IMPRIMA IDENTIFICADOR { 
+        | IMPRIMA IDENTIFICADOR ';' { 
                                     fprintf(file, "param(ts[%d], NULL, NULL);\n", $2); 
                                     fprintf(file, "call(\"imprima\", 1, NULL);\n");
                                     fflush(file);
@@ -150,6 +150,7 @@ sentenca:
 selecao: 
 	IF '(' expressao ')' THEN instrucao {
                 fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+                fprintf(file, "l%d:\n", l-1);
                 fflush(file);
             }
 	| IF '(' expressao ')' THEN instrucao ELSE instrucao {printf("IF (xxxx) yyyy else zzz");}
@@ -159,7 +160,7 @@ instrucao:
 	selecao
         |sentenca
 	|afirmacao
-        |expressao
+        |expressao ';'
 	|bloco_instrucao
 	;
 conjunto_instrucao:
@@ -182,7 +183,7 @@ void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
 }
  
-int main(void) {
+int main(int argc, char **argv) {
 //as primeiras palavras que forem adicionadas serao as palavras chaves, isso antes do lex entrar em acao
 //enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
     //lookup("inicio",1);
@@ -190,9 +191,20 @@ int main(void) {
     file = fopen("Portugol.out","w");
 
     if(!file){
-        printf("O arquivo nao pode ser aberto!!");
+        printf("O arquivo nao pode ser aberto!!\n");
         exit(1);
     }
+
+    FILE *yyin;
+    if (argc > 1) {
+        if ((yyin = fopen(argv[1], "r")) == NULL) {
+            printf("erro ao ler arquivo de entrada.\n");
+            exit(1);
+        }
+        yyrestart(yyin); 
+    }
+            
     yyparse();
+    if (argc > 1) fclose(yyin);
     fclose(file);
 }
