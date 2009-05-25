@@ -74,7 +74,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 18 "Portugol.y"
+#line 19 "Portugol.y"
 {
     char *texto;
     int sp;

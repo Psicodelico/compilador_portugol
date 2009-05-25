@@ -112,10 +112,11 @@
     FILE *file;
     void yyerror(char *);
     int yylex(void);
-    void escreverLabel(void);
+    void desempilhar(void);
     int tp_count = 0;
     int l = 0;
-    int flag = 0;
+    int count_if = 1;
+    int count_else = 1;
 
 
 /* Enabling traces.  */
@@ -138,13 +139,13 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 18 "Portugol.y"
+#line 19 "Portugol.y"
 {
     char *texto;
     int sp;
 }
 /* Line 187 of yacc.c.  */
-#line 148 "y.tab.c"
+#line 149 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -157,7 +158,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 161 "y.tab.c"
+#line 162 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -372,16 +373,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  24
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   112
+#define YYLAST   114
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  26
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  10
+#define YYNNTS  14
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  31
+#define YYNRULES  35
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  65
+#define YYNSTATES  70
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
@@ -430,34 +431,35 @@ static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     5,     8,    13,    17,    21,    25,    29,
       33,    35,    37,    41,    45,    49,    53,    56,    60,    64,
-      68,    75,    84,    86,    88,    90,    93,    96,    98,   100,
-     103,   108
+      68,    69,    70,    71,    81,    93,    95,    97,    99,   102,
+     105,   107,   109,   112,   118,   125
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      27,     0,    -1,    33,    -1,    27,    33,    -1,     3,    22,
+      27,     0,    -1,    36,    -1,    27,    36,    -1,     3,    22,
       30,    23,    -1,    30,    14,    30,    -1,    30,    13,    30,
       -1,    30,    12,    30,    -1,    30,    10,    30,    -1,    30,
       11,    30,    -1,     6,    -1,     3,    -1,    30,    15,    30,
       -1,    30,    16,    30,    -1,    30,    17,    30,    -1,    30,
       18,    30,    -1,    16,    30,    -1,    24,    30,    25,    -1,
-       9,     6,    23,    -1,     9,     3,    23,    -1,     8,    24,
-      29,    25,    20,    33,    -1,     8,    24,    29,    25,    20,
-      33,    21,    33,    -1,    32,    -1,    31,    -1,    28,    -1,
-      30,    23,    -1,    29,    23,    -1,    35,    -1,    33,    -1,
-      34,    33,    -1,     4,    23,     5,    23,    -1,     4,    23,
-      34,     5,    23,    -1
+       9,     6,    23,    -1,     9,     3,    23,    -1,    -1,    -1,
+      -1,     8,    24,    29,    25,    32,    20,    36,    33,    34,
+      -1,     8,    24,    29,    25,    32,    20,    36,    33,    21,
+      36,    34,    -1,    35,    -1,    31,    -1,    28,    -1,    30,
+      23,    -1,    29,    23,    -1,    38,    -1,    36,    -1,    37,
+      36,    -1,     4,    23,    39,     5,    23,    -1,     4,    23,
+      39,    37,     5,    23,    -1,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    42,    42,    43,    47,    60,    68,    76,    84,    92,
-     103,   104,   109,   116,   123,   130,   137,   144,   148,   153,
-     161,   166,   174,   175,   176,   177,   178,   179,   182,   183,
-     186,   190
+       0,    43,    43,    44,    48,    61,    69,    77,    85,    93,
+     104,   105,   110,   118,   126,   134,   142,   150,   154,   161,
+     170,   178,   184,   198,   199,   203,   204,   205,   206,   207,
+     208,   211,   212,   215,   219,   224
 };
 #endif
 
@@ -470,8 +472,9 @@ static const char *const yytname[] =
   "TEXTO", "SQRT", "IF", "IMPRIMA", "MAIORIGUAL", "IGUAL", "MENORIGUAL",
   "'<'", "'>'", "'+'", "'-'", "'*'", "'/'", "UMINUS", "THEN", "ELSE",
   "'='", "';'", "'('", "')'", "$accept", "programa", "afirmacao",
-  "expressao_relacional", "expressao", "sentenca", "selecao", "instrucao",
-  "conjunto_instrucao", "bloco_instrucao", 0
+  "expressao_relacional", "expressao", "sentenca", "inicio_if", "if_then",
+  "if_else", "selecao", "instrucao", "conjunto_instrucao",
+  "bloco_instrucao", "imprimir_label", 0
 };
 #endif
 
@@ -491,8 +494,8 @@ static const yytype_uint8 yyr1[] =
 {
        0,    26,    27,    27,    28,    29,    29,    29,    29,    29,
       30,    30,    30,    30,    30,    30,    30,    30,    31,    31,
-      32,    32,    33,    33,    33,    33,    33,    33,    34,    34,
-      35,    35
+      32,    33,    34,    35,    35,    36,    36,    36,    36,    36,
+      36,    37,    37,    38,    38,    39
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
@@ -500,8 +503,8 @@ static const yytype_uint8 yyr2[] =
 {
        0,     2,     1,     2,     4,     3,     3,     3,     3,     3,
        1,     1,     3,     3,     3,     3,     2,     3,     3,     3,
-       6,     8,     1,     1,     1,     2,     2,     1,     1,     2,
-       4,     5
+       0,     0,     0,     9,    11,     1,     1,     1,     2,     2,
+       1,     1,     2,     5,     6,     0
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -509,39 +512,41 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,    11,     0,    10,     0,     0,     0,     0,     0,    24,
-       0,     0,    23,    22,     2,    27,     0,     0,     0,     0,
-       0,    11,    16,     0,     1,     3,    26,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    25,     0,     0,    28,
-       0,     0,     0,    19,    18,    17,     8,     9,     7,     6,
-       5,    12,    13,    14,    15,     4,    30,     0,    29,     0,
-      31,     0,    20,     0,    21
+       0,    11,     0,    10,     0,     0,     0,     0,     0,    27,
+       0,     0,    26,    25,     2,    30,     0,    35,     0,     0,
+       0,    11,    16,     0,     1,     3,    29,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    28,     0,     0,     0,
+       0,    19,    18,    17,     8,     9,     7,     6,     5,    12,
+      13,    14,    15,     4,     0,    31,     0,    20,    33,     0,
+      32,     0,    34,     0,    21,    22,     0,    23,    22,    24
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     8,     9,    10,    11,    12,    13,    14,    40,    15
+      -1,     8,     9,    10,    11,    12,    61,    65,    67,    13,
+      14,    56,    15,    38
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -20
+#define YYPACT_NINF -26
 static const yytype_int8 yypact[] =
 {
-      65,   -19,   -15,   -20,   -14,    32,    28,    28,    33,   -20,
-      -2,    80,   -20,   -20,   -20,   -20,    28,    42,    28,    17,
-      20,   -20,   -20,   -11,   -20,   -20,   -20,    28,    28,    28,
-      28,    28,    28,    28,    28,    28,   -20,    60,    31,   -20,
-      56,   -13,    94,   -20,   -20,   -20,     0,     0,     0,     0,
-       0,     2,     2,   -20,   -20,   -20,   -20,    40,   -20,    36,
-     -20,    65,    46,    65,   -20
+      67,   -21,   -11,   -26,   -10,    10,     3,     3,    41,   -26,
+      -2,    82,   -26,   -26,   -26,   -26,     3,   -26,     3,     1,
+       2,   -26,   -26,    62,   -26,   -26,   -26,     3,     3,     3,
+       3,     3,     3,     3,     3,     3,   -26,    36,    -1,    15,
+      96,   -26,   -26,   -26,    86,    86,    86,    86,    86,     0,
+       0,   -26,   -26,   -26,     5,   -26,    58,   -26,   -26,     6,
+     -26,    22,   -26,    67,   -26,    25,    67,   -26,   -26,   -26
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -20,   -20,   -20,    52,    -5,   -20,   -20,    -8,   -20,   -20
+     -26,   -26,   -26,     8,     4,   -26,   -26,   -26,   -25,   -26,
+      -8,   -26,   -26,   -26
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -551,34 +556,34 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      25,    22,    23,    16,    32,    33,    34,    35,    17,    39,
-      18,    37,    59,    42,    45,    32,    33,    34,    35,    34,
-      35,    26,    46,    47,    48,    49,    50,    51,    52,    53,
-      54,    21,    58,    24,     3,    19,     1,     2,    20,     3,
-      43,     4,     5,    44,     6,     1,     2,    38,     3,     6,
-       4,     5,     7,    62,    56,    64,    61,     7,     6,     1,
-       2,    57,     3,    60,     4,     5,     7,    63,     1,     2,
-      41,     3,     6,     4,     5,    32,    33,    34,    35,     0,
-       7,     6,     0,    55,     0,     0,     0,     0,     0,     7,
-      27,    28,    29,    30,    31,    32,    33,    34,    35,     0,
-       0,     0,     0,    36,    27,    28,    29,    30,    31,    32,
-      33,    34,    35
+      25,    16,     1,     2,    54,     3,    21,     4,     5,     3,
+      22,    23,    17,    19,    18,     6,    20,    34,    35,     6,
+      37,    26,    40,     7,    41,    42,    39,     7,    58,    62,
+      55,    44,    45,    46,    47,    48,    49,    50,    51,    52,
+      57,    24,    63,    69,     1,     2,    66,     3,    60,     4,
+       5,    32,    33,    34,    35,    64,     0,     6,    68,    53,
+       0,     1,     2,    59,     3,     7,     4,     5,     0,     0,
+       1,     2,     0,     3,     6,     4,     5,    32,    33,    34,
+      35,     0,     7,     6,     0,     0,     0,    43,     0,     0,
+       0,     7,    27,    28,    29,    30,    31,    32,    33,    34,
+      35,    32,    33,    34,    35,    36,    27,    28,    29,    30,
+      31,    32,    33,    34,    35
 };
 
 static const yytype_int8 yycheck[] =
 {
-       8,     6,     7,    22,    15,    16,    17,    18,    23,    17,
-      24,    16,    25,    18,    25,    15,    16,    17,    18,    17,
-      18,    23,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,     3,    40,     0,     6,     3,     3,     4,     6,     6,
-      23,     8,     9,    23,    16,     3,     4,     5,     6,    16,
-       8,     9,    24,    61,    23,    63,    20,    24,    16,     3,
-       4,     5,     6,    23,     8,     9,    24,    21,     3,     4,
-      18,     6,    16,     8,     9,    15,    16,    17,    18,    -1,
-      24,    16,    -1,    23,    -1,    -1,    -1,    -1,    -1,    24,
-      10,    11,    12,    13,    14,    15,    16,    17,    18,    -1,
-      -1,    -1,    -1,    23,    10,    11,    12,    13,    14,    15,
-      16,    17,    18
+       8,    22,     3,     4,     5,     6,     3,     8,     9,     6,
+       6,     7,    23,     3,    24,    16,     6,    17,    18,    16,
+      16,    23,    18,    24,    23,    23,    18,    24,    23,    23,
+      38,    27,    28,    29,    30,    31,    32,    33,    34,    35,
+      25,     0,    20,    68,     3,     4,    21,     6,    56,     8,
+       9,    15,    16,    17,    18,    63,    -1,    16,    66,    23,
+      -1,     3,     4,     5,     6,    24,     8,     9,    -1,    -1,
+       3,     4,    -1,     6,    16,     8,     9,    15,    16,    17,
+      18,    -1,    24,    16,    -1,    -1,    -1,    25,    -1,    -1,
+      -1,    24,    10,    11,    12,    13,    14,    15,    16,    17,
+      18,    15,    16,    17,    18,    23,    10,    11,    12,    13,
+      14,    15,    16,    17,    18
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -586,12 +591,12 @@ static const yytype_int8 yycheck[] =
 static const yytype_uint8 yystos[] =
 {
        0,     3,     4,     6,     8,     9,    16,    24,    27,    28,
-      29,    30,    31,    32,    33,    35,    22,    23,    24,     3,
-       6,     3,    30,    30,     0,    33,    23,    10,    11,    12,
-      13,    14,    15,    16,    17,    18,    23,    30,     5,    33,
-      34,    29,    30,    23,    23,    25,    30,    30,    30,    30,
-      30,    30,    30,    30,    30,    23,    23,     5,    33,    25,
-      23,    20,    33,    21,    33
+      29,    30,    31,    35,    36,    38,    22,    23,    24,     3,
+       6,     3,    30,    30,     0,    36,    23,    10,    11,    12,
+      13,    14,    15,    16,    17,    18,    23,    30,    39,    29,
+      30,    23,    23,    25,    30,    30,    30,    30,    30,    30,
+      30,    30,    30,    23,     5,    36,    37,    25,    23,     5,
+      36,    32,    23,    20,    36,    33,    21,    34,    36,    34
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1406,77 +1411,78 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 47 "Portugol.y"
+#line 48 "Portugol.y"
     {
-                                            fprintf(file, "mov(%s, NULL, &ts[%d]);\n", (yyvsp[(3) - (4)].texto), (yyvsp[(1) - (4)].sp));
-                                            fflush(file);
-                                            //char* command = sprintf("mov(%s, NULL, &ts[%d]);\n", $3, $1);
-                                            //enqueue( command );
+                                            //fprintf(file, "mov(%s, NULL, &ts[%d]);\n", $3, $1);
+                                            //fflush(file);
+                                            char command[50];
+                                            sprintf(command,"mov(%s, NULL, &ts[%d]);\n", (yyvsp[(3) - (4)].texto), (yyvsp[(1) - (4)].sp));
+                                            enqueue( strdup(command) );
 				        }
     break;
 
   case 5:
-#line 60 "Portugol.y"
+#line 61 "Portugol.y"
     {
-                                        fprintf(file, "comp_gt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = strdup(buf);
-                                  //      $$ = $1 > $3;
+                                        char command[50];
+                                        sprintf(command,"comp_gt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        enqueue( strdup(command) );
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = strdup(command);
                                   }
     break;
 
   case 6:
-#line 68 "Portugol.y"
+#line 69 "Portugol.y"
     {
-                                        fprintf(file, "comp_lt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = strdup(buf);
-                                    //$$ = $1 < $3;
+                                        char command[50];
+                                        sprintf(command, "comp_lt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        enqueue( strdup(command) );
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = strdup(command);
                                   }
     break;
 
   case 7:
-#line 76 "Portugol.y"
+#line 77 "Portugol.y"
     {
-                                        fprintf(file, "comp_le(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = strdup(buf);
-                                    //$$ = $1 <= $3;
+                                        char command[50];
+                                        sprintf(command, "comp_le(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        enqueue( strdup(command));
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = strdup(command);
                                          }
     break;
 
   case 8:
-#line 84 "Portugol.y"
+#line 85 "Portugol.y"
     {
-                                        fprintf(file, "comp_ge(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = strdup(buf);
-                                    //$$ = $1 >= $3;
+                                        char command[50];
+                                        sprintf(command, "comp_ge(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        enqueue( strdup(command));
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = strdup(command);
                                          }
     break;
 
   case 9:
-#line 92 "Portugol.y"
+#line 93 "Portugol.y"
     {
-                                        fprintf(file, "comp_eq(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = strdup(buf);
-                                    //$$ = $1 == $3;
+                                        char command[50];
+                                        sprintf(command, "comp_eq(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        enqueue( strdup(command));
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = strdup(command);
                                     }
     break;
 
   case 11:
-#line 104 "Portugol.y"
+#line 105 "Portugol.y"
     { 
                                         char buf[40];
                                         sprintf(buf, "ts[%d]", (yyvsp[(1) - (1)].sp));
@@ -1485,120 +1491,173 @@ yyreduce:
     break;
 
   case 12:
-#line 109 "Portugol.y"
+#line 110 "Portugol.y"
     {
-                                        fprintf(file, "add(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"add(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(buf);
                                       }
     break;
 
   case 13:
-#line 116 "Portugol.y"
+#line 118 "Portugol.y"
     {
-                                        fprintf(file, "sub(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"sub(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = buf;
+                                        (yyval.texto) = strdup(buf);
                                       }
     break;
 
   case 14:
-#line 123 "Portugol.y"
+#line 126 "Portugol.y"
     { 
-                                        fprintf(file, "mult(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"mult(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(buf);
                                       }
     break;
 
   case 15:
-#line 130 "Portugol.y"
+#line 134 "Portugol.y"
     {
-                                        fprintf(file, "divi(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"divi(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = buf;
+                                        (yyval.texto) = strdup(buf);
                                       }
     break;
 
   case 16:
-#line 137 "Portugol.y"
+#line 142 "Portugol.y"
     {
-                                        fprintf(file, "uminus(%s, NULL, &temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"uminus(%s, NULL, &temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = buf;
+                                        (yyval.texto) = strdup(buf);
                                       }
     break;
 
   case 17:
-#line 144 "Portugol.y"
+#line 150 "Portugol.y"
     { (yyval.texto) = (yyvsp[(2) - (3)].texto); }
     break;
 
   case 18:
-#line 148 "Portugol.y"
+#line 154 "Portugol.y"
     {
-                            fprintf(file, "param(%s, NULL, NULL);\n", (yyvsp[(2) - (3)].texto)); 
-                            fprintf(file, "call(\"imprima\", 1, NULL);\n");
-                            fflush(file);
+                            char command[50];
+                            sprintf(command, "param(%s, NULL, NULL);\n", (yyvsp[(2) - (3)].texto)); 
+                            enqueue(strdup(command));
+                            sprintf(command, "call(\"imprima\", 1, NULL);\n");
+                            enqueue(strdup(command));
                       }
     break;
 
   case 19:
-#line 153 "Portugol.y"
-    { 
-                                    fprintf(file, "param(ts[%d], NULL, NULL);\n", (yyvsp[(2) - (3)].sp)); 
-                                    fprintf(file, "call(\"imprima\", 1, NULL);\n");
-                                    fflush(file);
+#line 161 "Portugol.y"
+    {
+                                    char command[50];
+                                    sprintf(command, "param(ts[%d], NULL, NULL);\n", (yyvsp[(2) - (3)].sp)); 
+                                    enqueue(strdup(command));
+                                    sprintf(command, "call(\"imprima\", 1, NULL);\n");
+                                    enqueue(strdup(command));
                                 }
     break;
 
   case 20:
-#line 161 "Portugol.y"
+#line 170 "Portugol.y"
     {
-                //fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
-                //fprintf(file, "l%d:\n", l-1);
-                //fflush(file);
-            }
+            desempilhar();
+            fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+            count_else = 1;
+            count_if++;
+            fflush(file);
+           }
     break;
 
   case 21:
-#line 166 "Portugol.y"
-    {  
-                fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
-                flag = 1;
-                fflush(file); 
-            }
+#line 178 "Portugol.y"
+    {
+            desempilhar();
+            fflush(file);        
+      }
     break;
 
-  case 30:
-#line 186 "Portugol.y"
+  case 22:
+#line 184 "Portugol.y"
     {
-                                fprintf(file, "l%d:\n", l++);
-                                fflush(file);
+            fprintf(file, "jump(l%d, NULL, NULL);\n", l);
+            fprintf(file, "l%d:\n", l-count_else);
+            count_else++;
+            desempilhar();
+            if(count_else == count_if) {
+                fprintf(file, "l%d:\n", l);
+                count_if = 1;
+            }
+            fflush(file); 
+         }
+    break;
+
+  case 26:
+#line 204 "Portugol.y"
+    { if (count_if == 1) desempilhar(); }
+    break;
+
+  case 27:
+#line 205 "Portugol.y"
+    { if (count_if == 1) desempilhar(); }
+    break;
+
+  case 28:
+#line 206 "Portugol.y"
+    { if (count_if == 1) desempilhar(); }
+    break;
+
+  case 29:
+#line 207 "Portugol.y"
+    { if (count_if == 1) desempilhar(); }
+    break;
+
+  case 33:
+#line 215 "Portugol.y"
+    {
+                                //fprintf(file, "l%d:\n", l++);
+                                //fflush(file);
                            }
     break;
 
-  case 31:
-#line 190 "Portugol.y"
+  case 34:
+#line 219 "Portugol.y"
     {
-                                                    fprintf(file, "l%d:\n", l++);
-                                                    fflush(file);
+                                                    //fprintf(file, "l%d:\n", l++);
+                                                    //fflush(file);
                                                 }
+    break;
+
+  case 35:
+#line 224 "Portugol.y"
+    {
+                    if (count_if == 1) // Soh imprime se nao estiver em um if
+                        fprintf(file, "l%d:\n", l++);
+                }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1602 "y.tab.c"
+#line 1661 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1812,20 +1871,30 @@ yyreturn:
 }
 
 
-#line 195 "Portugol.y"
+#line 228 "Portugol.y"
 
+
+void desempilhar(void) {
+    
+    while(!is_empty()){
+        char* value = dequeue();
+        fprintf(file,"%s",value);
+    }
+    fflush(file);
+
+}
 
 void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
 }
  
-void escreverLabel(){
+/*void escreverLabel(){
     if(flag){
-        fprintf(file, "l%d:\n", l-1);//Quem Escreve isso eh a instrucao do else
+        fprintf(file, "l%d:\n", l-1);
         flag = 0;
     }
 }
-
+*/
 int main(int argc, char **argv) {
 //as primeiras palavras que forem adicionadas serao as palavras chaves, isso antes do lex entrar em acao
 //enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
@@ -1833,6 +1902,7 @@ int main(int argc, char **argv) {
     //lookup("fim",1);
     file = fopen("Portugol.out","w");
 
+    init_queue();
     if(!file){
         printf("O arquivo nao pode ser aberto!!\n");
         exit(1);

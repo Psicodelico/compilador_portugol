@@ -11,25 +11,34 @@ typedef struct queue{
 
 }Queue;
 
+int size = 0;
+
 Queue *first;
 Queue *last;
 
 void enqueue(char* value){
 
+    //printf("entrou %s\n", value);
     if(last != NULL){
-
-        last->value = value;
-        last->next = (Queue*)malloc(sizeof(Queue));
-        last = last -> next;
     
+        last->next = (Queue*)malloc(sizeof(Queue));
+        last->next->value = value;
+        last->next->next = NULL;
+        last = last -> next;
+
+        if(first == NULL){
+            first = last;
+        }
+   
     }else{
     
         first = (Queue*) malloc(sizeof (Queue));
         first->value = value;
-        first -> next = (Queue*) malloc(sizeof(Queue));
-        last = first -> next;
+        first -> next = NULL;
+        last = first;
     }
 
+        size++;
 }
 
 char* dequeue(void){
@@ -43,10 +52,23 @@ char* dequeue(void){
         next = first->next;
         free(first);
         first = next;
+        
+        size--;
+        
         return result;
+
     }else{
+
         return NULL;
     }
+}
+
+int is_empty() {
+        
+    if(first == NULL)
+        return 1;
+    else
+        return 0;
 }
 
 void init_queue(){

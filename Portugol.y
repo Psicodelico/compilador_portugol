@@ -9,10 +9,11 @@
     FILE *file;
     void yyerror(char *);
     int yylex(void);
-    void escreverLabel(void);
+    void desempilhar(void);
     int tp_count = 0;
     int l = 0;
-    int flag = 0;
+    int count_if = 1;
+    int count_else = 1;
 %}
 
 %union{
@@ -35,7 +36,7 @@
 %nonassoc ELSE
 %type <texto> expressao
 %type <texto> expressao_relacional
-//%expect 1
+%expect 1
 %%
 
 programa:
@@ -45,10 +46,11 @@ programa:
 
 afirmacao:
         IDENTIFICADOR '=' expressao ';' {
-                                            fprintf(file, "mov(%s, NULL, &ts[%d]);\n", $3, $1);
-                                            fflush(file);
-                                            //char* command = sprintf("mov(%s, NULL, &ts[%d]);\n", $3, $1);
-                                            //enqueue( command );
+                                            //fprintf(file, "mov(%s, NULL, &ts[%d]);\n", $3, $1);
+                                            //fflush(file);
+                                            char command[50];
+                                            sprintf(command,"mov(%s, NULL, &ts[%d]);\n", $3, $1);
+                                            enqueue( strdup(command) );
 				        }
 	//|  COMENTARIO {;}
 	//|  expressao COMENTARIO { printf("= %g\n", $1); }
@@ -56,46 +58,45 @@ afirmacao:
         ;
 
 expressao_relacional:
-        
         expressao '>' expressao {
-                                        fprintf(file, "comp_gt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        $$ = strdup(buf);
-                                  //      $$ = $1 > $3;
+                                        char command[50];
+                                        sprintf(command,"comp_gt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        enqueue( strdup(command) );
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        $$ = strdup(command);
                                   }	
 	| expressao '<' expressao {
-                                        fprintf(file, "comp_lt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        $$ = strdup(buf);
-                                    //$$ = $1 < $3;
+                                        char command[50];
+                                        sprintf(command, "comp_lt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        enqueue( strdup(command) );
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        $$ = strdup(command);
                                   }
 	| expressao MENORIGUAL expressao {
-                                        fprintf(file, "comp_le(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        $$ = strdup(buf);
-                                    //$$ = $1 <= $3;
+                                        char command[50];
+                                        sprintf(command, "comp_le(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        enqueue( strdup(command));
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        $$ = strdup(command);
                                          }
 	| expressao MAIORIGUAL expressao {
-                                        fprintf(file, "comp_ge(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        $$ = strdup(buf);
-                                    //$$ = $1 >= $3;
+                                        char command[50];
+                                        sprintf(command, "comp_ge(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        enqueue( strdup(command));
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        $$ = strdup(command);
                                          }
 	| expressao IGUAL expressao {
-                                        fprintf(file, "comp_eq(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        fflush(file);
-                                        char buf[40];
-                                        sprintf(buf, "temp[%d]", tp_count-1);
-                                        $$ = strdup(buf);
-                                    //$$ = $1 == $3;
+                                        char command[50];
+                                        sprintf(command, "comp_eq(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        enqueue( strdup(command));
+                                        
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        $$ = strdup(command);
                                     }
         ;
 
@@ -107,75 +108,103 @@ expressao:
                                         $$ = strdup(buf);
                                     }
         | expressao '+' expressao     {
-                                        fprintf(file, "add(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"add(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = strdup(buf);
                                       }
         | expressao '-' expressao     {
-                                        fprintf(file, "sub(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"sub(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
-                                        $$ = buf;
+                                        $$ = strdup(buf);
                                       }
         | expressao '*' expressao     { 
-                                        fprintf(file, "mult(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"mult(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = strdup(buf);
                                       }
         | expressao '/' expressao     {
-                                        fprintf(file, "divi(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"divi(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
-                                        $$ = buf;
+                                        $$ = strdup(buf);
                                       }
         | '-' expressao %prec UMINUS  {
-                                        fprintf(file, "uminus(%s, NULL, &temp[%d]);\n", $2, tp_count++);
-                                        fflush(file);
                                         char buf[40];
+                                        sprintf(buf,"uminus(%s, NULL, &temp[%d]);\n", $2, tp_count++);
+                                        enqueue( strdup(buf) );
+
                                         sprintf(buf, "temp[%d]", tp_count-1);
-                                        $$ = buf;
+                                        $$ = strdup(buf);
                                       }
         | '(' expressao ')'            { $$ = $2; }
         ;
 
 sentenca:
         IMPRIMA TEXTO ';' {
-                            fprintf(file, "param(%s, NULL, NULL);\n", $2); 
-                            fprintf(file, "call(\"imprima\", 1, NULL);\n");
-                            fflush(file);
+                            char command[50];
+                            sprintf(command, "param(%s, NULL, NULL);\n", $2); 
+                            enqueue(strdup(command));
+                            sprintf(command, "call(\"imprima\", 1, NULL);\n");
+                            enqueue(strdup(command));
                       }
-        | IMPRIMA IDENTIFICADOR ';' { 
-                                    fprintf(file, "param(ts[%d], NULL, NULL);\n", $2); 
-                                    fprintf(file, "call(\"imprima\", 1, NULL);\n");
-                                    fflush(file);
+        | IMPRIMA IDENTIFICADOR ';' {
+                                    char command[50];
+                                    sprintf(command, "param(ts[%d], NULL, NULL);\n", $2); 
+                                    enqueue(strdup(command));
+                                    sprintf(command, "call(\"imprima\", 1, NULL);\n");
+                                    enqueue(strdup(command));
                                 }
         ;
 
+inicio_if: {
+            desempilhar();
+            fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+            count_else = 1;
+            count_if++;
+            fflush(file);
+           }
+           ;
+if_then: {
+            desempilhar();
+            fflush(file);        
+      }
+      ;
+
+if_else: {
+            fprintf(file, "jump(l%d, NULL, NULL);\n", l);
+            fprintf(file, "l%d:\n", l-count_else);
+            count_else++;
+            desempilhar();
+            if(count_else == count_if) {
+                fprintf(file, "l%d:\n", l);
+                count_if = 1;
+            }
+            fflush(file); 
+         }
+         ;
+
 selecao: 
-	IF '(' expressao_relacional ')' THEN instrucao {
-                //fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
-                //fprintf(file, "l%d:\n", l-1);
-                //fflush(file);
-            }
-	| IF '(' expressao_relacional ')' THEN instrucao ELSE instrucao {  
-                fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
-                flag = 1;
-                fflush(file); 
-            }
+	IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then if_else
+        | IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then ELSE instrucao if_else
 	;
 
 instrucao:
 	selecao
-        |sentenca 
-	|afirmacao
-        |expressao ';'
-        |expressao_relacional ';'
+        |sentenca { if (count_if == 1) desempilhar(); }
+	|afirmacao { if (count_if == 1) desempilhar(); } 
+        |expressao ';' { if (count_if == 1) desempilhar(); } 
+        |expressao_relacional ';' { if (count_if == 1) desempilhar(); } 
 	|bloco_instrucao
 	;
 conjunto_instrucao:
@@ -183,28 +212,42 @@ conjunto_instrucao:
 	| conjunto_instrucao instrucao
 	;
 bloco_instrucao:
-	INICIO ';' FIM ';' {
-                                fprintf(file, "l%d:\n", l++);
-                                fflush(file);
+	INICIO ';' imprimir_label FIM ';' {
+                                //fprintf(file, "l%d:\n", l++);
+                                //fflush(file);
                            }
-	| INICIO ';' conjunto_instrucao FIM ';' {
-                                                    fprintf(file, "l%d:\n", l++);
-                                                    fflush(file);
+	| INICIO ';' imprimir_label conjunto_instrucao FIM ';' {
+                                                    //fprintf(file, "l%d:\n", l++);
+                                                    //fflush(file);
                                                 }
 	;
+imprimir_label: {
+                    if (count_if == 1) // Soh imprime se nao estiver em um if
+                        fprintf(file, "l%d:\n", l++);
+                }
 %%
+
+void desempilhar(void) {
+    
+    while(!is_empty()){
+        char* value = dequeue();
+        fprintf(file,"%s",value);
+    }
+    fflush(file);
+
+}
 
 void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
 }
  
-void escreverLabel(){
+/*void escreverLabel(){
     if(flag){
-        fprintf(file, "l%d:\n", l-1);//Quem Escreve isso eh a instrucao do else
+        fprintf(file, "l%d:\n", l-1);
         flag = 0;
     }
 }
-
+*/
 int main(int argc, char **argv) {
 //as primeiras palavras que forem adicionadas serao as palavras chaves, isso antes do lex entrar em acao
 //enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
@@ -212,6 +255,7 @@ int main(int argc, char **argv) {
     //lookup("fim",1);
     file = fopen("Portugol.out","w");
 
+    init_queue();
     if(!file){
         printf("O arquivo nao pode ser aberto!!\n");
         exit(1);

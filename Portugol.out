@@ -1,15 +1,2 @@
 mov(1, NULL, &ts[0]);
-comp_eq(ts[0], 1, &temp[0]);
-param(111, NULL, NULL);
 call("imprima", 1, NULL);
-param(222, NULL, NULL);
-call("imprima", 1, NULL);
-jump_f(temp[0], NULL, l0);
-l0:
-param(333, NULL, NULL);
-call("imprima", 1, NULL);
-param(444, NULL, NULL);
-call("imprima", 1, NULL);
-param(ts[0], NULL, NULL);
-call("imprima", 1, NULL);
-l1:
