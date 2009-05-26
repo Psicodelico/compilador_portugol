@@ -3,6 +3,9 @@ Terminals which are not used
    SQRT
 
 
+State 77 conflicts: 1 shift/reduce
+
+
 Grammar
 
     0 $accept: programa $end
@@ -38,7 +41,7 @@ Grammar
    22 bloco: /* empty */
 
    23 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label
-   24        | IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao
+   24        | IF '(' expressao_logica ')' inicio_if THEN instrucao ELSE bloco label instrucao
 
    25 expressao_logica: expressao_relacional
    26                 | expressao_relacional AND expressao_logica
@@ -184,7 +187,7 @@ state 3
 state 4
 
    23 selecao: IF . '(' expressao_logica ')' inicio_if THEN instrucao label
-   24        | IF . '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao
+   24        | IF . '(' expressao_logica ')' inicio_if THEN instrucao ELSE bloco label instrucao
 
     '('  shift, and go to state 21
 
@@ -380,7 +383,7 @@ state 20
 state 21
 
    23 selecao: IF '(' . expressao_logica ')' inicio_if THEN instrucao label
-   24        | IF '(' . expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao
+   24        | IF '(' . expressao_logica ')' inicio_if THEN instrucao ELSE bloco label instrucao
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
@@ -719,7 +722,7 @@ state 47
 state 48
 
    23 selecao: IF '(' expressao_logica . ')' inicio_if THEN instrucao label
-   24        | IF '(' expressao_logica . ')' inicio_if THEN instrucao label ELSE bloco instrucao
+   24        | IF '(' expressao_logica . ')' inicio_if THEN instrucao ELSE bloco label instrucao
 
     ')'  shift, and go to state 70
 
@@ -977,7 +980,7 @@ state 69
 state 70
 
    23 selecao: IF '(' expressao_logica ')' . inicio_if THEN instrucao label
-   24        | IF '(' expressao_logica ')' . inicio_if THEN instrucao label ELSE bloco instrucao
+   24        | IF '(' expressao_logica ')' . inicio_if THEN instrucao ELSE bloco label instrucao
 
     $default  reduce using rule 20 (inicio_if)
 
@@ -1008,7 +1011,7 @@ state 73
 state 74
 
    23 selecao: IF '(' expressao_logica ')' inicio_if . THEN instrucao label
-   24        | IF '(' expressao_logica ')' inicio_if . THEN instrucao label ELSE bloco instrucao
+   24        | IF '(' expressao_logica ')' inicio_if . THEN instrucao ELSE bloco label instrucao
 
     THEN  shift, and go to state 76
 
@@ -1023,7 +1026,7 @@ state 75
 state 76
 
    23 selecao: IF '(' expressao_logica ')' inicio_if THEN . instrucao label
-   24        | IF '(' expressao_logica ')' inicio_if THEN . instrucao label ELSE bloco instrucao
+   24        | IF '(' expressao_logica ')' inicio_if THEN . instrucao ELSE bloco label instrucao
 
     IDENTIFICADOR  shift, and go to state 1
     INICIO         shift, and go to state 2
@@ -1048,35 +1051,44 @@ state 76
 state 77
 
    23 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao . label
-   24        | IF '(' expressao_logica ')' inicio_if THEN instrucao . label ELSE bloco instrucao
+   24        | IF '(' expressao_logica ')' inicio_if THEN instrucao . ELSE bloco label instrucao
 
+    ELSE  shift, and go to state 78
+
+    ELSE      [reduce using rule 21 (label)]
     $default  reduce using rule 21 (label)
 
-    label  go to state 78
+    label  go to state 79
 
 
 state 78
 
-   23 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label .
-   24        | IF '(' expressao_logica ')' inicio_if THEN instrucao label . ELSE bloco instrucao
-
-    ELSE  shift, and go to state 79
-
-    $default  reduce using rule 23 (selecao)
-
-
-state 79
-
-   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE . bloco instrucao
+   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao ELSE . bloco label instrucao
 
     $default  reduce using rule 22 (bloco)
 
     bloco  go to state 80
 
 
+state 79
+
+   23 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label .
+
+    $default  reduce using rule 23 (selecao)
+
+
 state 80
 
-   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco . instrucao
+   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao ELSE bloco . label instrucao
+
+    $default  reduce using rule 21 (label)
+
+    label  go to state 81
+
+
+state 81
+
+   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao ELSE bloco label . instrucao
 
     IDENTIFICADOR  shift, and go to state 1
     INICIO         shift, and go to state 2
@@ -1094,12 +1106,12 @@ state 80
     sentenca              go to state 14
     selecao               go to state 15
     expressao_logica      go to state 16
-    instrucao             go to state 81
+    instrucao             go to state 82
     bloco_instrucao       go to state 18
 
 
-state 81
+state 82
 
-   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao .
+   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao ELSE bloco label instrucao .
 
     $default  reduce using rule 24 (selecao)
