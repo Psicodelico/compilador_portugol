@@ -502,17 +502,7 @@ char *yytext;
     #include <stdlib.h>
     #include "quadruplas-v1q.h"
     void yyerror(char *);
-    /*
-
-    \"[^\"\n]*[\"\n]    { yylval.texto = strdup(yytext+1); // Pula a primeira aspas
-                      if (yylval.texto[yyleng-2] != '"')
-                        ;//warning("Cadeia de caracteres nao terminada.", (char *)0);
-                      else
-                        yylval.texto[yyleng-2] = '\0'; // Remove a ultima aspas
-                      return TEXTO;
-                    }
-    */
-#line 516 "lex.yy.c"
+#line 506 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -699,10 +689,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 18 "Portugol.l"
+#line 8 "Portugol.l"
 
 
-#line 706 "lex.yy.c"
+#line 696 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -788,77 +778,75 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 20 "Portugol.l"
-{ printf("comentario\n");}
+#line 10 "Portugol.l"
+{;} 
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 22 "Portugol.l"
+#line 12 "Portugol.l"
 {return SQRT;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 24 "Portugol.l"
+#line 14 "Portugol.l"
 { return INICIO;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 25 "Portugol.l"
+#line 15 "Portugol.l"
 { return FIM; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 26 "Portugol.l"
+#line 16 "Portugol.l"
 { return IF; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 27 "Portugol.l"
+#line 17 "Portugol.l"
 { return THEN; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 28 "Portugol.l"
+#line 18 "Portugol.l"
 { return ELSE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 29 "Portugol.l"
+#line 19 "Portugol.l"
 { return IMPRIMA; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 30 "Portugol.l"
+#line 20 "Portugol.l"
 { return AND; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 31 "Portugol.l"
+#line 21 "Portugol.l"
 { return OR; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 32 "Portugol.l"
+#line 22 "Portugol.l"
 { return NOT; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 33 "Portugol.l"
+#line 23 "Portugol.l"
 { return *yytext;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 35 "Portugol.l"
-{ 
-                        //struct symtab* sp = lookup(yytext,0);
-
-                        yylval.sp = ((char) *yytext) - 65;
-                        return IDENTIFICADOR;//Teste
-                    }
+#line 25 "Portugol.l"
+{
+            yylval.sp = ((char) *yytext) - 65;
+            return IDENTIFICADOR;
+      }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 42 "Portugol.l"
+#line 30 "Portugol.l"
 {
                             yylval.texto = strdup(yytext);
                             return TEXTO;
@@ -866,46 +854,46 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 48 "Portugol.l"
+#line 36 "Portugol.l"
 { return *yytext; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 51 "Portugol.l"
+#line 39 "Portugol.l"
 {return MENORIGUAL;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 52 "Portugol.l"
+#line 40 "Portugol.l"
 {return MAIORIGUAL;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 53 "Portugol.l"
+#line 41 "Portugol.l"
 {return IGUAL;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 54 "Portugol.l"
+#line 42 "Portugol.l"
 {return DIFERENTE;}
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 56 "Portugol.l"
-;       /*Ignora espaço em branco */
+#line 44 "Portugol.l"
+{;/*Ignora espaço em branco */}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 58 "Portugol.l"
+#line 46 "Portugol.l"
 yyerror("Caracter Desconhecido");
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 60 "Portugol.l"
+#line 48 "Portugol.l"
 ECHO;
 	YY_BREAK
-#line 909 "lex.yy.c"
+#line 897 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1903,7 +1891,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 60 "Portugol.l"
+#line 48 "Portugol.l"
 
 
 

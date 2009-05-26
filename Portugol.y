@@ -12,15 +12,11 @@
     void desempilhar(void);
     int pop();
     void push();
-    //int pop_rel();
-    //void push_rel();
     int tp_count = 0;
     int l = 1;
     int count_if_else = 0;
     int stack[100];
     int stack_pt = -1;
-    //int stack_rel[100];
-    //int stack_rel_pt = -1;
 %}
 
 %union{
@@ -56,7 +52,7 @@ programa:
 afirmacao:
         IDENTIFICADOR '=' expressao ';' {
                                             char command[50];
-                                            sprintf(command,"mov(%s, NULL, &ts[%d]);\n", $3, $1);
+                                            sprintf(command,"\tmov(%s, NULL, &ts[%d]);\n", $3, $1);
                                             enqueue( strdup(command) );
 				        }
         ;
@@ -64,54 +60,53 @@ afirmacao:
 expressao_relacional:
         expressao '>' expressao {
                                         char command[50];
-                                        sprintf(command,"comp_gt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        sprintf(command,"\tcomp_gt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(command) );
-                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         $$ = strdup(command);
-                                  }	
+                                }
+
 	| expressao '<' expressao {
                                         char command[50];
-                                        sprintf(command, "comp_lt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        sprintf(command, "\tcomp_lt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(command) );
-                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         $$ = strdup(command);
                                   }
+
 	| expressao MENORIGUAL expressao {
-                                        char command[50];
-                                        sprintf(command, "comp_le(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        enqueue( strdup(command));
-                                        //push(tp_count-1);
+                                            char command[50];
+                                            sprintf(command, "\tcomp_le(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                            enqueue( strdup(command));
                                         
-                                        sprintf(command, "temp[%d]", tp_count-1);
-                                        $$ = strdup(command);
+                                            sprintf(command, "temp[%d]", tp_count-1);
+                                            $$ = strdup(command);
                                          }
+
 	| expressao MAIORIGUAL expressao {
-                                        char command[50];
-                                        sprintf(command, "comp_ge(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
-                                        enqueue( strdup(command));
-                                        //push(tp_count-1);
+                                            char command[50];
+                                            sprintf(command, "\tcomp_ge(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                            enqueue( strdup(command));
                                         
-                                        sprintf(command, "temp[%d]", tp_count-1);
-                                        $$ = strdup(command);
+                                            sprintf(command, "temp[%d]", tp_count-1);
+                                            $$ = strdup(command);
                                          }
+
 	| expressao IGUAL expressao {
                                         char command[50];
-                                        sprintf(command, "comp_eq(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        sprintf(command, "\tcomp_eq(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(command));
-                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         $$ = strdup(command);
-                                    } 
+                                    }
+
         | expressao DIFERENTE expressao {
                                             char command[50];
-                                            sprintf(command, "comp_ne(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                            sprintf(command, "\tcomp_ne(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                             enqueue( strdup(command));
-                                            //push(tp_count-1);
                                         
                                             sprintf(command, "temp[%d]", tp_count-1);
                                             $$ = strdup(command);
@@ -120,87 +115,92 @@ expressao_relacional:
 
 expressao:
         TEXTO
+
         | IDENTIFICADOR             { 
                                         char buf[40];
                                         sprintf(buf, "ts[%d]", $1);
                                         $$ = strdup(buf);
                                     }
-        | expressao '+' expressao     {
+
+        | expressao '+' expressao   {
                                         char buf[40];
-                                        sprintf(buf,"add(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        sprintf(buf,"\tadd(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = strdup(buf);
-                                      }
-        | expressao '-' expressao     {
+                                    }
+
+        | expressao '-' expressao   {
                                         char buf[40];
-                                        sprintf(buf,"sub(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        sprintf(buf,"\tsub(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = strdup(buf);
-                                      }
-        | expressao '*' expressao     { 
+                                    }
+
+        | expressao '*' expressao   { 
                                         char buf[40];
-                                        sprintf(buf,"mult(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        sprintf(buf,"\tmult(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = strdup(buf);
-                                      }
-        | expressao '/' expressao     {
+                                    }
+
+        | expressao '/' expressao   {
                                         char buf[40];
-                                        sprintf(buf,"divi(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                        sprintf(buf,"\tdivi(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = strdup(buf);
-                                      }
-        | '-' expressao %prec UMINUS  {
+                                    }
+
+        | '-' expressao %prec UMINUS{
                                         char buf[40];
-                                        sprintf(buf,"uminus(%s, NULL, &temp[%d]);\n", $2, tp_count++);
+                                        sprintf(buf,"\tuminus(%s, NULL, &temp[%d]);\n", $2, tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         $$ = strdup(buf);
-                                      }
-        | '(' expressao ')'            { $$ = $2; }
+                                    }
+
+        | '(' expressao ')'         { $$ = $2; }
         ;
 
 sentenca:
         IMPRIMA TEXTO ';' {
                             char command[50];
-                            sprintf(command, "param(%s, NULL, NULL);\n", $2); 
+                            sprintf(command, "\tparam(%s, NULL, NULL);\n", $2); 
                             enqueue(strdup(command));
-                            sprintf(command, "call(\"imprima\", 1, NULL);\n");
+                            sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
                             enqueue(strdup(command));
-                      }
+                          }
         | IMPRIMA IDENTIFICADOR ';' {
-                                    printf("entrou\n");
-                                    char command[50];
-                                    sprintf(command, "param(ts[%d], NULL, NULL);\n", $2); 
-                                    enqueue(strdup(command));
-                                    enqueue(strdup(command));
-                                    printf("empty: %d\n", is_empty());
-                                    sprintf(command, "call(\"imprima\", 1, NULL);\n");
-                                    enqueue(strdup(command));
-                                    printf("empty: %d\n", is_empty());
-                                }
+
+                                        char command[50];
+                                        sprintf(command, "\tparam(ts[%d], NULL, NULL);\n", $2); 
+                                        enqueue(strdup(command));
+                                        enqueue(strdup(command));
+                                        sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
+                                        enqueue(strdup(command));
+                                    }
         ;
 
 inicio_if: {
-            char command[50];
-            sprintf(command,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
-            enqueue(strdup(command));
-            push(l-1);
-            count_if_else++;
+                char command[50];
+                sprintf(command,"\tjump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+                enqueue(strdup(command));
+                push(l-1);
+                count_if_else++;
            }
            ;
 
 label: {
             char command[50];
-            sprintf(command, "l%d:\n", pop());
+            sprintf(command, " l%d:\n", pop());
             enqueue(strdup(command));
         }
 
@@ -215,54 +215,56 @@ selecao:
 
 expressao_logica:
                 expressao_relacional {
-                    char command[50];
-                    sprintf(command, "temp[%d]", tp_count-1);
-                    $$ = strdup(command);
-                }
+                                        char command[50];
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        $$ = strdup(command);
+                                     }
+
                 | expressao_relacional AND expressao_logica { 
                                                                     char command[50];
-                                                                    sprintf(command, "rela_an(%s, %s, temp[%d]);\n", $1, $3, tp_count++);
+                                                                    sprintf(command, "\trela_an(%s, %s, temp[%d]);\n", $1, $3, tp_count++);
                                                                     enqueue(strdup(command));
                                                                     sprintf(command, "temp[%d]", tp_count-1);
                                                                     $$ = strdup(command);
                                                             }
-                | expressao_relacional OR expressao_logica {
+                | expressao_relacional OR expressao_logica  {
                                                                     char command[50];
-                                                                    sprintf(command, "rela_or(%s, %s, temp[%d]);\n", $1, $3, tp_count++);
+                                                                    sprintf(command, "\trela_or(%s, %s, temp[%d]);\n", $1, $3, tp_count++);
                                                                     enqueue(strdup(command));
                                                                     sprintf(command, "temp[%d]", tp_count-1);
                                                                     $$ = strdup(command);
-                                                           }
+                                                            }
                 | NOT expressao_logica {
                                                 
-                                                char command[50];
-                                                sprintf(command, "rela_no(%s, NULL, temp[%d]);\n", $2, tp_count++);
-                                                enqueue(strdup(command));
+                                            char command[50];
+                                            sprintf(command, "\trela_no(%s, NULL, temp[%d]);\n", $2, tp_count++);
+                                            enqueue(strdup(command));
                                        }
+
                 | '(' expressao_logica ')' { $$ = $2; }
                 ;
 
 
 instrucao:
 	selecao { 
-                desempilhar();
-                count_if_else--;
-                if (!count_if_else) { // label de jump incondicional
-                    fprintf(file, "l%d:\n", l++);
-                    fflush(file);
+                    desempilhar();
+                    count_if_else--;
+                    if (!count_if_else) { // label de jump incondicional
+                        fprintf(file, " l%d:\n", l++);
+                        fflush(file);
+                    }
                 }
-        }
+
         | expressao_logica
         | sentenca { if (count_if_else == 0) desempilhar(); }
 	| afirmacao { if (count_if_else == 0) desempilhar(); } 
         | expressao ';' { if (count_if_else == 0) desempilhar(); } 
-        //| expressao_relacional ';' { if (count_if_else == 0) desempilhar(); } // Nao faz sentido!
 	| bloco_instrucao
         | ';' { if (count_if_else == 0) {
-                    fprintf(file, "nop(NULL, NULL, NULL);\n");
+                    fprintf(file, "\tnop(NULL, NULL, NULL);\n");
                     fflush(file);
                 } else {
-                    enqueue("nop(NULL, NULL, NULL);\n");
+                    enqueue("\tnop(NULL, NULL, NULL);\n");
                 }
         }
 	;
@@ -278,7 +280,7 @@ bloco_instrucao:
 	;
 imprimir_label: {
                     if (count_if_else == 0 && l > 1) // Soh imprime se nao estiver em um if
-                        fprintf(file, "l%d:\n", l++);
+                        fprintf(file, " l%d:\n", l++);
                 }
 %%
 
@@ -289,19 +291,13 @@ void push(int value) {
 int pop() {
     return stack[stack_pt--];
 }
-//void push_rel(int value) {
-//    stack_rel[++stack_rel_pt] = value;
-//}
 
-//int pop_rel() {
-//    return stack_rel[stack_rel_pt--];
-//}
 void desempilhar(void) {
     char *value; 
     while(!is_empty()){
         value = dequeue();
         if (!strcmp(value, "jump_incondicional")) {
-            fprintf(file, "jump(NULL, NULL, l%d);\n", l);
+            fprintf(file, "\tjump(NULL, NULL, l%d);\n", l);
         }
         else {
             fprintf(file,"%s",value);
@@ -314,25 +310,15 @@ void desempilhar(void) {
 void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
 }
- 
-/*void escreverLabel(){
-    if(flag){
-        fprintf(file, "l%d:\n", l-1);
-        flag = 0;
-    }
-}
-*/
+
 int main(int argc, char **argv) {
-//as primeiras palavras que forem adicionadas serao as palavras chaves, isso antes do lex entrar em acao
-//enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
-    //lookup("inicio",1);
-    //lookup("fim",1);
+
     file = fopen("Portugol.c","w");
 
     init_queue();
 
-    fprintf(file,"#include \"quadruplas-v1q.h\"\n");
-    fprintf(file,"int main() {\n");
+    fprintf(file,"#include \"quadruplas-v1q.h\"\n\n");
+    fprintf(file,"int main() {\n\n");
 
     if(!file){
         printf("O arquivo nao pode ser aberto!!\n");
@@ -351,7 +337,7 @@ int main(int argc, char **argv) {
     yyparse();
     if (argc > 1) fclose(yyin);    
 
-    fprintf(file,"}\n");
+    fprintf(file,"\n}\n");
 
     fclose(file);
 }

@@ -123,15 +123,11 @@
     void desempilhar(void);
     int pop();
     void push();
-    //int pop_rel();
-    //void push_rel();
     int tp_count = 0;
     int l = 1;
     int count_if_else = 0;
     int stack[100];
     int stack_pt = -1;
-    //int stack_rel[100];
-    //int stack_rel_pt = -1;
 
 
 /* Enabling traces.  */
@@ -154,13 +150,13 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 26 "Portugol.y"
+#line 22 "Portugol.y"
 {
     char *texto;
     int sp;
 }
 /* Line 187 of yacc.c.  */
-#line 164 "y.tab.c"
+#line 160 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -173,7 +169,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 177 "y.tab.c"
+#line 173 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -474,11 +470,11 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    52,    52,    53,    57,    65,    74,    83,    92,   101,
-     110,   122,   123,   128,   136,   144,   152,   160,   168,   172,
-     179,   192,   201,   207,   212,   213,   217,   222,   229,   236,
-     242,   247,   255,   256,   257,   258,   260,   261,   270,   271,
-     274,   276,   279
+       0,    48,    48,    49,    53,    61,    70,    79,    88,    97,
+     106,   117,   119,   125,   134,   143,   152,   161,   170,   174,
+     181,   192,   201,   207,   212,   213,   217,   223,   230,   237,
+     244,   249,   258,   259,   260,   261,   262,   263,   272,   273,
+     276,   278,   281
 };
 #endif
 
@@ -1446,34 +1442,32 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 57 "Portugol.y"
+#line 53 "Portugol.y"
     {
                                             char command[50];
-                                            sprintf(command,"mov(%s, NULL, &ts[%d]);\n", (yyvsp[(3) - (4)].texto), (yyvsp[(1) - (4)].sp));
+                                            sprintf(command,"\tmov(%s, NULL, &ts[%d]);\n", (yyvsp[(3) - (4)].texto), (yyvsp[(1) - (4)].sp));
                                             enqueue( strdup(command) );
 				        }
     break;
 
   case 5:
-#line 65 "Portugol.y"
+#line 61 "Portugol.y"
     {
                                         char command[50];
-                                        sprintf(command,"comp_gt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        sprintf(command,"\tcomp_gt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(command) );
-                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(command);
-                                  }
+                                }
     break;
 
   case 6:
-#line 74 "Portugol.y"
+#line 70 "Portugol.y"
     {
                                         char command[50];
-                                        sprintf(command, "comp_lt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        sprintf(command, "\tcomp_lt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(command) );
-                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(command);
@@ -1481,38 +1475,35 @@ yyreduce:
     break;
 
   case 7:
-#line 83 "Portugol.y"
+#line 79 "Portugol.y"
     {
-                                        char command[50];
-                                        sprintf(command, "comp_le(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        enqueue( strdup(command));
-                                        //push(tp_count-1);
+                                            char command[50];
+                                            sprintf(command, "\tcomp_le(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                            enqueue( strdup(command));
                                         
-                                        sprintf(command, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = strdup(command);
+                                            sprintf(command, "temp[%d]", tp_count-1);
+                                            (yyval.texto) = strdup(command);
                                          }
     break;
 
   case 8:
-#line 92 "Portugol.y"
+#line 88 "Portugol.y"
     {
-                                        char command[50];
-                                        sprintf(command, "comp_ge(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
-                                        enqueue( strdup(command));
-                                        //push(tp_count-1);
+                                            char command[50];
+                                            sprintf(command, "\tcomp_ge(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                            enqueue( strdup(command));
                                         
-                                        sprintf(command, "temp[%d]", tp_count-1);
-                                        (yyval.texto) = strdup(command);
+                                            sprintf(command, "temp[%d]", tp_count-1);
+                                            (yyval.texto) = strdup(command);
                                          }
     break;
 
   case 9:
-#line 101 "Portugol.y"
+#line 97 "Portugol.y"
     {
                                         char command[50];
-                                        sprintf(command, "comp_eq(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        sprintf(command, "\tcomp_eq(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(command));
-                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(command);
@@ -1520,12 +1511,11 @@ yyreduce:
     break;
 
   case 10:
-#line 110 "Portugol.y"
+#line 106 "Portugol.y"
     {
                                             char command[50];
-                                            sprintf(command, "comp_ne(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                            sprintf(command, "\tcomp_ne(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                             enqueue( strdup(command));
-                                            //push(tp_count-1);
                                         
                                             sprintf(command, "temp[%d]", tp_count-1);
                                             (yyval.texto) = strdup(command);
@@ -1533,7 +1523,7 @@ yyreduce:
     break;
 
   case 12:
-#line 123 "Portugol.y"
+#line 119 "Portugol.y"
     { 
                                         char buf[40];
                                         sprintf(buf, "ts[%d]", (yyvsp[(1) - (1)].sp));
@@ -1542,104 +1532,102 @@ yyreduce:
     break;
 
   case 13:
-#line 128 "Portugol.y"
+#line 125 "Portugol.y"
     {
                                         char buf[40];
-                                        sprintf(buf,"add(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        sprintf(buf,"\tadd(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(buf);
-                                      }
+                                    }
     break;
 
   case 14:
-#line 136 "Portugol.y"
+#line 134 "Portugol.y"
     {
                                         char buf[40];
-                                        sprintf(buf,"sub(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        sprintf(buf,"\tsub(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(buf);
-                                      }
+                                    }
     break;
 
   case 15:
-#line 144 "Portugol.y"
+#line 143 "Portugol.y"
     { 
                                         char buf[40];
-                                        sprintf(buf,"mult(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        sprintf(buf,"\tmult(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(buf);
-                                      }
+                                    }
     break;
 
   case 16:
 #line 152 "Portugol.y"
     {
                                         char buf[40];
-                                        sprintf(buf,"divi(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                        sprintf(buf,"\tdivi(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(buf);
-                                      }
+                                    }
     break;
 
   case 17:
-#line 160 "Portugol.y"
+#line 161 "Portugol.y"
     {
                                         char buf[40];
-                                        sprintf(buf,"uminus(%s, NULL, &temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
+                                        sprintf(buf,"\tuminus(%s, NULL, &temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
                                         enqueue( strdup(buf) );
 
                                         sprintf(buf, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(buf);
-                                      }
+                                    }
     break;
 
   case 18:
-#line 168 "Portugol.y"
+#line 170 "Portugol.y"
     { (yyval.texto) = (yyvsp[(2) - (3)].texto); }
     break;
 
   case 19:
-#line 172 "Portugol.y"
+#line 174 "Portugol.y"
     {
                             char command[50];
-                            sprintf(command, "param(%s, NULL, NULL);\n", (yyvsp[(2) - (3)].texto)); 
+                            sprintf(command, "\tparam(%s, NULL, NULL);\n", (yyvsp[(2) - (3)].texto)); 
                             enqueue(strdup(command));
-                            sprintf(command, "call(\"imprima\", 1, NULL);\n");
+                            sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
                             enqueue(strdup(command));
-                      }
+                          }
     break;
 
   case 20:
-#line 179 "Portugol.y"
+#line 181 "Portugol.y"
     {
-                                    printf("entrou\n");
-                                    char command[50];
-                                    sprintf(command, "param(ts[%d], NULL, NULL);\n", (yyvsp[(2) - (3)].sp)); 
-                                    enqueue(strdup(command));
-                                    enqueue(strdup(command));
-                                    printf("empty: %d\n", is_empty());
-                                    sprintf(command, "call(\"imprima\", 1, NULL);\n");
-                                    enqueue(strdup(command));
-                                    printf("empty: %d\n", is_empty());
-                                }
+
+                                        char command[50];
+                                        sprintf(command, "\tparam(ts[%d], NULL, NULL);\n", (yyvsp[(2) - (3)].sp)); 
+                                        enqueue(strdup(command));
+                                        enqueue(strdup(command));
+                                        sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
+                                        enqueue(strdup(command));
+                                    }
     break;
 
   case 21:
 #line 192 "Portugol.y"
     {
-            char command[50];
-            sprintf(command,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
-            enqueue(strdup(command));
-            push(l-1);
-            count_if_else++;
+                char command[50];
+                sprintf(command,"\tjump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+                enqueue(strdup(command));
+                push(l-1);
+                count_if_else++;
            }
     break;
 
@@ -1647,7 +1635,7 @@ yyreduce:
 #line 201 "Portugol.y"
     {
             char command[50];
-            sprintf(command, "l%d:\n", pop());
+            sprintf(command, " l%d:\n", pop());
             enqueue(strdup(command));
         }
     break;
@@ -1662,17 +1650,17 @@ yyreduce:
   case 26:
 #line 217 "Portugol.y"
     {
-                    char command[50];
-                    sprintf(command, "temp[%d]", tp_count-1);
-                    (yyval.texto) = strdup(command);
-                }
+                                        char command[50];
+                                        sprintf(command, "temp[%d]", tp_count-1);
+                                        (yyval.texto) = strdup(command);
+                                     }
     break;
 
   case 27:
-#line 222 "Portugol.y"
+#line 223 "Portugol.y"
     { 
                                                                     char command[50];
-                                                                    sprintf(command, "rela_an(%s, %s, temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                                                    sprintf(command, "\trela_an(%s, %s, temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                                                     enqueue(strdup(command));
                                                                     sprintf(command, "temp[%d]", tp_count-1);
                                                                     (yyval.texto) = strdup(command);
@@ -1680,92 +1668,92 @@ yyreduce:
     break;
 
   case 28:
-#line 229 "Portugol.y"
+#line 230 "Portugol.y"
     {
                                                                     char command[50];
-                                                                    sprintf(command, "rela_or(%s, %s, temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                                                    sprintf(command, "\trela_or(%s, %s, temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                                                     enqueue(strdup(command));
                                                                     sprintf(command, "temp[%d]", tp_count-1);
                                                                     (yyval.texto) = strdup(command);
-                                                           }
+                                                            }
     break;
 
   case 29:
-#line 236 "Portugol.y"
+#line 237 "Portugol.y"
     {
                                                 
-                                                char command[50];
-                                                sprintf(command, "rela_no(%s, NULL, temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
-                                                enqueue(strdup(command));
+                                            char command[50];
+                                            sprintf(command, "\trela_no(%s, NULL, temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
+                                            enqueue(strdup(command));
                                        }
     break;
 
   case 30:
-#line 242 "Portugol.y"
+#line 244 "Portugol.y"
     { (yyval.texto) = (yyvsp[(2) - (3)].texto); }
     break;
 
   case 31:
-#line 247 "Portugol.y"
+#line 249 "Portugol.y"
     { 
-                desempilhar();
-                count_if_else--;
-                if (!count_if_else) { // label de jump incondicional
-                    fprintf(file, "l%d:\n", l++);
-                    fflush(file);
+                    desempilhar();
+                    count_if_else--;
+                    if (!count_if_else) { // label de jump incondicional
+                        fprintf(file, " l%d:\n", l++);
+                        fflush(file);
+                    }
                 }
-        }
     break;
 
   case 33:
-#line 256 "Portugol.y"
+#line 259 "Portugol.y"
     { if (count_if_else == 0) desempilhar(); }
     break;
 
   case 34:
-#line 257 "Portugol.y"
+#line 260 "Portugol.y"
     { if (count_if_else == 0) desempilhar(); }
     break;
 
   case 35:
-#line 258 "Portugol.y"
+#line 261 "Portugol.y"
     { if (count_if_else == 0) desempilhar(); }
     break;
 
   case 37:
-#line 261 "Portugol.y"
+#line 263 "Portugol.y"
     { if (count_if_else == 0) {
-                    fprintf(file, "nop(NULL, NULL, NULL);\n");
+                    fprintf(file, "\tnop(NULL, NULL, NULL);\n");
                     fflush(file);
                 } else {
-                    enqueue("nop(NULL, NULL, NULL);\n");
+                    enqueue("\tnop(NULL, NULL, NULL);\n");
                 }
         }
     break;
 
   case 40:
-#line 274 "Portugol.y"
+#line 276 "Portugol.y"
     {
                            }
     break;
 
   case 41:
-#line 276 "Portugol.y"
+#line 278 "Portugol.y"
     {
                                                 }
     break;
 
   case 42:
-#line 279 "Portugol.y"
+#line 281 "Portugol.y"
     {
                     if (count_if_else == 0 && l > 1) // Soh imprime se nao estiver em um if
-                        fprintf(file, "l%d:\n", l++);
+                        fprintf(file, " l%d:\n", l++);
                 }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1769 "y.tab.c"
+#line 1757 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1979,7 +1967,7 @@ yyreturn:
 }
 
 
-#line 283 "Portugol.y"
+#line 285 "Portugol.y"
 
 
 void push(int value) {
@@ -1989,19 +1977,13 @@ void push(int value) {
 int pop() {
     return stack[stack_pt--];
 }
-//void push_rel(int value) {
-//    stack_rel[++stack_rel_pt] = value;
-//}
 
-//int pop_rel() {
-//    return stack_rel[stack_rel_pt--];
-//}
 void desempilhar(void) {
     char *value; 
     while(!is_empty()){
         value = dequeue();
         if (!strcmp(value, "jump_incondicional")) {
-            fprintf(file, "jump(NULL, NULL, l%d);\n", l);
+            fprintf(file, "\tjump(NULL, NULL, l%d);\n", l);
         }
         else {
             fprintf(file,"%s",value);
@@ -2014,25 +1996,15 @@ void desempilhar(void) {
 void yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
 }
- 
-/*void escreverLabel(){
-    if(flag){
-        fprintf(file, "l%d:\n", l-1);
-        flag = 0;
-    }
-}
-*/
+
 int main(int argc, char **argv) {
-//as primeiras palavras que forem adicionadas serao as palavras chaves, isso antes do lex entrar em acao
-//enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
-    //lookup("inicio",1);
-    //lookup("fim",1);
+
     file = fopen("Portugol.c","w");
 
     init_queue();
 
-    fprintf(file,"#include \"quadruplas-v1q.h\"\n");
-    fprintf(file,"int main() {\n");
+    fprintf(file,"#include \"quadruplas-v1q.h\"\n\n");
+    fprintf(file,"int main() {\n\n");
 
     if(!file){
         printf("O arquivo nao pode ser aberto!!\n");
@@ -2051,7 +2023,7 @@ int main(int argc, char **argv) {
     yyparse();
     if (argc > 1) fclose(yyin);    
 
-    fprintf(file,"}\n");
+    fprintf(file,"\n}\n");
 
     fclose(file);
 }

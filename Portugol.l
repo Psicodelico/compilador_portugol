@@ -4,20 +4,10 @@
     #include <stdlib.h>
     #include "quadruplas-v1q.h"
     void yyerror(char *);
-    /*
-
-    \"[^\"\n]*[\"\n]    { yylval.texto = strdup(yytext+1); // Pula a primeira aspas
-                      if (yylval.texto[yyleng-2] != '"')
-                        ;//warning("Cadeia de caracteres nao terminada.", (char *)0);
-                      else
-                        yylval.texto[yyleng-2] = '\0'; // Remove a ultima aspas
-                      return TEXTO;
-                    }
-    */
 %}
 %%
 
-\/\/[^\n]*\n { printf("comentario\n");}
+\/\/[^\n]*\n {;} 
 
 sqrt        {return SQRT;}
 
@@ -32,12 +22,10 @@ sqrt        {return SQRT;}
 "nao"       { return NOT; }
 ;           { return *yytext;}
 
-[A-Z] { 
-                        //struct symtab* sp = lookup(yytext,0);
-
-                        yylval.sp = ((char) *yytext) - 65;
-                        return IDENTIFICADOR;//Teste
-                    }
+[A-Z] {
+            yylval.sp = ((char) *yytext) - 65;
+            return IDENTIFICADOR;
+      }
 
 ([0-9]+|([0-9]*\.[0-9]+)) {
                             yylval.texto = strdup(yytext);
@@ -45,7 +33,7 @@ sqrt        {return SQRT;}
                           }
 
 
-[-+><()=/*]     { return *yytext; }
+[-+><()=/*] { return *yytext; }
 
 
 "<="        {return MENORIGUAL;}
@@ -53,7 +41,7 @@ sqrt        {return SQRT;}
 "=="        {return IGUAL;}
 "!="        {return DIFERENTE;}
 
-[ \t\n]*       ;       /*Ignora espaço em branco */
+[ \t\n]*    {;/*Ignora espaço em branco */}
 
 .           yyerror("Caracter Desconhecido");
 
