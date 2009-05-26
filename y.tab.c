@@ -76,9 +76,13 @@
      MAIORIGUAL = 265,
      IGUAL = 266,
      MENORIGUAL = 267,
-     UMINUS = 268,
-     THEN = 269,
-     ELSE = 270
+     DIFERENTE = 268,
+     AND = 269,
+     OR = 270,
+     NOT = 271,
+     UMINUS = 272,
+     THEN = 273,
+     ELSE = 274
    };
 #endif
 /* Tokens.  */
@@ -92,9 +96,13 @@
 #define MAIORIGUAL 265
 #define IGUAL 266
 #define MENORIGUAL 267
-#define UMINUS 268
-#define THEN 269
-#define ELSE 270
+#define DIFERENTE 268
+#define AND 269
+#define OR 270
+#define NOT 271
+#define UMINUS 272
+#define THEN 273
+#define ELSE 274
 
 
 
@@ -113,10 +121,17 @@
     void yyerror(char *);
     int yylex(void);
     void desempilhar(void);
+    int pop();
+    void push();
+    int pop_rel();
+    void push_rel();
     int tp_count = 0;
     int l = 0;
-    int count_if = 1;
-    int count_else = 1;
+    int count_if_else = 0;
+    int stack[100];
+    int stack_pt = -1;
+    int stack_rel[100];
+    int stack_rel_pt = -1;
 
 
 /* Enabling traces.  */
@@ -139,13 +154,13 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 19 "Portugol.y"
+#line 26 "Portugol.y"
 {
     char *texto;
     int sp;
 }
 /* Line 187 of yacc.c.  */
-#line 149 "y.tab.c"
+#line 164 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -158,7 +173,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 162 "y.tab.c"
+#line 177 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -371,22 +386,22 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  24
+#define YYFINAL  31
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   114
+#define YYLAST   166
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  26
+#define YYNTOKENS  30
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  14
+#define YYNNTS  15
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  35
+#define YYNRULES  42
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  70
+#define YYNSTATES  82
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   270
+#define YYMAXUTOK   274
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -398,9 +413,9 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      24,    25,    17,    15,     2,    16,     2,    18,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    23,
-      13,    22,    14,     2,     2,     2,     2,     2,     2,     2,
+      28,    29,    21,    19,     2,    20,     2,    22,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    27,
+      17,    26,    18,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -420,8 +435,8 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12,    19,    20,
-      21
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    23,    24,    25
 };
 
 #if YYDEBUG
@@ -430,36 +445,40 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint8 yyprhs[] =
 {
        0,     0,     3,     5,     8,    13,    17,    21,    25,    29,
-      33,    35,    37,    41,    45,    49,    53,    56,    60,    64,
-      68,    69,    70,    71,    81,    93,    95,    97,    99,   102,
-     105,   107,   109,   112,   118,   125
+      33,    37,    39,    41,    45,    49,    53,    57,    60,    64,
+      68,    72,    73,    74,    75,    84,    96,    98,   102,   106,
+     109,   113,   115,   117,   119,   121,   124,   126,   128,   130,
+     133,   139,   146
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      27,     0,    -1,    36,    -1,    27,    36,    -1,     3,    22,
-      30,    23,    -1,    30,    14,    30,    -1,    30,    13,    30,
-      -1,    30,    12,    30,    -1,    30,    10,    30,    -1,    30,
-      11,    30,    -1,     6,    -1,     3,    -1,    30,    15,    30,
-      -1,    30,    16,    30,    -1,    30,    17,    30,    -1,    30,
-      18,    30,    -1,    16,    30,    -1,    24,    30,    25,    -1,
-       9,     6,    23,    -1,     9,     3,    23,    -1,    -1,    -1,
-      -1,     8,    24,    29,    25,    32,    20,    36,    33,    34,
-      -1,     8,    24,    29,    25,    32,    20,    36,    33,    21,
-      36,    34,    -1,    35,    -1,    31,    -1,    28,    -1,    30,
-      23,    -1,    29,    23,    -1,    38,    -1,    36,    -1,    37,
-      36,    -1,     4,    23,    39,     5,    23,    -1,     4,    23,
-      39,    37,     5,    23,    -1,    -1
+      31,     0,    -1,    41,    -1,    31,    41,    -1,     3,    26,
+      34,    27,    -1,    34,    18,    34,    -1,    34,    17,    34,
+      -1,    34,    12,    34,    -1,    34,    10,    34,    -1,    34,
+      11,    34,    -1,    34,    13,    34,    -1,     6,    -1,     3,
+      -1,    34,    19,    34,    -1,    34,    20,    34,    -1,    34,
+      21,    34,    -1,    34,    22,    34,    -1,    20,    34,    -1,
+      28,    34,    29,    -1,     9,     6,    27,    -1,     9,     3,
+      27,    -1,    -1,    -1,    -1,     8,    28,    40,    29,    36,
+      24,    41,    37,    -1,     8,    28,    40,    29,    36,    24,
+      41,    37,    25,    38,    41,    -1,    33,    -1,    33,    14,
+      40,    -1,    33,    15,    40,    -1,    16,    40,    -1,    28,
+      40,    29,    -1,    39,    -1,    40,    -1,    35,    -1,    32,
+      -1,    34,    27,    -1,    43,    -1,    27,    -1,    41,    -1,
+      42,    41,    -1,     4,    27,    44,     5,    27,    -1,     4,
+      27,    44,    42,     5,    27,    -1,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_uint16 yyrline[] =
 {
-       0,    43,    43,    44,    48,    61,    69,    77,    85,    93,
-     104,   105,   110,   118,   126,   134,   142,   150,   154,   161,
-     170,   178,   184,   198,   199,   203,   204,   205,   206,   207,
-     208,   211,   212,   215,   219,   224
+       0,    52,    52,    53,    57,    65,    74,    83,    92,   101,
+     110,   122,   123,   128,   136,   144,   152,   160,   168,   172,
+     179,   192,   201,   207,   212,   213,   217,   218,   224,   230,
+     236,   241,   249,   250,   251,   252,   254,   255,   264,   265,
+     268,   270,   273
 };
 #endif
 
@@ -470,11 +489,11 @@ static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "IDENTIFICADOR", "INICIO", "FIM",
   "TEXTO", "SQRT", "IF", "IMPRIMA", "MAIORIGUAL", "IGUAL", "MENORIGUAL",
-  "'<'", "'>'", "'+'", "'-'", "'*'", "'/'", "UMINUS", "THEN", "ELSE",
-  "'='", "';'", "'('", "')'", "$accept", "programa", "afirmacao",
-  "expressao_relacional", "expressao", "sentenca", "inicio_if", "if_then",
-  "if_else", "selecao", "instrucao", "conjunto_instrucao",
-  "bloco_instrucao", "imprimir_label", 0
+  "DIFERENTE", "AND", "OR", "NOT", "'<'", "'>'", "'+'", "'-'", "'*'",
+  "'/'", "UMINUS", "THEN", "ELSE", "'='", "';'", "'('", "')'", "$accept",
+  "programa", "afirmacao", "expressao_relacional", "expressao", "sentenca",
+  "inicio_if", "label", "bloco", "selecao", "expressao_logica",
+  "instrucao", "conjunto_instrucao", "bloco_instrucao", "imprimir_label", 0
 };
 #endif
 
@@ -484,27 +503,29 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,    60,    62,    43,    45,    42,    47,   268,
-     269,   270,    61,    59,    40,    41
+     265,   266,   267,   268,   269,   270,   271,    60,    62,    43,
+      45,    42,    47,   272,   273,   274,    61,    59,    40,    41
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    26,    27,    27,    28,    29,    29,    29,    29,    29,
-      30,    30,    30,    30,    30,    30,    30,    30,    31,    31,
-      32,    33,    34,    35,    35,    36,    36,    36,    36,    36,
-      36,    37,    37,    38,    38,    39
+       0,    30,    31,    31,    32,    33,    33,    33,    33,    33,
+      33,    34,    34,    34,    34,    34,    34,    34,    34,    35,
+      35,    36,    37,    38,    39,    39,    40,    40,    40,    40,
+      40,    41,    41,    41,    41,    41,    41,    41,    42,    42,
+      43,    43,    44
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
        0,     2,     1,     2,     4,     3,     3,     3,     3,     3,
-       1,     1,     3,     3,     3,     3,     2,     3,     3,     3,
-       0,     0,     0,     9,    11,     1,     1,     1,     2,     2,
-       1,     1,     2,     5,     6,     0
+       3,     1,     1,     3,     3,     3,     3,     2,     3,     3,
+       3,     0,     0,     0,     8,    11,     1,     3,     3,     2,
+       3,     1,     1,     1,     1,     2,     1,     1,     1,     2,
+       5,     6,     0
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -512,41 +533,45 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,    11,     0,    10,     0,     0,     0,     0,     0,    27,
-       0,     0,    26,    25,     2,    30,     0,    35,     0,     0,
-       0,    11,    16,     0,     1,     3,    29,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,    28,     0,     0,     0,
-       0,    19,    18,    17,     8,     9,     7,     6,     5,    12,
-      13,    14,    15,     4,     0,    31,     0,    20,    33,     0,
-      32,     0,    34,     0,    21,    22,     0,    23,    22,    24
+       0,    12,     0,    11,     0,     0,     0,     0,    37,     0,
+       0,    34,    26,     0,    33,    31,    32,     2,    36,     0,
+      42,     0,     0,     0,    12,     0,    29,     0,    17,     0,
+       0,     1,     3,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    35,     0,     0,     0,    20,
+      19,     0,    18,    30,    27,    28,     8,     9,     7,    10,
+       6,     5,    13,    14,    15,    16,     4,     0,    38,     0,
+      21,    40,     0,    39,     0,    41,     0,    22,    24,    23,
+       0,    25
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     8,     9,    10,    11,    12,    61,    65,    67,    13,
-      14,    56,    15,    38
+      -1,    10,    11,    12,    13,    14,    74,    78,    80,    15,
+      16,    17,    69,    18,    47
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -26
-static const yytype_int8 yypact[] =
+#define YYPACT_NINF -25
+static const yytype_int16 yypact[] =
 {
-      67,   -21,   -11,   -26,   -10,    10,     3,     3,    41,   -26,
-      -2,    82,   -26,   -26,   -26,   -26,     3,   -26,     3,     1,
-       2,   -26,   -26,    62,   -26,   -26,   -26,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,   -26,    36,    -1,    15,
-      96,   -26,   -26,   -26,    86,    86,    86,    86,    86,     0,
-       0,   -26,   -26,   -26,     5,   -26,    58,   -26,   -26,     6,
-     -26,    22,   -26,    67,   -26,    25,    67,   -26,   -26,   -26
+      82,   -24,   -19,   -25,   -13,    10,    91,    93,   -25,    91,
+       1,   -25,     8,   118,   -25,   -25,   -25,   -25,   -25,    93,
+     -25,    91,     0,    27,   -25,   131,   -25,    93,   -25,   105,
+      -4,   -25,   -25,    91,    91,    93,    93,    93,    93,    93,
+      93,    93,    93,    93,    93,   -25,   139,    47,    28,   -25,
+     -25,   135,   -25,   -25,   -25,   -25,    14,    14,    14,    14,
+      14,    14,    -2,    -2,   -25,   -25,   -25,    31,   -25,    73,
+     -25,   -25,    33,   -25,    37,   -25,    82,   -25,    39,   -25,
+      82,   -25
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -26,   -26,   -26,     8,     4,   -26,   -26,   -26,   -25,   -26,
-      -8,   -26,   -26,   -26
+     -25,   -25,   -25,   -25,     5,   -25,   -25,   -25,   -25,   -25,
+      -3,   -10,   -25,   -25,   -25
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -556,47 +581,59 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      25,    16,     1,     2,    54,     3,    21,     4,     5,     3,
-      22,    23,    17,    19,    18,     6,    20,    34,    35,     6,
-      37,    26,    40,     7,    41,    42,    39,     7,    58,    62,
-      55,    44,    45,    46,    47,    48,    49,    50,    51,    52,
-      57,    24,    63,    69,     1,     2,    66,     3,    60,     4,
-       5,    32,    33,    34,    35,    64,     0,     6,    68,    53,
-       0,     1,     2,    59,     3,     7,     4,     5,     0,     0,
-       1,     2,     0,     3,     6,     4,     5,    32,    33,    34,
-      35,     0,     7,     6,     0,     0,     0,    43,     0,     0,
-       0,     7,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,    32,    33,    34,    35,    36,    27,    28,    29,    30,
-      31,    32,    33,    34,    35
+      32,    31,    19,    26,     1,     2,    30,     3,    20,     4,
+       5,    25,    28,    22,    29,    21,    23,     6,    48,    43,
+      44,     7,    33,    34,    46,    53,    25,    49,     8,     9,
+      54,    55,    51,    41,    42,    43,    44,    68,    25,    25,
+      56,    57,    58,    59,    60,    61,    62,    63,    64,    65,
+       1,     2,    67,     3,    50,     4,     5,    70,    71,    73,
+      75,    76,     0,     6,    79,     0,    77,     7,     0,     0,
+      81,     0,     0,     0,     8,     9,     1,     2,    72,     3,
+       0,     4,     5,     0,     0,     1,     2,     0,     3,     6,
+       4,     5,     0,     7,    24,     0,    24,     3,     6,     3,
+       8,     9,     7,     0,     0,     0,     0,     6,     0,     8,
+       9,     7,     0,     7,     0,    35,    36,    37,    38,     9,
+       0,    27,    39,    40,    41,    42,    43,    44,    35,    36,
+      37,    38,     0,     0,    52,    39,    40,    41,    42,    43,
+      44,    35,    36,    37,    38,    45,     0,     0,    39,    40,
+      41,    42,    43,    44,    41,    42,    43,    44,    41,    42,
+      43,    44,     0,     0,    52,     0,    66
 };
 
 static const yytype_int8 yycheck[] =
 {
-       8,    22,     3,     4,     5,     6,     3,     8,     9,     6,
-       6,     7,    23,     3,    24,    16,     6,    17,    18,    16,
-      16,    23,    18,    24,    23,    23,    18,    24,    23,    23,
-      38,    27,    28,    29,    30,    31,    32,    33,    34,    35,
-      25,     0,    20,    68,     3,     4,    21,     6,    56,     8,
-       9,    15,    16,    17,    18,    63,    -1,    16,    66,    23,
-      -1,     3,     4,     5,     6,    24,     8,     9,    -1,    -1,
-       3,     4,    -1,     6,    16,     8,     9,    15,    16,    17,
-      18,    -1,    24,    16,    -1,    -1,    -1,    25,    -1,    -1,
-      -1,    24,    10,    11,    12,    13,    14,    15,    16,    17,
-      18,    15,    16,    17,    18,    23,    10,    11,    12,    13,
-      14,    15,    16,    17,    18
+      10,     0,    26,     6,     3,     4,     9,     6,    27,     8,
+       9,     6,     7,     3,     9,    28,     6,    16,    21,    21,
+      22,    20,    14,    15,    19,    29,    21,    27,    27,    28,
+      33,    34,    27,    19,    20,    21,    22,    47,    33,    34,
+      35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
+       3,     4,     5,     6,    27,     8,     9,    29,    27,    69,
+      27,    24,    -1,    16,    25,    -1,    76,    20,    -1,    -1,
+      80,    -1,    -1,    -1,    27,    28,     3,     4,     5,     6,
+      -1,     8,     9,    -1,    -1,     3,     4,    -1,     6,    16,
+       8,     9,    -1,    20,     3,    -1,     3,     6,    16,     6,
+      27,    28,    20,    -1,    -1,    -1,    -1,    16,    -1,    27,
+      28,    20,    -1,    20,    -1,    10,    11,    12,    13,    28,
+      -1,    28,    17,    18,    19,    20,    21,    22,    10,    11,
+      12,    13,    -1,    -1,    29,    17,    18,    19,    20,    21,
+      22,    10,    11,    12,    13,    27,    -1,    -1,    17,    18,
+      19,    20,    21,    22,    19,    20,    21,    22,    19,    20,
+      21,    22,    -1,    -1,    29,    -1,    27
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,     6,     8,     9,    16,    24,    27,    28,
-      29,    30,    31,    35,    36,    38,    22,    23,    24,     3,
-       6,     3,    30,    30,     0,    36,    23,    10,    11,    12,
-      13,    14,    15,    16,    17,    18,    23,    30,    39,    29,
-      30,    23,    23,    25,    30,    30,    30,    30,    30,    30,
-      30,    30,    30,    23,     5,    36,    37,    25,    23,     5,
-      36,    32,    23,    20,    36,    33,    21,    34,    36,    34
+       0,     3,     4,     6,     8,     9,    16,    20,    27,    28,
+      31,    32,    33,    34,    35,    39,    40,    41,    43,    26,
+      27,    28,     3,     6,     3,    34,    40,    28,    34,    34,
+      40,     0,    41,    14,    15,    10,    11,    12,    13,    17,
+      18,    19,    20,    21,    22,    27,    34,    44,    40,    27,
+      27,    34,    29,    29,    40,    40,    34,    34,    34,    34,
+      34,    34,    34,    34,    34,    34,    27,     5,    41,    42,
+      29,    27,     5,    41,    36,    27,    24,    41,    37,    25,
+      38,    41
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1411,10 +1448,8 @@ yyreduce:
   switch (yyn)
     {
         case 4:
-#line 48 "Portugol.y"
+#line 57 "Portugol.y"
     {
-                                            //fprintf(file, "mov(%s, NULL, &ts[%d]);\n", $3, $1);
-                                            //fflush(file);
                                             char command[50];
                                             sprintf(command,"mov(%s, NULL, &ts[%d]);\n", (yyvsp[(3) - (4)].texto), (yyvsp[(1) - (4)].sp));
                                             enqueue( strdup(command) );
@@ -1422,11 +1457,12 @@ yyreduce:
     break;
 
   case 5:
-#line 61 "Portugol.y"
+#line 65 "Portugol.y"
     {
                                         char command[50];
                                         sprintf(command,"comp_gt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(command) );
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(command);
@@ -1434,11 +1470,12 @@ yyreduce:
     break;
 
   case 6:
-#line 69 "Portugol.y"
+#line 74 "Portugol.y"
     {
                                         char command[50];
                                         sprintf(command, "comp_lt(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(command) );
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(command);
@@ -1446,11 +1483,12 @@ yyreduce:
     break;
 
   case 7:
-#line 77 "Portugol.y"
+#line 83 "Portugol.y"
     {
                                         char command[50];
                                         sprintf(command, "comp_le(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(command));
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(command);
@@ -1458,11 +1496,12 @@ yyreduce:
     break;
 
   case 8:
-#line 85 "Portugol.y"
+#line 92 "Portugol.y"
     {
                                         char command[50];
                                         sprintf(command, "comp_ge(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(command));
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(command);
@@ -1470,19 +1509,33 @@ yyreduce:
     break;
 
   case 9:
-#line 93 "Portugol.y"
+#line 101 "Portugol.y"
     {
                                         char command[50];
                                         sprintf(command, "comp_eq(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                         enqueue( strdup(command));
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         (yyval.texto) = strdup(command);
                                     }
     break;
 
-  case 11:
-#line 105 "Portugol.y"
+  case 10:
+#line 110 "Portugol.y"
+    {
+                                            char command[50];
+                                            sprintf(command, "comp_ne(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                            enqueue( strdup(command));
+                                            //push(tp_count-1);
+                                        
+                                            sprintf(command, "temp[%d]", tp_count-1);
+                                            (yyval.texto) = strdup(command);
+                                        }
+    break;
+
+  case 12:
+#line 123 "Portugol.y"
     { 
                                         char buf[40];
                                         sprintf(buf, "ts[%d]", (yyvsp[(1) - (1)].sp));
@@ -1490,8 +1543,8 @@ yyreduce:
                                     }
     break;
 
-  case 12:
-#line 110 "Portugol.y"
+  case 13:
+#line 128 "Portugol.y"
     {
                                         char buf[40];
                                         sprintf(buf,"add(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
@@ -1502,8 +1555,8 @@ yyreduce:
                                       }
     break;
 
-  case 13:
-#line 118 "Portugol.y"
+  case 14:
+#line 136 "Portugol.y"
     {
                                         char buf[40];
                                         sprintf(buf,"sub(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
@@ -1514,8 +1567,8 @@ yyreduce:
                                       }
     break;
 
-  case 14:
-#line 126 "Portugol.y"
+  case 15:
+#line 144 "Portugol.y"
     { 
                                         char buf[40];
                                         sprintf(buf,"mult(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
@@ -1526,8 +1579,8 @@ yyreduce:
                                       }
     break;
 
-  case 15:
-#line 134 "Portugol.y"
+  case 16:
+#line 152 "Portugol.y"
     {
                                         char buf[40];
                                         sprintf(buf,"divi(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
@@ -1538,8 +1591,8 @@ yyreduce:
                                       }
     break;
 
-  case 16:
-#line 142 "Portugol.y"
+  case 17:
+#line 160 "Portugol.y"
     {
                                         char buf[40];
                                         sprintf(buf,"uminus(%s, NULL, &temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
@@ -1550,13 +1603,13 @@ yyreduce:
                                       }
     break;
 
-  case 17:
-#line 150 "Portugol.y"
+  case 18:
+#line 168 "Portugol.y"
     { (yyval.texto) = (yyvsp[(2) - (3)].texto); }
     break;
 
-  case 18:
-#line 154 "Portugol.y"
+  case 19:
+#line 172 "Portugol.y"
     {
                             char command[50];
                             sprintf(command, "param(%s, NULL, NULL);\n", (yyvsp[(2) - (3)].texto)); 
@@ -1566,98 +1619,149 @@ yyreduce:
                       }
     break;
 
-  case 19:
-#line 161 "Portugol.y"
+  case 20:
+#line 179 "Portugol.y"
     {
+                                    printf("entrou\n");
                                     char command[50];
                                     sprintf(command, "param(ts[%d], NULL, NULL);\n", (yyvsp[(2) - (3)].sp)); 
                                     enqueue(strdup(command));
+                                    enqueue(strdup(command));
+                                    printf("empty: %d\n", is_empty());
                                     sprintf(command, "call(\"imprima\", 1, NULL);\n");
                                     enqueue(strdup(command));
+                                    printf("empty: %d\n", is_empty());
                                 }
     break;
 
-  case 20:
-#line 170 "Portugol.y"
+  case 21:
+#line 192 "Portugol.y"
     {
-            desempilhar();
-            fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
-            count_else = 1;
-            count_if++;
-            fflush(file);
+            char command[50];
+            sprintf(command,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+            enqueue(strdup(command));
+            push(l-1);
+            count_if_else++;
            }
     break;
 
-  case 21:
-#line 178 "Portugol.y"
+  case 22:
+#line 201 "Portugol.y"
     {
-            desempilhar();
-            fflush(file);        
-      }
+            char command[50];
+            sprintf(command, "l%d:\n", pop());
+            enqueue(strdup(command));
+        }
     break;
 
-  case 22:
-#line 184 "Portugol.y"
+  case 23:
+#line 207 "Portugol.y"
     {
-            fprintf(file, "jump(l%d, NULL, NULL);\n", l);
-            fprintf(file, "l%d:\n", l-count_else);
-            count_else++;
-            desempilhar();
-            if(count_else == count_if) {
-                fprintf(file, "l%d:\n", l);
-                count_if = 1;
-            }
-            fflush(file); 
-         }
+            enqueue("jump_incondicional");
+       }
     break;
 
   case 26:
-#line 204 "Portugol.y"
-    { if (count_if == 1) desempilhar(); }
+#line 217 "Portugol.y"
+    { push_rel(tp_count-1); }
     break;
 
   case 27:
-#line 205 "Portugol.y"
-    { if (count_if == 1) desempilhar(); }
+#line 218 "Portugol.y"
+    { 
+                                                                    char command[50];
+                                                                    sprintf(command, "rela_an(temp[%d], temp[%d], temp[%d]);\n", pop_rel(), pop_rel(), tp_count++);
+                                                                    enqueue(strdup(command));
+                                                                    push_rel(tp_count-1);
+                                                                }
     break;
 
   case 28:
-#line 206 "Portugol.y"
-    { if (count_if == 1) desempilhar(); }
+#line 224 "Portugol.y"
+    {
+                                                                    char command[50];
+                                                                    sprintf(command, "rela_or(temp[%d], temp[%d], temp[%d]);\n", pop_rel(), pop_rel(), tp_count++);
+                                                                    enqueue(strdup(command));
+                                                                    push_rel(tp_count-1);
+                                                                 }
     break;
 
   case 29:
-#line 207 "Portugol.y"
-    { if (count_if == 1) desempilhar(); }
+#line 230 "Portugol.y"
+    {
+                                                
+                                                char command[50];
+                                                sprintf(command, "rela_no(temp[%d], NULL, temp[%d]);\n", pop_rel(), tp_count++);
+                                                enqueue(strdup(command));
+                                           }
+    break;
+
+  case 30:
+#line 236 "Portugol.y"
+    { (yyval.texto) = (yyvsp[(2) - (3)].texto); }
+    break;
+
+  case 31:
+#line 241 "Portugol.y"
+    { 
+                desempilhar();
+                count_if_else--;
+                if (!count_if_else) {
+                    fprintf(file, "l%d:\n", l);
+                    fflush(file);
+                }
+        }
     break;
 
   case 33:
-#line 215 "Portugol.y"
-    {
-                                //fprintf(file, "l%d:\n", l++);
-                                //fflush(file);
-                           }
+#line 250 "Portugol.y"
+    { if (count_if_else == 0) desempilhar(); }
     break;
 
   case 34:
-#line 219 "Portugol.y"
-    {
-                                                    //fprintf(file, "l%d:\n", l++);
-                                                    //fflush(file);
-                                                }
+#line 251 "Portugol.y"
+    { if (count_if_else == 0) desempilhar(); }
     break;
 
   case 35:
-#line 224 "Portugol.y"
+#line 252 "Portugol.y"
+    { if (count_if_else == 0) desempilhar(); }
+    break;
+
+  case 37:
+#line 255 "Portugol.y"
+    { if (count_if_else == 0) {
+                    fprintf(file, "nop(NULL, NULL, NULL);\n");
+                    fflush(file);
+                } else {
+                    enqueue("nop(NULL, NULL, NULL);\n");
+                }
+        }
+    break;
+
+  case 40:
+#line 268 "Portugol.y"
     {
-                    if (count_if == 1) // Soh imprime se nao estiver em um if
+                           }
+    break;
+
+  case 41:
+#line 270 "Portugol.y"
+    {
+                                                }
+    break;
+
+  case 42:
+#line 273 "Portugol.y"
+    {
+                    if (count_if_else == 0) // Soh imprime se nao estiver em um if
                         fprintf(file, "l%d:\n", l++);
                 }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1661 "y.tab.c"
+#line 1765 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1871,14 +1975,33 @@ yyreturn:
 }
 
 
-#line 228 "Portugol.y"
+#line 277 "Portugol.y"
 
 
+void push(int value) {
+    stack[++stack_pt] = value;
+}
+
+int pop() {
+    return stack[stack_pt--];
+}
+void push_rel(int value) {
+    stack_rel[++stack_rel_pt] = value;
+}
+
+int pop_rel() {
+    return stack_rel[stack_rel_pt--];
+}
 void desempilhar(void) {
-    
+    char *value; 
     while(!is_empty()){
-        char* value = dequeue();
-        fprintf(file,"%s",value);
+        value = dequeue();
+        if (!strcmp(value, "jump_incondicional")) {
+            fprintf(file, "jump(l%d, NULL, NULL);\n", l);
+        }
+        else {
+            fprintf(file,"%s",value);
+        }
     }
     fflush(file);
 

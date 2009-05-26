@@ -3,9 +3,6 @@ Terminals which are not used
    SQRT
 
 
-State 65 conflicts: 1 shift/reduce
-
-
 Grammar
 
     0 $accept: programa $end
@@ -20,104 +17,118 @@ Grammar
     6                     | expressao MENORIGUAL expressao
     7                     | expressao MAIORIGUAL expressao
     8                     | expressao IGUAL expressao
+    9                     | expressao DIFERENTE expressao
 
-    9 expressao: TEXTO
-   10          | IDENTIFICADOR
-   11          | expressao '+' expressao
-   12          | expressao '-' expressao
-   13          | expressao '*' expressao
-   14          | expressao '/' expressao
-   15          | '-' expressao
-   16          | '(' expressao ')'
+   10 expressao: TEXTO
+   11          | IDENTIFICADOR
+   12          | expressao '+' expressao
+   13          | expressao '-' expressao
+   14          | expressao '*' expressao
+   15          | expressao '/' expressao
+   16          | '-' expressao
+   17          | '(' expressao ')'
 
-   17 sentenca: IMPRIMA TEXTO ';'
-   18         | IMPRIMA IDENTIFICADOR ';'
+   18 sentenca: IMPRIMA TEXTO ';'
+   19         | IMPRIMA IDENTIFICADOR ';'
 
-   19 inicio_if: /* empty */
+   20 inicio_if: /* empty */
 
-   20 if_then: /* empty */
+   21 label: /* empty */
 
-   21 if_else: /* empty */
+   22 bloco: /* empty */
 
-   22 selecao: IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then if_else
-   23        | IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then ELSE instrucao if_else
+   23 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label
+   24        | IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao
 
-   24 instrucao: selecao
-   25          | sentenca
-   26          | afirmacao
-   27          | expressao ';'
-   28          | expressao_relacional ';'
-   29          | bloco_instrucao
+   25 expressao_logica: expressao_relacional
+   26                 | expressao_relacional AND expressao_logica
+   27                 | expressao_relacional OR expressao_logica
+   28                 | NOT expressao_logica
+   29                 | '(' expressao_logica ')'
 
-   30 conjunto_instrucao: instrucao
-   31                   | conjunto_instrucao instrucao
+   30 instrucao: selecao
+   31          | expressao_logica
+   32          | sentenca
+   33          | afirmacao
+   34          | expressao ';'
+   35          | bloco_instrucao
+   36          | ';'
 
-   32 bloco_instrucao: INICIO ';' imprimir_label FIM ';'
-   33                | INICIO ';' imprimir_label conjunto_instrucao FIM ';'
+   37 conjunto_instrucao: instrucao
+   38                   | conjunto_instrucao instrucao
 
-   34 imprimir_label: /* empty */
+   39 bloco_instrucao: INICIO ';' imprimir_label FIM ';'
+   40                | INICIO ';' imprimir_label conjunto_instrucao FIM ';'
+
+   41 imprimir_label: /* empty */
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-'(' (40) 16 22 23
-')' (41) 16 22 23
-'*' (42) 13
-'+' (43) 11
-'-' (45) 12 15
-'/' (47) 14
-';' (59) 3 17 18 27 28 32 33
+'(' (40) 17 23 24 29
+')' (41) 17 23 24 29
+'*' (42) 14
+'+' (43) 12
+'-' (45) 13 16
+'/' (47) 15
+';' (59) 3 18 19 34 36 39 40
 '<' (60) 5
 '=' (61) 3
 '>' (62) 4
 error (256)
-IDENTIFICADOR (258) 3 10 18
-INICIO (259) 32 33
-FIM (260) 32 33
-TEXTO (261) 9 17
+IDENTIFICADOR (258) 3 11 19
+INICIO (259) 39 40
+FIM (260) 39 40
+TEXTO (261) 10 18
 SQRT (262)
-IF (263) 22 23
-IMPRIMA (264) 17 18
+IF (263) 23 24
+IMPRIMA (264) 18 19
 MAIORIGUAL (265) 7
 IGUAL (266) 8
 MENORIGUAL (267) 6
-UMINUS (268)
-THEN (269) 22 23
-ELSE (270) 23
+DIFERENTE (268) 9
+AND (269) 26
+OR (270) 27
+NOT (271) 28
+UMINUS (272)
+THEN (273) 23 24
+ELSE (274) 24
 
 
 Nonterminals, with rules where they appear
 
-$accept (26)
+$accept (30)
     on left: 0
-programa (27)
+programa (31)
     on left: 1 2, on right: 0 2
-afirmacao (28)
-    on left: 3, on right: 26
-expressao_relacional (29)
-    on left: 4 5 6 7 8, on right: 22 23 28
-expressao (30)
-    on left: 9 10 11 12 13 14 15 16, on right: 3 4 5 6 7 8 11 12 13
-    14 15 16 27
-sentenca (31)
-    on left: 17 18, on right: 25
-inicio_if (32)
-    on left: 19, on right: 22 23
-if_then (33)
-    on left: 20, on right: 22 23
-if_else (34)
-    on left: 21, on right: 22 23
-selecao (35)
-    on left: 22 23, on right: 24
-instrucao (36)
-    on left: 24 25 26 27 28 29, on right: 1 2 22 23 30 31
-conjunto_instrucao (37)
-    on left: 30 31, on right: 31 33
-bloco_instrucao (38)
-    on left: 32 33, on right: 29
-imprimir_label (39)
-    on left: 34, on right: 32 33
+afirmacao (32)
+    on left: 3, on right: 33
+expressao_relacional (33)
+    on left: 4 5 6 7 8 9, on right: 25 26 27
+expressao (34)
+    on left: 10 11 12 13 14 15 16 17, on right: 3 4 5 6 7 8 9 12 13
+    14 15 16 17 34
+sentenca (35)
+    on left: 18 19, on right: 32
+inicio_if (36)
+    on left: 20, on right: 23 24
+label (37)
+    on left: 21, on right: 23 24
+bloco (38)
+    on left: 22, on right: 24
+selecao (39)
+    on left: 23 24, on right: 30
+expressao_logica (40)
+    on left: 25 26 27 28 29, on right: 23 24 26 27 28 29 31
+instrucao (41)
+    on left: 30 31 32 33 34 35 36, on right: 1 2 23 24 37 38
+conjunto_instrucao (42)
+    on left: 37 38, on right: 38 40
+bloco_instrucao (43)
+    on left: 39 40, on right: 35
+imprimir_label (44)
+    on left: 41, on right: 39 40
 
 
 state 0
@@ -129,789 +140,966 @@ state 0
     TEXTO          shift, and go to state 3
     IF             shift, and go to state 4
     IMPRIMA        shift, and go to state 5
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    ';'            shift, and go to state 8
+    '('            shift, and go to state 9
 
-    programa              go to state 8
-    afirmacao             go to state 9
-    expressao_relacional  go to state 10
-    expressao             go to state 11
-    sentenca              go to state 12
-    selecao               go to state 13
-    instrucao             go to state 14
-    bloco_instrucao       go to state 15
+    programa              go to state 10
+    afirmacao             go to state 11
+    expressao_relacional  go to state 12
+    expressao             go to state 13
+    sentenca              go to state 14
+    selecao               go to state 15
+    expressao_logica      go to state 16
+    instrucao             go to state 17
+    bloco_instrucao       go to state 18
 
 
 state 1
 
     3 afirmacao: IDENTIFICADOR . '=' expressao ';'
-   10 expressao: IDENTIFICADOR .
+   11 expressao: IDENTIFICADOR .
 
-    '='  shift, and go to state 16
+    '='  shift, and go to state 19
 
-    $default  reduce using rule 10 (expressao)
+    $default  reduce using rule 11 (expressao)
 
 
 state 2
 
-   32 bloco_instrucao: INICIO . ';' imprimir_label FIM ';'
-   33                | INICIO . ';' imprimir_label conjunto_instrucao FIM ';'
+   39 bloco_instrucao: INICIO . ';' imprimir_label FIM ';'
+   40                | INICIO . ';' imprimir_label conjunto_instrucao FIM ';'
 
-    ';'  shift, and go to state 17
+    ';'  shift, and go to state 20
 
 
 state 3
 
-    9 expressao: TEXTO .
+   10 expressao: TEXTO .
 
-    $default  reduce using rule 9 (expressao)
+    $default  reduce using rule 10 (expressao)
 
 
 state 4
 
-   22 selecao: IF . '(' expressao_relacional ')' inicio_if THEN instrucao if_then if_else
-   23        | IF . '(' expressao_relacional ')' inicio_if THEN instrucao if_then ELSE instrucao if_else
+   23 selecao: IF . '(' expressao_logica ')' inicio_if THEN instrucao label
+   24        | IF . '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao
 
-    '('  shift, and go to state 18
+    '('  shift, and go to state 21
 
 
 state 5
 
-   17 sentenca: IMPRIMA . TEXTO ';'
-   18         | IMPRIMA . IDENTIFICADOR ';'
+   18 sentenca: IMPRIMA . TEXTO ';'
+   19         | IMPRIMA . IDENTIFICADOR ';'
 
-    IDENTIFICADOR  shift, and go to state 19
-    TEXTO          shift, and go to state 20
+    IDENTIFICADOR  shift, and go to state 22
+    TEXTO          shift, and go to state 23
 
 
 state 6
 
-   15 expressao: '-' . expressao
+   28 expressao_logica: NOT . expressao_logica
 
-    IDENTIFICADOR  shift, and go to state 21
+    IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 9
 
-    expressao  go to state 22
+    expressao_relacional  go to state 12
+    expressao             go to state 25
+    expressao_logica      go to state 26
 
 
 state 7
 
-   16 expressao: '(' . expressao ')'
+   16 expressao: '-' . expressao
 
-    IDENTIFICADOR  shift, and go to state 21
+    IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
 
-    expressao  go to state 23
+    expressao  go to state 28
 
 
 state 8
 
+   36 instrucao: ';' .
+
+    $default  reduce using rule 36 (instrucao)
+
+
+state 9
+
+   17 expressao: '(' . expressao ')'
+   29 expressao_logica: '(' . expressao_logica ')'
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 9
+
+    expressao_relacional  go to state 12
+    expressao             go to state 29
+    expressao_logica      go to state 30
+
+
+state 10
+
     0 $accept: programa . $end
     2 programa: programa . instrucao
 
-    $end           shift, and go to state 24
+    $end           shift, and go to state 31
     IDENTIFICADOR  shift, and go to state 1
     INICIO         shift, and go to state 2
     TEXTO          shift, and go to state 3
     IF             shift, and go to state 4
     IMPRIMA        shift, and go to state 5
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    ';'            shift, and go to state 8
+    '('            shift, and go to state 9
 
-    afirmacao             go to state 9
-    expressao_relacional  go to state 10
-    expressao             go to state 11
-    sentenca              go to state 12
-    selecao               go to state 13
-    instrucao             go to state 25
-    bloco_instrucao       go to state 15
-
-
-state 9
-
-   26 instrucao: afirmacao .
-
-    $default  reduce using rule 26 (instrucao)
-
-
-state 10
-
-   28 instrucao: expressao_relacional . ';'
-
-    ';'  shift, and go to state 26
+    afirmacao             go to state 11
+    expressao_relacional  go to state 12
+    expressao             go to state 13
+    sentenca              go to state 14
+    selecao               go to state 15
+    expressao_logica      go to state 16
+    instrucao             go to state 32
+    bloco_instrucao       go to state 18
 
 
 state 11
+
+   33 instrucao: afirmacao .
+
+    $default  reduce using rule 33 (instrucao)
+
+
+state 12
+
+   25 expressao_logica: expressao_relacional .
+   26                 | expressao_relacional . AND expressao_logica
+   27                 | expressao_relacional . OR expressao_logica
+
+    AND  shift, and go to state 33
+    OR   shift, and go to state 34
+
+    $default  reduce using rule 25 (expressao_logica)
+
+
+state 13
 
     4 expressao_relacional: expressao . '>' expressao
     5                     | expressao . '<' expressao
     6                     | expressao . MENORIGUAL expressao
     7                     | expressao . MAIORIGUAL expressao
     8                     | expressao . IGUAL expressao
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
-   27 instrucao: expressao . ';'
+    9                     | expressao . DIFERENTE expressao
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+   34 instrucao: expressao . ';'
 
-    MAIORIGUAL  shift, and go to state 27
-    IGUAL       shift, and go to state 28
-    MENORIGUAL  shift, and go to state 29
-    '<'         shift, and go to state 30
-    '>'         shift, and go to state 31
-    '+'         shift, and go to state 32
-    '-'         shift, and go to state 33
-    '*'         shift, and go to state 34
-    '/'         shift, and go to state 35
-    ';'         shift, and go to state 36
-
-
-state 12
-
-   25 instrucao: sentenca .
-
-    $default  reduce using rule 25 (instrucao)
-
-
-state 13
-
-   24 instrucao: selecao .
-
-    $default  reduce using rule 24 (instrucao)
+    MAIORIGUAL  shift, and go to state 35
+    IGUAL       shift, and go to state 36
+    MENORIGUAL  shift, and go to state 37
+    DIFERENTE   shift, and go to state 38
+    '<'         shift, and go to state 39
+    '>'         shift, and go to state 40
+    '+'         shift, and go to state 41
+    '-'         shift, and go to state 42
+    '*'         shift, and go to state 43
+    '/'         shift, and go to state 44
+    ';'         shift, and go to state 45
 
 
 state 14
+
+   32 instrucao: sentenca .
+
+    $default  reduce using rule 32 (instrucao)
+
+
+state 15
+
+   30 instrucao: selecao .
+
+    $default  reduce using rule 30 (instrucao)
+
+
+state 16
+
+   31 instrucao: expressao_logica .
+
+    $default  reduce using rule 31 (instrucao)
+
+
+state 17
 
     1 programa: instrucao .
 
     $default  reduce using rule 1 (programa)
 
 
-state 15
-
-   29 instrucao: bloco_instrucao .
-
-    $default  reduce using rule 29 (instrucao)
-
-
-state 16
-
-    3 afirmacao: IDENTIFICADOR '=' . expressao ';'
-
-    IDENTIFICADOR  shift, and go to state 21
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    expressao  go to state 37
-
-
-state 17
-
-   32 bloco_instrucao: INICIO ';' . imprimir_label FIM ';'
-   33                | INICIO ';' . imprimir_label conjunto_instrucao FIM ';'
-
-    $default  reduce using rule 34 (imprimir_label)
-
-    imprimir_label  go to state 38
-
-
 state 18
 
-   22 selecao: IF '(' . expressao_relacional ')' inicio_if THEN instrucao if_then if_else
-   23        | IF '(' . expressao_relacional ')' inicio_if THEN instrucao if_then ELSE instrucao if_else
+   35 instrucao: bloco_instrucao .
 
-    IDENTIFICADOR  shift, and go to state 21
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    expressao_relacional  go to state 39
-    expressao             go to state 40
+    $default  reduce using rule 35 (instrucao)
 
 
 state 19
 
-   18 sentenca: IMPRIMA IDENTIFICADOR . ';'
+    3 afirmacao: IDENTIFICADOR '=' . expressao ';'
 
-    ';'  shift, and go to state 41
-
-
-state 20
-
-   17 sentenca: IMPRIMA TEXTO . ';'
-
-    ';'  shift, and go to state 42
-
-
-state 21
-
-   10 expressao: IDENTIFICADOR .
-
-    $default  reduce using rule 10 (expressao)
-
-
-state 22
-
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
-   15          | '-' expressao .
-
-    $default  reduce using rule 15 (expressao)
-
-
-state 23
-
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
-   16          | '(' expressao . ')'
-
-    '+'  shift, and go to state 32
-    '-'  shift, and go to state 33
-    '*'  shift, and go to state 34
-    '/'  shift, and go to state 35
-    ')'  shift, and go to state 43
-
-
-state 24
-
-    0 $accept: programa $end .
-
-    $default  accept
-
-
-state 25
-
-    2 programa: programa instrucao .
-
-    $default  reduce using rule 2 (programa)
-
-
-state 26
-
-   28 instrucao: expressao_relacional ';' .
-
-    $default  reduce using rule 28 (instrucao)
-
-
-state 27
-
-    7 expressao_relacional: expressao MAIORIGUAL . expressao
-
-    IDENTIFICADOR  shift, and go to state 21
+    IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    expressao  go to state 44
-
-
-state 28
-
-    8 expressao_relacional: expressao IGUAL . expressao
-
-    IDENTIFICADOR  shift, and go to state 21
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    expressao  go to state 45
-
-
-state 29
-
-    6 expressao_relacional: expressao MENORIGUAL . expressao
-
-    IDENTIFICADOR  shift, and go to state 21
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
 
     expressao  go to state 46
 
 
-state 30
+state 20
 
-    5 expressao_relacional: expressao '<' . expressao
+   39 bloco_instrucao: INICIO ';' . imprimir_label FIM ';'
+   40                | INICIO ';' . imprimir_label conjunto_instrucao FIM ';'
 
-    IDENTIFICADOR  shift, and go to state 21
+    $default  reduce using rule 41 (imprimir_label)
+
+    imprimir_label  go to state 47
+
+
+state 21
+
+   23 selecao: IF '(' . expressao_logica ')' inicio_if THEN instrucao label
+   24        | IF '(' . expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao
+
+    IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 9
 
-    expressao  go to state 47
-
-
-state 31
-
-    4 expressao_relacional: expressao '>' . expressao
-
-    IDENTIFICADOR  shift, and go to state 21
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    expressao  go to state 48
+    expressao_relacional  go to state 12
+    expressao             go to state 25
+    expressao_logica      go to state 48
 
 
-state 32
+state 22
 
-   11 expressao: expressao '+' . expressao
+   19 sentenca: IMPRIMA IDENTIFICADOR . ';'
 
-    IDENTIFICADOR  shift, and go to state 21
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    expressao  go to state 49
+    ';'  shift, and go to state 49
 
 
-state 33
+state 23
 
-   12 expressao: expressao '-' . expressao
+   18 sentenca: IMPRIMA TEXTO . ';'
 
-    IDENTIFICADOR  shift, and go to state 21
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    expressao  go to state 50
+    ';'  shift, and go to state 50
 
 
-state 34
+state 24
 
-   13 expressao: expressao '*' . expressao
+   11 expressao: IDENTIFICADOR .
 
-    IDENTIFICADOR  shift, and go to state 21
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    expressao  go to state 51
+    $default  reduce using rule 11 (expressao)
 
 
-state 35
-
-   14 expressao: expressao '/' . expressao
-
-    IDENTIFICADOR  shift, and go to state 21
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    expressao  go to state 52
-
-
-state 36
-
-   27 instrucao: expressao ';' .
-
-    $default  reduce using rule 27 (instrucao)
-
-
-state 37
-
-    3 afirmacao: IDENTIFICADOR '=' expressao . ';'
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
-
-    '+'  shift, and go to state 32
-    '-'  shift, and go to state 33
-    '*'  shift, and go to state 34
-    '/'  shift, and go to state 35
-    ';'  shift, and go to state 53
-
-
-state 38
-
-   32 bloco_instrucao: INICIO ';' imprimir_label . FIM ';'
-   33                | INICIO ';' imprimir_label . conjunto_instrucao FIM ';'
-
-    IDENTIFICADOR  shift, and go to state 1
-    INICIO         shift, and go to state 2
-    FIM            shift, and go to state 54
-    TEXTO          shift, and go to state 3
-    IF             shift, and go to state 4
-    IMPRIMA        shift, and go to state 5
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    afirmacao             go to state 9
-    expressao_relacional  go to state 10
-    expressao             go to state 11
-    sentenca              go to state 12
-    selecao               go to state 13
-    instrucao             go to state 55
-    conjunto_instrucao    go to state 56
-    bloco_instrucao       go to state 15
-
-
-state 39
-
-   22 selecao: IF '(' expressao_relacional . ')' inicio_if THEN instrucao if_then if_else
-   23        | IF '(' expressao_relacional . ')' inicio_if THEN instrucao if_then ELSE instrucao if_else
-
-    ')'  shift, and go to state 57
-
-
-state 40
+state 25
 
     4 expressao_relacional: expressao . '>' expressao
     5                     | expressao . '<' expressao
     6                     | expressao . MENORIGUAL expressao
     7                     | expressao . MAIORIGUAL expressao
     8                     | expressao . IGUAL expressao
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
+    9                     | expressao . DIFERENTE expressao
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
 
-    MAIORIGUAL  shift, and go to state 27
-    IGUAL       shift, and go to state 28
-    MENORIGUAL  shift, and go to state 29
-    '<'         shift, and go to state 30
-    '>'         shift, and go to state 31
-    '+'         shift, and go to state 32
-    '-'         shift, and go to state 33
-    '*'         shift, and go to state 34
-    '/'         shift, and go to state 35
-
-
-state 41
-
-   18 sentenca: IMPRIMA IDENTIFICADOR ';' .
-
-    $default  reduce using rule 18 (sentenca)
+    MAIORIGUAL  shift, and go to state 35
+    IGUAL       shift, and go to state 36
+    MENORIGUAL  shift, and go to state 37
+    DIFERENTE   shift, and go to state 38
+    '<'         shift, and go to state 39
+    '>'         shift, and go to state 40
+    '+'         shift, and go to state 41
+    '-'         shift, and go to state 42
+    '*'         shift, and go to state 43
+    '/'         shift, and go to state 44
 
 
-state 42
+state 26
 
-   17 sentenca: IMPRIMA TEXTO ';' .
+   28 expressao_logica: NOT expressao_logica .
 
-    $default  reduce using rule 17 (sentenca)
+    $default  reduce using rule 28 (expressao_logica)
 
 
-state 43
+state 27
 
-   16 expressao: '(' expressao ')' .
+   17 expressao: '(' . expressao ')'
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 51
+
+
+state 28
+
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+   16          | '-' expressao .
 
     $default  reduce using rule 16 (expressao)
 
 
+state 29
+
+    4 expressao_relacional: expressao . '>' expressao
+    5                     | expressao . '<' expressao
+    6                     | expressao . MENORIGUAL expressao
+    7                     | expressao . MAIORIGUAL expressao
+    8                     | expressao . IGUAL expressao
+    9                     | expressao . DIFERENTE expressao
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+   17          | '(' expressao . ')'
+
+    MAIORIGUAL  shift, and go to state 35
+    IGUAL       shift, and go to state 36
+    MENORIGUAL  shift, and go to state 37
+    DIFERENTE   shift, and go to state 38
+    '<'         shift, and go to state 39
+    '>'         shift, and go to state 40
+    '+'         shift, and go to state 41
+    '-'         shift, and go to state 42
+    '*'         shift, and go to state 43
+    '/'         shift, and go to state 44
+    ')'         shift, and go to state 52
+
+
+state 30
+
+   29 expressao_logica: '(' expressao_logica . ')'
+
+    ')'  shift, and go to state 53
+
+
+state 31
+
+    0 $accept: programa $end .
+
+    $default  accept
+
+
+state 32
+
+    2 programa: programa instrucao .
+
+    $default  reduce using rule 2 (programa)
+
+
+state 33
+
+   26 expressao_logica: expressao_relacional AND . expressao_logica
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 9
+
+    expressao_relacional  go to state 12
+    expressao             go to state 25
+    expressao_logica      go to state 54
+
+
+state 34
+
+   27 expressao_logica: expressao_relacional OR . expressao_logica
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 9
+
+    expressao_relacional  go to state 12
+    expressao             go to state 25
+    expressao_logica      go to state 55
+
+
+state 35
+
+    7 expressao_relacional: expressao MAIORIGUAL . expressao
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 56
+
+
+state 36
+
+    8 expressao_relacional: expressao IGUAL . expressao
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 57
+
+
+state 37
+
+    6 expressao_relacional: expressao MENORIGUAL . expressao
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 58
+
+
+state 38
+
+    9 expressao_relacional: expressao DIFERENTE . expressao
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 59
+
+
+state 39
+
+    5 expressao_relacional: expressao '<' . expressao
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 60
+
+
+state 40
+
+    4 expressao_relacional: expressao '>' . expressao
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 61
+
+
+state 41
+
+   12 expressao: expressao '+' . expressao
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 62
+
+
+state 42
+
+   13 expressao: expressao '-' . expressao
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 63
+
+
+state 43
+
+   14 expressao: expressao '*' . expressao
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
+
+    expressao  go to state 64
+
+
 state 44
 
-    7 expressao_relacional: expressao MAIORIGUAL expressao .
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
+   15 expressao: expressao '/' . expressao
 
-    '+'  shift, and go to state 32
-    '-'  shift, and go to state 33
-    '*'  shift, and go to state 34
-    '/'  shift, and go to state 35
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 7
+    '('            shift, and go to state 27
 
-    $default  reduce using rule 7 (expressao_relacional)
+    expressao  go to state 65
 
 
 state 45
 
-    8 expressao_relacional: expressao IGUAL expressao .
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
+   34 instrucao: expressao ';' .
 
-    '+'  shift, and go to state 32
-    '-'  shift, and go to state 33
-    '*'  shift, and go to state 34
-    '/'  shift, and go to state 35
-
-    $default  reduce using rule 8 (expressao_relacional)
+    $default  reduce using rule 34 (instrucao)
 
 
 state 46
 
-    6 expressao_relacional: expressao MENORIGUAL expressao .
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
+    3 afirmacao: IDENTIFICADOR '=' expressao . ';'
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
 
-    '+'  shift, and go to state 32
-    '-'  shift, and go to state 33
-    '*'  shift, and go to state 34
-    '/'  shift, and go to state 35
-
-    $default  reduce using rule 6 (expressao_relacional)
+    '+'  shift, and go to state 41
+    '-'  shift, and go to state 42
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+    ';'  shift, and go to state 66
 
 
 state 47
 
-    5 expressao_relacional: expressao '<' expressao .
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
+   39 bloco_instrucao: INICIO ';' imprimir_label . FIM ';'
+   40                | INICIO ';' imprimir_label . conjunto_instrucao FIM ';'
 
-    '+'  shift, and go to state 32
-    '-'  shift, and go to state 33
-    '*'  shift, and go to state 34
-    '/'  shift, and go to state 35
+    IDENTIFICADOR  shift, and go to state 1
+    INICIO         shift, and go to state 2
+    FIM            shift, and go to state 67
+    TEXTO          shift, and go to state 3
+    IF             shift, and go to state 4
+    IMPRIMA        shift, and go to state 5
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    ';'            shift, and go to state 8
+    '('            shift, and go to state 9
 
-    $default  reduce using rule 5 (expressao_relacional)
+    afirmacao             go to state 11
+    expressao_relacional  go to state 12
+    expressao             go to state 13
+    sentenca              go to state 14
+    selecao               go to state 15
+    expressao_logica      go to state 16
+    instrucao             go to state 68
+    conjunto_instrucao    go to state 69
+    bloco_instrucao       go to state 18
 
 
 state 48
 
-    4 expressao_relacional: expressao '>' expressao .
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
+   23 selecao: IF '(' expressao_logica . ')' inicio_if THEN instrucao label
+   24        | IF '(' expressao_logica . ')' inicio_if THEN instrucao label ELSE bloco instrucao
 
-    '+'  shift, and go to state 32
-    '-'  shift, and go to state 33
-    '*'  shift, and go to state 34
-    '/'  shift, and go to state 35
-
-    $default  reduce using rule 4 (expressao_relacional)
+    ')'  shift, and go to state 70
 
 
 state 49
 
-   11 expressao: expressao . '+' expressao
-   11          | expressao '+' expressao .
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
+   19 sentenca: IMPRIMA IDENTIFICADOR ';' .
 
-    '*'  shift, and go to state 34
-    '/'  shift, and go to state 35
-
-    $default  reduce using rule 11 (expressao)
+    $default  reduce using rule 19 (sentenca)
 
 
 state 50
 
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   12          | expressao '-' expressao .
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
+   18 sentenca: IMPRIMA TEXTO ';' .
 
-    '*'  shift, and go to state 34
-    '/'  shift, and go to state 35
-
-    $default  reduce using rule 12 (expressao)
+    $default  reduce using rule 18 (sentenca)
 
 
 state 51
 
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   13          | expressao '*' expressao .
-   14          | expressao . '/' expressao
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+   17          | '(' expressao . ')'
 
-    $default  reduce using rule 13 (expressao)
+    '+'  shift, and go to state 41
+    '-'  shift, and go to state 42
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+    ')'  shift, and go to state 52
 
 
 state 52
 
-   11 expressao: expressao . '+' expressao
-   12          | expressao . '-' expressao
-   13          | expressao . '*' expressao
-   14          | expressao . '/' expressao
-   14          | expressao '/' expressao .
+   17 expressao: '(' expressao ')' .
+
+    $default  reduce using rule 17 (expressao)
+
+
+state 53
+
+   29 expressao_logica: '(' expressao_logica ')' .
+
+    $default  reduce using rule 29 (expressao_logica)
+
+
+state 54
+
+   26 expressao_logica: expressao_relacional AND expressao_logica .
+
+    $default  reduce using rule 26 (expressao_logica)
+
+
+state 55
+
+   27 expressao_logica: expressao_relacional OR expressao_logica .
+
+    $default  reduce using rule 27 (expressao_logica)
+
+
+state 56
+
+    7 expressao_relacional: expressao MAIORIGUAL expressao .
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+
+    '+'  shift, and go to state 41
+    '-'  shift, and go to state 42
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+
+    $default  reduce using rule 7 (expressao_relacional)
+
+
+state 57
+
+    8 expressao_relacional: expressao IGUAL expressao .
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+
+    '+'  shift, and go to state 41
+    '-'  shift, and go to state 42
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+
+    $default  reduce using rule 8 (expressao_relacional)
+
+
+state 58
+
+    6 expressao_relacional: expressao MENORIGUAL expressao .
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+
+    '+'  shift, and go to state 41
+    '-'  shift, and go to state 42
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+
+    $default  reduce using rule 6 (expressao_relacional)
+
+
+state 59
+
+    9 expressao_relacional: expressao DIFERENTE expressao .
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+
+    '+'  shift, and go to state 41
+    '-'  shift, and go to state 42
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+
+    $default  reduce using rule 9 (expressao_relacional)
+
+
+state 60
+
+    5 expressao_relacional: expressao '<' expressao .
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+
+    '+'  shift, and go to state 41
+    '-'  shift, and go to state 42
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+
+    $default  reduce using rule 5 (expressao_relacional)
+
+
+state 61
+
+    4 expressao_relacional: expressao '>' expressao .
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+
+    '+'  shift, and go to state 41
+    '-'  shift, and go to state 42
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+
+    $default  reduce using rule 4 (expressao_relacional)
+
+
+state 62
+
+   12 expressao: expressao . '+' expressao
+   12          | expressao '+' expressao .
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+
+    $default  reduce using rule 12 (expressao)
+
+
+state 63
+
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   13          | expressao '-' expressao .
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+
+    '*'  shift, and go to state 43
+    '/'  shift, and go to state 44
+
+    $default  reduce using rule 13 (expressao)
+
+
+state 64
+
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   14          | expressao '*' expressao .
+   15          | expressao . '/' expressao
 
     $default  reduce using rule 14 (expressao)
 
 
-state 53
+state 65
+
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+   15          | expressao '/' expressao .
+
+    $default  reduce using rule 15 (expressao)
+
+
+state 66
 
     3 afirmacao: IDENTIFICADOR '=' expressao ';' .
 
     $default  reduce using rule 3 (afirmacao)
 
 
-state 54
-
-   32 bloco_instrucao: INICIO ';' imprimir_label FIM . ';'
-
-    ';'  shift, and go to state 58
-
-
-state 55
-
-   30 conjunto_instrucao: instrucao .
-
-    $default  reduce using rule 30 (conjunto_instrucao)
-
-
-state 56
-
-   31 conjunto_instrucao: conjunto_instrucao . instrucao
-   33 bloco_instrucao: INICIO ';' imprimir_label conjunto_instrucao . FIM ';'
-
-    IDENTIFICADOR  shift, and go to state 1
-    INICIO         shift, and go to state 2
-    FIM            shift, and go to state 59
-    TEXTO          shift, and go to state 3
-    IF             shift, and go to state 4
-    IMPRIMA        shift, and go to state 5
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    afirmacao             go to state 9
-    expressao_relacional  go to state 10
-    expressao             go to state 11
-    sentenca              go to state 12
-    selecao               go to state 13
-    instrucao             go to state 60
-    bloco_instrucao       go to state 15
-
-
-state 57
-
-   22 selecao: IF '(' expressao_relacional ')' . inicio_if THEN instrucao if_then if_else
-   23        | IF '(' expressao_relacional ')' . inicio_if THEN instrucao if_then ELSE instrucao if_else
-
-    $default  reduce using rule 19 (inicio_if)
-
-    inicio_if  go to state 61
-
-
-state 58
-
-   32 bloco_instrucao: INICIO ';' imprimir_label FIM ';' .
-
-    $default  reduce using rule 32 (bloco_instrucao)
-
-
-state 59
-
-   33 bloco_instrucao: INICIO ';' imprimir_label conjunto_instrucao FIM . ';'
-
-    ';'  shift, and go to state 62
-
-
-state 60
-
-   31 conjunto_instrucao: conjunto_instrucao instrucao .
-
-    $default  reduce using rule 31 (conjunto_instrucao)
-
-
-state 61
-
-   22 selecao: IF '(' expressao_relacional ')' inicio_if . THEN instrucao if_then if_else
-   23        | IF '(' expressao_relacional ')' inicio_if . THEN instrucao if_then ELSE instrucao if_else
-
-    THEN  shift, and go to state 63
-
-
-state 62
-
-   33 bloco_instrucao: INICIO ';' imprimir_label conjunto_instrucao FIM ';' .
-
-    $default  reduce using rule 33 (bloco_instrucao)
-
-
-state 63
-
-   22 selecao: IF '(' expressao_relacional ')' inicio_if THEN . instrucao if_then if_else
-   23        | IF '(' expressao_relacional ')' inicio_if THEN . instrucao if_then ELSE instrucao if_else
-
-    IDENTIFICADOR  shift, and go to state 1
-    INICIO         shift, and go to state 2
-    TEXTO          shift, and go to state 3
-    IF             shift, and go to state 4
-    IMPRIMA        shift, and go to state 5
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    afirmacao             go to state 9
-    expressao_relacional  go to state 10
-    expressao             go to state 11
-    sentenca              go to state 12
-    selecao               go to state 13
-    instrucao             go to state 64
-    bloco_instrucao       go to state 15
-
-
-state 64
-
-   22 selecao: IF '(' expressao_relacional ')' inicio_if THEN instrucao . if_then if_else
-   23        | IF '(' expressao_relacional ')' inicio_if THEN instrucao . if_then ELSE instrucao if_else
-
-    $default  reduce using rule 20 (if_then)
-
-    if_then  go to state 65
-
-
-state 65
-
-   22 selecao: IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then . if_else
-   23        | IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then . ELSE instrucao if_else
-
-    ELSE  shift, and go to state 66
-
-    ELSE      [reduce using rule 21 (if_else)]
-    $default  reduce using rule 21 (if_else)
-
-    if_else  go to state 67
-
-
-state 66
-
-   23 selecao: IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then ELSE . instrucao if_else
-
-    IDENTIFICADOR  shift, and go to state 1
-    INICIO         shift, and go to state 2
-    TEXTO          shift, and go to state 3
-    IF             shift, and go to state 4
-    IMPRIMA        shift, and go to state 5
-    '-'            shift, and go to state 6
-    '('            shift, and go to state 7
-
-    afirmacao             go to state 9
-    expressao_relacional  go to state 10
-    expressao             go to state 11
-    sentenca              go to state 12
-    selecao               go to state 13
-    instrucao             go to state 68
-    bloco_instrucao       go to state 15
-
-
 state 67
 
-   22 selecao: IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then if_else .
+   39 bloco_instrucao: INICIO ';' imprimir_label FIM . ';'
 
-    $default  reduce using rule 22 (selecao)
+    ';'  shift, and go to state 71
 
 
 state 68
 
-   23 selecao: IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then ELSE instrucao . if_else
+   37 conjunto_instrucao: instrucao .
 
-    $default  reduce using rule 21 (if_else)
-
-    if_else  go to state 69
+    $default  reduce using rule 37 (conjunto_instrucao)
 
 
 state 69
 
-   23 selecao: IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then ELSE instrucao if_else .
+   38 conjunto_instrucao: conjunto_instrucao . instrucao
+   40 bloco_instrucao: INICIO ';' imprimir_label conjunto_instrucao . FIM ';'
+
+    IDENTIFICADOR  shift, and go to state 1
+    INICIO         shift, and go to state 2
+    FIM            shift, and go to state 72
+    TEXTO          shift, and go to state 3
+    IF             shift, and go to state 4
+    IMPRIMA        shift, and go to state 5
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    ';'            shift, and go to state 8
+    '('            shift, and go to state 9
+
+    afirmacao             go to state 11
+    expressao_relacional  go to state 12
+    expressao             go to state 13
+    sentenca              go to state 14
+    selecao               go to state 15
+    expressao_logica      go to state 16
+    instrucao             go to state 73
+    bloco_instrucao       go to state 18
+
+
+state 70
+
+   23 selecao: IF '(' expressao_logica ')' . inicio_if THEN instrucao label
+   24        | IF '(' expressao_logica ')' . inicio_if THEN instrucao label ELSE bloco instrucao
+
+    $default  reduce using rule 20 (inicio_if)
+
+    inicio_if  go to state 74
+
+
+state 71
+
+   39 bloco_instrucao: INICIO ';' imprimir_label FIM ';' .
+
+    $default  reduce using rule 39 (bloco_instrucao)
+
+
+state 72
+
+   40 bloco_instrucao: INICIO ';' imprimir_label conjunto_instrucao FIM . ';'
+
+    ';'  shift, and go to state 75
+
+
+state 73
+
+   38 conjunto_instrucao: conjunto_instrucao instrucao .
+
+    $default  reduce using rule 38 (conjunto_instrucao)
+
+
+state 74
+
+   23 selecao: IF '(' expressao_logica ')' inicio_if . THEN instrucao label
+   24        | IF '(' expressao_logica ')' inicio_if . THEN instrucao label ELSE bloco instrucao
+
+    THEN  shift, and go to state 76
+
+
+state 75
+
+   40 bloco_instrucao: INICIO ';' imprimir_label conjunto_instrucao FIM ';' .
+
+    $default  reduce using rule 40 (bloco_instrucao)
+
+
+state 76
+
+   23 selecao: IF '(' expressao_logica ')' inicio_if THEN . instrucao label
+   24        | IF '(' expressao_logica ')' inicio_if THEN . instrucao label ELSE bloco instrucao
+
+    IDENTIFICADOR  shift, and go to state 1
+    INICIO         shift, and go to state 2
+    TEXTO          shift, and go to state 3
+    IF             shift, and go to state 4
+    IMPRIMA        shift, and go to state 5
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    ';'            shift, and go to state 8
+    '('            shift, and go to state 9
+
+    afirmacao             go to state 11
+    expressao_relacional  go to state 12
+    expressao             go to state 13
+    sentenca              go to state 14
+    selecao               go to state 15
+    expressao_logica      go to state 16
+    instrucao             go to state 77
+    bloco_instrucao       go to state 18
+
+
+state 77
+
+   23 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao . label
+   24        | IF '(' expressao_logica ')' inicio_if THEN instrucao . label ELSE bloco instrucao
+
+    $default  reduce using rule 21 (label)
+
+    label  go to state 78
+
+
+state 78
+
+   23 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label .
+   24        | IF '(' expressao_logica ')' inicio_if THEN instrucao label . ELSE bloco instrucao
+
+    ELSE  shift, and go to state 79
 
     $default  reduce using rule 23 (selecao)
+
+
+state 79
+
+   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE . bloco instrucao
+
+    $default  reduce using rule 22 (bloco)
+
+    bloco  go to state 80
+
+
+state 80
+
+   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco . instrucao
+
+    IDENTIFICADOR  shift, and go to state 1
+    INICIO         shift, and go to state 2
+    TEXTO          shift, and go to state 3
+    IF             shift, and go to state 4
+    IMPRIMA        shift, and go to state 5
+    NOT            shift, and go to state 6
+    '-'            shift, and go to state 7
+    ';'            shift, and go to state 8
+    '('            shift, and go to state 9
+
+    afirmacao             go to state 11
+    expressao_relacional  go to state 12
+    expressao             go to state 13
+    sentenca              go to state 14
+    selecao               go to state 15
+    expressao_logica      go to state 16
+    instrucao             go to state 81
+    bloco_instrucao       go to state 18
+
+
+state 81
+
+   24 selecao: IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao .
+
+    $default  reduce using rule 24 (selecao)

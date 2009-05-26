@@ -10,10 +10,17 @@
     void yyerror(char *);
     int yylex(void);
     void desempilhar(void);
+    int pop();
+    void push();
+    int pop_rel();
+    void push_rel();
     int tp_count = 0;
     int l = 0;
-    int count_if = 1;
-    int count_else = 1;
+    int count_if_else = 0;
+    int stack[100];
+    int stack_pt = -1;
+    int stack_rel[100];
+    int stack_rel_pt = -1;
 %}
 
 %union{
@@ -25,10 +32,11 @@
 %token INICIO FIM
 %token <texto> TEXTO
 %token SQRT
-%token IF //ELSE
+%token IF
 %token IMPRIMA
-%token MAIORIGUAL IGUAL MENORIGUAL
-%left '<' '>' MENORIGUAL MAIORIGUAL IGUAL
+%token MAIORIGUAL IGUAL MENORIGUAL DIFERENTE
+%token AND OR NOT
+%left '<' '>' MENORIGUAL MAIORIGUAL IGUAL DIFERENTE
 %left '+' '-'
 %left '*' '/'
 %nonassoc UMINUS
@@ -36,7 +44,8 @@
 %nonassoc ELSE
 %type <texto> expressao
 %type <texto> expressao_relacional
-%expect 1
+%type <texto> expressao_logica
+//%expect 1
 %%
 
 programa:
@@ -46,15 +55,10 @@ programa:
 
 afirmacao:
         IDENTIFICADOR '=' expressao ';' {
-                                            //fprintf(file, "mov(%s, NULL, &ts[%d]);\n", $3, $1);
-                                            //fflush(file);
                                             char command[50];
                                             sprintf(command,"mov(%s, NULL, &ts[%d]);\n", $3, $1);
                                             enqueue( strdup(command) );
 				        }
-	//|  COMENTARIO {;}
-	//|  expressao COMENTARIO { printf("= %g\n", $1); }
-	//|  declaracao
         ;
 
 expressao_relacional:
@@ -62,6 +66,7 @@ expressao_relacional:
                                         char command[50];
                                         sprintf(command,"comp_gt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(command) );
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         $$ = strdup(command);
@@ -70,6 +75,7 @@ expressao_relacional:
                                         char command[50];
                                         sprintf(command, "comp_lt(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(command) );
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         $$ = strdup(command);
@@ -78,6 +84,7 @@ expressao_relacional:
                                         char command[50];
                                         sprintf(command, "comp_le(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(command));
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         $$ = strdup(command);
@@ -86,6 +93,7 @@ expressao_relacional:
                                         char command[50];
                                         sprintf(command, "comp_ge(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(command));
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         $$ = strdup(command);
@@ -94,10 +102,20 @@ expressao_relacional:
                                         char command[50];
                                         sprintf(command, "comp_eq(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                         enqueue( strdup(command));
+                                        //push(tp_count-1);
                                         
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         $$ = strdup(command);
-                                    }
+                                    } 
+        | expressao DIFERENTE expressao {
+                                            char command[50];
+                                            sprintf(command, "comp_ne(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                            enqueue( strdup(command));
+                                            //push(tp_count-1);
+                                        
+                                            sprintf(command, "temp[%d]", tp_count-1);
+                                            $$ = strdup(command);
+                                        }
         ;
 
 expressao:
@@ -159,53 +177,88 @@ sentenca:
                             enqueue(strdup(command));
                       }
         | IMPRIMA IDENTIFICADOR ';' {
+                                    printf("entrou\n");
                                     char command[50];
                                     sprintf(command, "param(ts[%d], NULL, NULL);\n", $2); 
                                     enqueue(strdup(command));
+                                    enqueue(strdup(command));
+                                    printf("empty: %d\n", is_empty());
                                     sprintf(command, "call(\"imprima\", 1, NULL);\n");
                                     enqueue(strdup(command));
+                                    printf("empty: %d\n", is_empty());
                                 }
         ;
 
 inicio_if: {
-            desempilhar();
-            fprintf(file,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
-            count_else = 1;
-            count_if++;
-            fflush(file);
+            char command[50];
+            sprintf(command,"jump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+            enqueue(strdup(command));
+            push(l-1);
+            count_if_else++;
            }
            ;
-if_then: {
-            desempilhar();
-            fflush(file);        
-      }
-      ;
 
-if_else: {
-            fprintf(file, "jump(l%d, NULL, NULL);\n", l);
-            fprintf(file, "l%d:\n", l-count_else);
-            count_else++;
-            desempilhar();
-            if(count_else == count_if) {
-                fprintf(file, "l%d:\n", l);
-                count_if = 1;
-            }
-            fflush(file); 
-         }
-         ;
+label: {
+            char command[50];
+            sprintf(command, "l%d:\n", pop());
+            enqueue(strdup(command));
+        }
+
+bloco: {
+            enqueue("jump_incondicional");
+       }
 
 selecao: 
-	IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then if_else
-        | IF '(' expressao_relacional ')' inicio_if THEN instrucao if_then ELSE instrucao if_else
+	IF '(' expressao_logica ')' inicio_if THEN instrucao label
+        | IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao
 	;
 
+expressao_logica:
+                expressao_relacional { push_rel(tp_count-1); }
+                | expressao_relacional AND expressao_logica { 
+                                                                    char command[50];
+                                                                    sprintf(command, "rela_an(temp[%d], temp[%d], temp[%d]);\n", pop_rel(), pop_rel(), tp_count++);
+                                                                    enqueue(strdup(command));
+                                                                    push_rel(tp_count-1);
+                                                                }
+                | expressao_relacional OR expressao_logica {
+                                                                    char command[50];
+                                                                    sprintf(command, "rela_or(temp[%d], temp[%d], temp[%d]);\n", pop_rel(), pop_rel(), tp_count++);
+                                                                    enqueue(strdup(command));
+                                                                    push_rel(tp_count-1);
+                                                                 }
+                | NOT expressao_logica {
+                                                
+                                                char command[50];
+                                                sprintf(command, "rela_no(temp[%d], NULL, temp[%d]);\n", pop_rel(), tp_count++);
+                                                enqueue(strdup(command));
+                                           }
+                | '(' expressao_logica ')' { $$ = $2; }
+                ;
+
+
 instrucao:
-	selecao
-        |sentenca { if (count_if == 1) desempilhar(); }
-	|afirmacao { if (count_if == 1) desempilhar(); } 
-        |expressao ';' { if (count_if == 1) desempilhar(); } 
-        |expressao_relacional ';' { if (count_if == 1) desempilhar(); } 
-	|bloco_instrucao
+	selecao { 
+                desempilhar();
+                count_if_else--;
+                if (!count_if_else) {
+                    fprintf(file, "l%d:\n", l);
+                    fflush(file);
+                }
+        }
+        | expressao_logica
+        | sentenca { if (count_if_else == 0) desempilhar(); }
+	| afirmacao { if (count_if_else == 0) desempilhar(); } 
+        | expressao ';' { if (count_if_else == 0) desempilhar(); } 
+        //| expressao_relacional ';' { if (count_if_else == 0) desempilhar(); } // Nao faz sentido!
+	| bloco_instrucao
+        | ';' { if (count_if_else == 0) {
+                    fprintf(file, "nop(NULL, NULL, NULL);\n");
+                    fflush(file);
+                } else {
+                    enqueue("nop(NULL, NULL, NULL);\n");
+                }
+        }
 	;
 conjunto_instrucao:
 	instrucao
@@ -213,25 +266,40 @@ conjunto_instrucao:
 	;
 bloco_instrucao:
 	INICIO ';' imprimir_label FIM ';' {
-                                //fprintf(file, "l%d:\n", l++);
-                                //fflush(file);
                            }
 	| INICIO ';' imprimir_label conjunto_instrucao FIM ';' {
-                                                    //fprintf(file, "l%d:\n", l++);
-                                                    //fflush(file);
                                                 }
 	;
 imprimir_label: {
-                    if (count_if == 1) // Soh imprime se nao estiver em um if
+                    if (count_if_else == 0) // Soh imprime se nao estiver em um if
                         fprintf(file, "l%d:\n", l++);
                 }
 %%
 
+void push(int value) {
+    stack[++stack_pt] = value;
+}
+
+int pop() {
+    return stack[stack_pt--];
+}
+void push_rel(int value) {
+    stack_rel[++stack_rel_pt] = value;
+}
+
+int pop_rel() {
+    return stack_rel[stack_rel_pt--];
+}
 void desempilhar(void) {
-    
+    char *value; 
     while(!is_empty()){
-        char* value = dequeue();
-        fprintf(file,"%s",value);
+        value = dequeue();
+        if (!strcmp(value, "jump_incondicional")) {
+            fprintf(file, "jump(l%d, NULL, NULL);\n", l);
+        }
+        else {
+            fprintf(file,"%s",value);
+        }
     }
     fflush(file);
 

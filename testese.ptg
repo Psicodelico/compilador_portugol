@@ -10,20 +10,21 @@ inicio;
 A=1;
 se(2>1) entao
 //inicio;
-se (3>1) entao
-se (4>1) entao
-inicio;
-    2+2+3+5;
-fim;
-senao
-    6+6;
+    se (3>1) entao
+        se (4>1) entao
+            inicio;
+                2+2+3+5;
+            fim;
+        senao
+            se (5>1) entao
+                6+6;
     //3+3;
     //4+4;
 //fim;
-senao
-    5+5;
-senao
-    4+4;
+             senao
+                 5+5;
+    senao
+        4+4;
 
 //imprima 444;
 imprima A;

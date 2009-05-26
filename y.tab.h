@@ -49,9 +49,13 @@
      MAIORIGUAL = 265,
      IGUAL = 266,
      MENORIGUAL = 267,
-     UMINUS = 268,
-     THEN = 269,
-     ELSE = 270
+     DIFERENTE = 268,
+     AND = 269,
+     OR = 270,
+     NOT = 271,
+     UMINUS = 272,
+     THEN = 273,
+     ELSE = 274
    };
 #endif
 /* Tokens.  */
@@ -65,22 +69,26 @@
 #define MAIORIGUAL 265
 #define IGUAL 266
 #define MENORIGUAL 267
-#define UMINUS 268
-#define THEN 269
-#define ELSE 270
+#define DIFERENTE 268
+#define AND 269
+#define OR 270
+#define NOT 271
+#define UMINUS 272
+#define THEN 273
+#define ELSE 274
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 19 "Portugol.y"
+#line 26 "Portugol.y"
 {
     char *texto;
     int sp;
 }
 /* Line 1489 of yacc.c.  */
-#line 84 "y.tab.h"
+#line 92 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

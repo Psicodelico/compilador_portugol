@@ -17,7 +17,7 @@
 %}
 %%
 
-\/\/[^\n]*\n {;}
+\/\/[^\n]*\n { printf("comentario\n");}
 
 sqrt        {return SQRT;}
 
@@ -27,6 +27,9 @@ sqrt        {return SQRT;}
 "entao"     { return THEN; }
 "senao"     { return ELSE; }
 "imprima"   { return IMPRIMA; }
+"e"         { return AND; }
+"ou"        { return OR; }
+"nao"       { return NOT; }
 ;           { return *yytext;}
 
 [A-Z] { 
@@ -48,10 +51,9 @@ sqrt        {return SQRT;}
 "<="        {return MENORIGUAL;}
 ">="        {return MAIORIGUAL;}
 "=="        {return IGUAL;}
+"!="        {return DIFERENTE;}
 
-[ \t\n]       ;       /*Ignora espaço em branco */
-
-
+[ \t\n]*       ;       /*Ignora espaço em branco */
 
 .           yyerror("Caracter Desconhecido");
 
