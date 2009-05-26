@@ -318,7 +318,7 @@ int main(int argc, char **argv) {
     init_queue();
 
     fprintf(file,"#include \"quadruplas-v1q.h\"\n\n");
-    fprintf(file,"int main() {\n\n");
+    fprintf(file,"int main(void) {\n\n");
 
     if(!file){
         printf("O arquivo nao pode ser aberto!!\n");
