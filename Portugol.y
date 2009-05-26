@@ -15,7 +15,7 @@
     //int pop_rel();
     //void push_rel();
     int tp_count = 0;
-    int l = 0;
+    int l = 1;
     int count_if_else = 0;
     int stack[100];
     int stack_pt = -1;
@@ -45,7 +45,7 @@
 %type <texto> expressao
 %type <texto> expressao_relacional
 %type <texto> expressao_logica
-//%expect 1
+%expect 1
 %%
 
 programa:
@@ -210,7 +210,7 @@ bloco: {
 
 selecao: 
 	IF '(' expressao_logica ')' inicio_if THEN instrucao label
-        | IF '(' expressao_logica ')' inicio_if THEN instrucao label ELSE bloco instrucao
+        | IF '(' expressao_logica ')' inicio_if THEN instrucao ELSE bloco label instrucao
 	;
 
 expressao_logica:
@@ -277,7 +277,7 @@ bloco_instrucao:
                                                 }
 	;
 imprimir_label: {
-                    if (count_if_else == 0 && l > 0) // Soh imprime se nao estiver em um if
+                    if (count_if_else == 0 && l > 1) // Soh imprime se nao estiver em um if
                         fprintf(file, "l%d:\n", l++);
                 }
 %%
@@ -301,7 +301,7 @@ void desempilhar(void) {
     while(!is_empty()){
         value = dequeue();
         if (!strcmp(value, "jump_incondicional")) {
-            fprintf(file, "jump(l%d, NULL, NULL);\n", l);
+            fprintf(file, "jump(NULL, NULL, l%d);\n", l);
         }
         else {
             fprintf(file,"%s",value);
