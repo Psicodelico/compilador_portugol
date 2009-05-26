@@ -123,15 +123,15 @@
     void desempilhar(void);
     int pop();
     void push();
-    int pop_rel();
-    void push_rel();
+    //int pop_rel();
+    //void push_rel();
     int tp_count = 0;
     int l = 0;
     int count_if_else = 0;
     int stack[100];
     int stack_pt = -1;
-    int stack_rel[100];
-    int stack_rel_pt = -1;
+    //int stack_rel[100];
+    //int stack_rel_pt = -1;
 
 
 /* Enabling traces.  */
@@ -476,9 +476,9 @@ static const yytype_uint16 yyrline[] =
 {
        0,    52,    52,    53,    57,    65,    74,    83,    92,   101,
      110,   122,   123,   128,   136,   144,   152,   160,   168,   172,
-     179,   192,   201,   207,   212,   213,   217,   218,   224,   230,
-     236,   241,   249,   250,   251,   252,   254,   255,   264,   265,
-     268,   270,   273
+     179,   192,   201,   207,   212,   213,   217,   222,   229,   236,
+     242,   247,   255,   256,   257,   258,   260,   261,   270,   271,
+     274,   276,   279
 };
 #endif
 
@@ -1663,73 +1663,79 @@ yyreduce:
 
   case 26:
 #line 217 "Portugol.y"
-    { push_rel(tp_count-1); }
+    {
+                    char command[50];
+                    sprintf(command, "temp[%d]", tp_count-1);
+                    (yyval.texto) = strdup(command);
+                }
     break;
 
   case 27:
-#line 218 "Portugol.y"
+#line 222 "Portugol.y"
     { 
                                                                     char command[50];
-                                                                    sprintf(command, "rela_an(temp[%d], temp[%d], temp[%d]);\n", pop_rel(), pop_rel(), tp_count++);
+                                                                    sprintf(command, "rela_an(%s, %s, temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                                                     enqueue(strdup(command));
-                                                                    push_rel(tp_count-1);
-                                                                }
+                                                                    sprintf(command, "temp[%d]", tp_count-1);
+                                                                    (yyval.texto) = strdup(command);
+                                                            }
     break;
 
   case 28:
-#line 224 "Portugol.y"
+#line 229 "Portugol.y"
     {
                                                                     char command[50];
-                                                                    sprintf(command, "rela_or(temp[%d], temp[%d], temp[%d]);\n", pop_rel(), pop_rel(), tp_count++);
+                                                                    sprintf(command, "rela_or(%s, %s, temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                                                     enqueue(strdup(command));
-                                                                    push_rel(tp_count-1);
-                                                                 }
+                                                                    sprintf(command, "temp[%d]", tp_count-1);
+                                                                    (yyval.texto) = strdup(command);
+                                                           }
     break;
 
   case 29:
-#line 230 "Portugol.y"
+#line 236 "Portugol.y"
     {
                                                 
                                                 char command[50];
-                                                sprintf(command, "rela_no(temp[%d], NULL, temp[%d]);\n", pop_rel(), tp_count++);
+                                                sprintf(command, "rela_no(%s, NULL, temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
                                                 enqueue(strdup(command));
-                                           }
+                                       }
     break;
 
   case 30:
-#line 236 "Portugol.y"
+#line 242 "Portugol.y"
     { (yyval.texto) = (yyvsp[(2) - (3)].texto); }
     break;
 
   case 31:
-#line 241 "Portugol.y"
+#line 247 "Portugol.y"
     { 
                 desempilhar();
                 count_if_else--;
-                if (!count_if_else) {
-                    fprintf(file, "l%d:\n", l);
+                if (!count_if_else) { // label de jump incondicional
+                    fprintf(file, "l%d:\n", l++);
                     fflush(file);
                 }
         }
     break;
 
   case 33:
-#line 250 "Portugol.y"
+#line 256 "Portugol.y"
     { if (count_if_else == 0) desempilhar(); }
     break;
 
   case 34:
-#line 251 "Portugol.y"
+#line 257 "Portugol.y"
     { if (count_if_else == 0) desempilhar(); }
     break;
 
   case 35:
-#line 252 "Portugol.y"
+#line 258 "Portugol.y"
     { if (count_if_else == 0) desempilhar(); }
     break;
 
   case 37:
-#line 255 "Portugol.y"
+#line 261 "Portugol.y"
     { if (count_if_else == 0) {
                     fprintf(file, "nop(NULL, NULL, NULL);\n");
                     fflush(file);
@@ -1740,28 +1746,28 @@ yyreduce:
     break;
 
   case 40:
-#line 268 "Portugol.y"
+#line 274 "Portugol.y"
     {
                            }
     break;
 
   case 41:
-#line 270 "Portugol.y"
+#line 276 "Portugol.y"
     {
                                                 }
     break;
 
   case 42:
-#line 273 "Portugol.y"
+#line 279 "Portugol.y"
     {
-                    if (count_if_else == 0) // Soh imprime se nao estiver em um if
+                    if (count_if_else == 0 && l > 0) // Soh imprime se nao estiver em um if
                         fprintf(file, "l%d:\n", l++);
                 }
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1765 "y.tab.c"
+#line 1771 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1975,7 +1981,7 @@ yyreturn:
 }
 
 
-#line 277 "Portugol.y"
+#line 283 "Portugol.y"
 
 
 void push(int value) {
@@ -1985,13 +1991,13 @@ void push(int value) {
 int pop() {
     return stack[stack_pt--];
 }
-void push_rel(int value) {
-    stack_rel[++stack_rel_pt] = value;
-}
+//void push_rel(int value) {
+//    stack_rel[++stack_rel_pt] = value;
+//}
 
-int pop_rel() {
-    return stack_rel[stack_rel_pt--];
-}
+//int pop_rel() {
+//    return stack_rel[stack_rel_pt--];
+//}
 void desempilhar(void) {
     char *value; 
     while(!is_empty()){

@@ -12,15 +12,15 @@
     void desempilhar(void);
     int pop();
     void push();
-    int pop_rel();
-    void push_rel();
+    //int pop_rel();
+    //void push_rel();
     int tp_count = 0;
     int l = 0;
     int count_if_else = 0;
     int stack[100];
     int stack_pt = -1;
-    int stack_rel[100];
-    int stack_rel_pt = -1;
+    //int stack_rel[100];
+    //int stack_rel_pt = -1;
 %}
 
 %union{
@@ -214,25 +214,31 @@ selecao:
 	;
 
 expressao_logica:
-                expressao_relacional { push_rel(tp_count-1); }
+                expressao_relacional {
+                    char command[50];
+                    sprintf(command, "temp[%d]", tp_count-1);
+                    $$ = strdup(command);
+                }
                 | expressao_relacional AND expressao_logica { 
                                                                     char command[50];
-                                                                    sprintf(command, "rela_an(temp[%d], temp[%d], temp[%d]);\n", pop_rel(), pop_rel(), tp_count++);
+                                                                    sprintf(command, "rela_an(%s, %s, temp[%d]);\n", $1, $3, tp_count++);
                                                                     enqueue(strdup(command));
-                                                                    push_rel(tp_count-1);
-                                                                }
+                                                                    sprintf(command, "temp[%d]", tp_count-1);
+                                                                    $$ = strdup(command);
+                                                            }
                 | expressao_relacional OR expressao_logica {
                                                                     char command[50];
-                                                                    sprintf(command, "rela_or(temp[%d], temp[%d], temp[%d]);\n", pop_rel(), pop_rel(), tp_count++);
+                                                                    sprintf(command, "rela_or(%s, %s, temp[%d]);\n", $1, $3, tp_count++);
                                                                     enqueue(strdup(command));
-                                                                    push_rel(tp_count-1);
-                                                                 }
+                                                                    sprintf(command, "temp[%d]", tp_count-1);
+                                                                    $$ = strdup(command);
+                                                           }
                 | NOT expressao_logica {
                                                 
                                                 char command[50];
-                                                sprintf(command, "rela_no(temp[%d], NULL, temp[%d]);\n", pop_rel(), tp_count++);
+                                                sprintf(command, "rela_no(%s, NULL, temp[%d]);\n", $2, tp_count++);
                                                 enqueue(strdup(command));
-                                           }
+                                       }
                 | '(' expressao_logica ')' { $$ = $2; }
                 ;
 
@@ -241,8 +247,8 @@ instrucao:
 	selecao { 
                 desempilhar();
                 count_if_else--;
-                if (!count_if_else) {
-                    fprintf(file, "l%d:\n", l);
+                if (!count_if_else) { // label de jump incondicional
+                    fprintf(file, "l%d:\n", l++);
                     fflush(file);
                 }
         }
@@ -271,7 +277,7 @@ bloco_instrucao:
                                                 }
 	;
 imprimir_label: {
-                    if (count_if_else == 0) // Soh imprime se nao estiver em um if
+                    if (count_if_else == 0 && l > 0) // Soh imprime se nao estiver em um if
                         fprintf(file, "l%d:\n", l++);
                 }
 %%
@@ -283,13 +289,13 @@ void push(int value) {
 int pop() {
     return stack[stack_pt--];
 }
-void push_rel(int value) {
-    stack_rel[++stack_rel_pt] = value;
-}
+//void push_rel(int value) {
+//    stack_rel[++stack_rel_pt] = value;
+//}
 
-int pop_rel() {
-    return stack_rel[stack_rel_pt--];
-}
+//int pop_rel() {
+//    return stack_rel[stack_rel_pt--];
+//}
 void desempilhar(void) {
     char *value; 
     while(!is_empty()){

@@ -897,12 +897,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 60 "Portugol.l"
+#line 58 "Portugol.l"
 yyerror("Caracter Desconhecido");
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 62 "Portugol.l"
+#line 60 "Portugol.l"
 ECHO;
 	YY_BREAK
 #line 909 "lex.yy.c"
@@ -1903,7 +1903,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 62 "Portugol.l"
+#line 60 "Portugol.l"
 
 
 
