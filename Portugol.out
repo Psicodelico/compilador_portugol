@@ -1,3 +1,6 @@
+#include "quadruplas-v1q.h"
+int main() {
+#include "quadruplas-v1q.h"
 mov(1, NULL, &ts[0]);
 mov(2.0, NULL, &ts[1]);
 comp_eq(ts[1], 2.0, &temp[0]);
@@ -51,3 +54,4 @@ call("imprima", 1, NULL);
 nop(NULL, NULL, NULL);
 param(ts[3], NULL, NULL);
 call("imprima", 1, NULL);
+}

@@ -327,9 +327,13 @@ int main(int argc, char **argv) {
 //enquanto o lex estiver rodando o usuario n podera entrar mais com essas palavras, e as que ele entrar sera variavel
     //lookup("inicio",1);
     //lookup("fim",1);
-    file = fopen("Portugol.out","w");
+    file = fopen("Portugol.c","w");
 
     init_queue();
+
+    fprintf(file,"#include \"quadruplas-v1q.h\"\n");
+    fprintf(file,"int main() {\n");
+
     if(!file){
         printf("O arquivo nao pode ser aberto!!\n");
         exit(1);
@@ -345,6 +349,9 @@ int main(int argc, char **argv) {
     }
             
     yyparse();
-    if (argc > 1) fclose(yyin);
+    if (argc > 1) fclose(yyin);    
+
+    fprintf(file,"}\n");
+
     fclose(file);
 }
