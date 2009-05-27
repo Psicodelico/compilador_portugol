@@ -41,7 +41,7 @@
 %type <texto> expressao
 %type <texto> expressao_relacional
 %type <texto> expressao_logica
-%expect 1
+%expect 9
 %%
 
 programa:
@@ -183,7 +183,6 @@ sentenca:
                                         char command[50];
                                         sprintf(command, "\tparam(ts[%d], NULL, NULL);\n", $2); 
                                         enqueue(strdup(command));
-                                        //enqueue(strdup(command));
                                         sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
                                         enqueue(strdup(command));
                                     }
@@ -215,19 +214,33 @@ selecao:
 
 expressao_logica:
                 expressao_relacional {
-                                        char command[50];
+                                       char command[50];
                                         sprintf(command, "temp[%d]", tp_count-1);
                                         $$ = strdup(command);
                                      }
 
-                | expressao_relacional AND expressao_logica { 
+                | expressao_relacional AND expressao_logica {
+                                                                    char command[50];
+                                                                    sprintf(command, "\trela_an(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                                                    enqueue(strdup(command));
+                                                                    sprintf(command, "temp[%d]", tp_count-1);
+                                                                    $$ = strdup(command);
+                                                                }
+                | expressao_logica AND expressao_relacional { 
                                                                     char command[50];
                                                                     sprintf(command, "\trela_an(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                                                     enqueue(strdup(command));
                                                                     sprintf(command, "temp[%d]", tp_count-1);
                                                                     $$ = strdup(command);
                                                             }
-                | expressao_relacional OR expressao_logica  {
+                | expressao_logica OR expressao_relacional {
+                                                                    char command[50];
+                                                                    sprintf(command, "\trela_or(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
+                                                                    enqueue(strdup(command));
+                                                                    sprintf(command, "temp[%d]", tp_count-1);
+                                                                    $$ = strdup(command);
+                                                           }
+                | expressao_relacional OR expressao_logica {
                                                                     char command[50];
                                                                     sprintf(command, "\trela_or(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                                                     enqueue(strdup(command));
@@ -243,7 +256,6 @@ expressao_logica:
 
                 | '(' expressao_logica ')' { $$ = $2; }
                 ;
-
 
 instrucao:
 	selecao { 
