@@ -28,7 +28,10 @@ sqrt        {return SQRT;}
       }
 
 ([0-9]+|([0-9]*\.[0-9]+)) {
-                            yylval.texto = strdup(yytext);
+                            char buf[40];
+                            //float in = atof(yytext);
+                            sprintf(buf, "%.2f", atof(yytext));
+                            yylval.texto = strdup(buf);
                             return TEXTO;
                           }
 

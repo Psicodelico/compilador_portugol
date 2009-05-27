@@ -848,52 +848,55 @@ case 14:
 YY_RULE_SETUP
 #line 30 "Portugol.l"
 {
-                            yylval.texto = strdup(yytext);
+                            char buf[40];
+                            //float in = atof(yytext);
+                            sprintf(buf, "%.2f", atof(yytext));
+                            yylval.texto = strdup(buf);
                             return TEXTO;
                           }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 36 "Portugol.l"
+#line 39 "Portugol.l"
 { return *yytext; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 39 "Portugol.l"
+#line 42 "Portugol.l"
 {return MENORIGUAL;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 40 "Portugol.l"
+#line 43 "Portugol.l"
 {return MAIORIGUAL;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 41 "Portugol.l"
+#line 44 "Portugol.l"
 {return IGUAL;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 42 "Portugol.l"
+#line 45 "Portugol.l"
 {return DIFERENTE;}
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 44 "Portugol.l"
+#line 47 "Portugol.l"
 {;/*Ignora espaço em branco */}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 46 "Portugol.l"
+#line 49 "Portugol.l"
 yyerror("Caracter Desconhecido");
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 48 "Portugol.l"
+#line 51 "Portugol.l"
 ECHO;
 	YY_BREAK
-#line 897 "lex.yy.c"
+#line 900 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1891,7 +1894,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 48 "Portugol.l"
+#line 51 "Portugol.l"
 
 
 
