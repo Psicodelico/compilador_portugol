@@ -31,17 +31,14 @@
 %token IF
 %token IMPRIMA
 %token MAIORIGUAL IGUAL MENORIGUAL DIFERENTE
-%token AND OR NOT
 %left '<' '>' MENORIGUAL MAIORIGUAL IGUAL DIFERENTE
 %left '+' '-'
 %left '*' '/'
-%nonassoc UMINUS
-%nonassoc THEN
-%nonassoc ELSE
+%nonassoc UMINUS THEN ELSE AND OR NOT
 %type <texto> expressao
 %type <texto> expressao_relacional
 %type <texto> expressao_logica
-%expect 9
+%expect 3
 %%
 
 programa:
@@ -331,7 +328,7 @@ int main(int argc, char **argv) {
 
     fprintf(file,
                 "//\tGerado pelo compilador PORTUGOL versao 1q\n"
-                "//\tAutores: Ed Prado, Edinaldo Santos, Elton Oliveira,\n"
+                "//\tAutores: Ed Prado, Edinaldo Carvalho, Elton Oliveira,\n"
                 "//\t\t Marlon Chalegre, Rodrigo Castro\n"
                 "//\tEmail: {msgprado, truetypecode, elton.oliver,\n"
                 "//\t\tmarlonchalegre, rodrigomsc}@gmail.com\n"

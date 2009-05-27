@@ -35,14 +35,12 @@ sqrt        {return SQRT;}
                             return TEXTO;
                           }
 
-
-[-+><()=/*] { return *yytext; }
-
-
 "<="        {return MENORIGUAL;}
 ">="        {return MAIORIGUAL;}
 "=="        {return IGUAL;}
 "!="        {return DIFERENTE;}
+
+[-+><()=/*] { return *yytext; }
 
 [ \t\n]*    {;/*Ignora espaço em branco */}
 

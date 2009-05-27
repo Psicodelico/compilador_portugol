@@ -379,10 +379,10 @@ struct yy_trans_info
 	};
 static yyconst flex_int16_t yy_accept[62] =
     {   0,
-       20,   20,   23,   21,   20,   20,   21,   15,   21,   15,
-       14,   12,   15,   15,   15,   13,    9,   21,   21,   21,
-       21,   21,   20,   19,   14,    0,    0,   14,   16,   18,
-       17,    0,    0,    0,    0,    0,   10,    5,    0,    0,
+       20,   20,   23,   21,   20,   20,   21,   19,   21,   19,
+       14,   12,   19,   19,   19,   13,    9,   21,   21,   21,
+       21,   21,   20,   18,   14,    0,    0,   14,   15,   17,
+       16,    0,    0,    0,    0,    0,   10,    5,    0,    0,
         1,    0,    4,    0,    0,   11,    0,    0,    0,    0,
         0,    0,    2,    6,    0,    0,    7,    0,    3,    8,
         0
@@ -857,43 +857,43 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 39 "Portugol.l"
-{ return *yytext; }
+#line 38 "Portugol.l"
+{return MENORIGUAL;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 42 "Portugol.l"
-{return MENORIGUAL;}
+#line 39 "Portugol.l"
+{return MAIORIGUAL;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 43 "Portugol.l"
-{return MAIORIGUAL;}
+#line 40 "Portugol.l"
+{return IGUAL;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 44 "Portugol.l"
-{return IGUAL;}
+#line 41 "Portugol.l"
+{return DIFERENTE;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 45 "Portugol.l"
-{return DIFERENTE;}
+#line 43 "Portugol.l"
+{ return *yytext; }
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 47 "Portugol.l"
+#line 45 "Portugol.l"
 {;/*Ignora espaço em branco */}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 49 "Portugol.l"
+#line 47 "Portugol.l"
 yyerror("Caracter Desconhecido");
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 51 "Portugol.l"
+#line 49 "Portugol.l"
 ECHO;
 	YY_BREAK
 #line 900 "lex.yy.c"
@@ -1894,7 +1894,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 51 "Portugol.l"
+#line 49 "Portugol.l"
 
 
 

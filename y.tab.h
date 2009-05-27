@@ -50,12 +50,12 @@
      IGUAL = 266,
      MENORIGUAL = 267,
      DIFERENTE = 268,
-     AND = 269,
+     NOT = 269,
      OR = 270,
-     NOT = 271,
-     UMINUS = 272,
+     AND = 271,
+     ELSE = 272,
      THEN = 273,
-     ELSE = 274
+     UMINUS = 274
    };
 #endif
 /* Tokens.  */
@@ -70,12 +70,12 @@
 #define IGUAL 266
 #define MENORIGUAL 267
 #define DIFERENTE 268
-#define AND 269
+#define NOT 269
 #define OR 270
-#define NOT 271
-#define UMINUS 272
+#define AND 271
+#define ELSE 272
 #define THEN 273
-#define ELSE 274
+#define UMINUS 274
 
 
 

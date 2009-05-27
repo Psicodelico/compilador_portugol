@@ -4,9 +4,6 @@ Terminals which are not used
 
 
 State 12 conflicts: 2 shift/reduce
-State 26 conflicts: 2 shift/reduce
-State 56 conflicts: 2 shift/reduce
-State 57 conflicts: 2 shift/reduce
 State 81 conflicts: 1 shift/reduce
 
 
@@ -97,12 +94,12 @@ MAIORIGUAL (265) 7
 IGUAL (266) 8
 MENORIGUAL (267) 6
 DIFERENTE (268) 9
-AND (269) 26 27
+NOT (269) 30
 OR (270) 28 29
-NOT (271) 30
-UMINUS (272)
+AND (271) 26 27
+ELSE (272) 24
 THEN (273) 23 24
-ELSE (274) 24
+UMINUS (274)
 
 
 Nonterminals, with rules where they appear
@@ -150,8 +147,8 @@ state 0
     TEXTO          shift, and go to state 3
     IF             shift, and go to state 4
     IMPRIMA        shift, and go to state 5
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     ';'            shift, and go to state 8
     '('            shift, and go to state 9
 
@@ -210,29 +207,29 @@ state 5
 
 state 6
 
-   30 expressao_logica: NOT . expressao_logica
-
-    IDENTIFICADOR  shift, and go to state 24
-    TEXTO          shift, and go to state 3
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 9
-
-    expressao_relacional  go to state 12
-    expressao             go to state 25
-    expressao_logica      go to state 26
-
-
-state 7
-
    16 expressao: '-' . expressao
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
-    expressao  go to state 28
+    expressao  go to state 26
+
+
+state 7
+
+   30 expressao_logica: NOT . expressao_logica
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
+    '('            shift, and go to state 9
+
+    expressao_relacional  go to state 12
+    expressao             go to state 27
+    expressao_logica      go to state 28
 
 
 state 8
@@ -249,8 +246,8 @@ state 9
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     '('            shift, and go to state 9
 
     expressao_relacional  go to state 12
@@ -269,8 +266,8 @@ state 10
     TEXTO          shift, and go to state 3
     IF             shift, and go to state 4
     IMPRIMA        shift, and go to state 5
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     ';'            shift, and go to state 8
     '('            shift, and go to state 9
 
@@ -297,11 +294,11 @@ state 12
    26                 | expressao_relacional . AND expressao_logica
    29                 | expressao_relacional . OR expressao_logica
 
-    AND  shift, and go to state 33
-    OR   shift, and go to state 34
+    OR   shift, and go to state 33
+    AND  shift, and go to state 34
 
-    AND       [reduce using rule 25 (expressao_logica)]
     OR        [reduce using rule 25 (expressao_logica)]
+    AND       [reduce using rule 25 (expressao_logica)]
     $default  reduce using rule 25 (expressao_logica)
 
 
@@ -352,8 +349,8 @@ state 16
    28                 | expressao_logica . OR expressao_relacional
    33 instrucao: expressao_logica .
 
-    AND  shift, and go to state 46
-    OR   shift, and go to state 47
+    OR   shift, and go to state 46
+    AND  shift, and go to state 47
 
     $default  reduce using rule 33 (instrucao)
 
@@ -378,8 +375,8 @@ state 19
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 48
 
@@ -401,12 +398,12 @@ state 21
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     '('            shift, and go to state 9
 
     expressao_relacional  go to state 12
-    expressao             go to state 25
+    expressao             go to state 27
     expressao_logica      go to state 50
 
 
@@ -433,6 +430,29 @@ state 24
 
 state 25
 
+   17 expressao: '(' . expressao ')'
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
+
+    expressao  go to state 53
+
+
+state 26
+
+   12 expressao: expressao . '+' expressao
+   13          | expressao . '-' expressao
+   14          | expressao . '*' expressao
+   15          | expressao . '/' expressao
+   16          | '-' expressao .
+
+    $default  reduce using rule 16 (expressao)
+
+
+state 27
+
     4 expressao_relacional: expressao . '>' expressao
     5                     | expressao . '<' expressao
     6                     | expressao . MENORIGUAL expressao
@@ -456,41 +476,16 @@ state 25
     '/'         shift, and go to state 44
 
 
-state 26
+state 28
 
    27 expressao_logica: expressao_logica . AND expressao_relacional
    28                 | expressao_logica . OR expressao_relacional
    30                 | NOT expressao_logica .
 
-    AND  shift, and go to state 46
-    OR   shift, and go to state 47
+    OR   error (nonassociative)
+    AND  error (nonassociative)
 
-    AND       [reduce using rule 30 (expressao_logica)]
-    OR        [reduce using rule 30 (expressao_logica)]
     $default  reduce using rule 30 (expressao_logica)
-
-
-state 27
-
-   17 expressao: '(' . expressao ')'
-
-    IDENTIFICADOR  shift, and go to state 24
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
-
-    expressao  go to state 53
-
-
-state 28
-
-   12 expressao: expressao . '+' expressao
-   13          | expressao . '-' expressao
-   14          | expressao . '*' expressao
-   15          | expressao . '/' expressao
-   16          | '-' expressao .
-
-    $default  reduce using rule 16 (expressao)
 
 
 state 29
@@ -526,8 +521,8 @@ state 30
    28                 | expressao_logica . OR expressao_relacional
    31                 | '(' expressao_logica . ')'
 
-    AND  shift, and go to state 46
-    OR   shift, and go to state 47
+    OR   shift, and go to state 46
+    AND  shift, and go to state 47
     ')'  shift, and go to state 55
 
 
@@ -547,31 +542,31 @@ state 32
 
 state 33
 
-   26 expressao_logica: expressao_relacional AND . expressao_logica
+   29 expressao_logica: expressao_relacional OR . expressao_logica
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     '('            shift, and go to state 9
 
     expressao_relacional  go to state 12
-    expressao             go to state 25
+    expressao             go to state 27
     expressao_logica      go to state 56
 
 
 state 34
 
-   29 expressao_logica: expressao_relacional OR . expressao_logica
+   26 expressao_logica: expressao_relacional AND . expressao_logica
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     '('            shift, and go to state 9
 
     expressao_relacional  go to state 12
-    expressao             go to state 25
+    expressao             go to state 27
     expressao_logica      go to state 57
 
 
@@ -581,8 +576,8 @@ state 35
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 58
 
@@ -593,8 +588,8 @@ state 36
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 59
 
@@ -605,8 +600,8 @@ state 37
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 60
 
@@ -617,8 +612,8 @@ state 38
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 61
 
@@ -629,8 +624,8 @@ state 39
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 62
 
@@ -641,8 +636,8 @@ state 40
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 63
 
@@ -653,8 +648,8 @@ state 41
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 64
 
@@ -665,8 +660,8 @@ state 42
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 65
 
@@ -677,8 +672,8 @@ state 43
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 66
 
@@ -689,8 +684,8 @@ state 44
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao  go to state 67
 
@@ -704,28 +699,28 @@ state 45
 
 state 46
 
-   27 expressao_logica: expressao_logica AND . expressao_relacional
-
-    IDENTIFICADOR  shift, and go to state 24
-    TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
-
-    expressao_relacional  go to state 68
-    expressao             go to state 25
-
-
-state 47
-
    28 expressao_logica: expressao_logica OR . expressao_relacional
 
     IDENTIFICADOR  shift, and go to state 24
     TEXTO          shift, and go to state 3
-    '-'            shift, and go to state 7
-    '('            shift, and go to state 27
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
+
+    expressao_relacional  go to state 68
+    expressao             go to state 27
+
+
+state 47
+
+   27 expressao_logica: expressao_logica AND . expressao_relacional
+
+    IDENTIFICADOR  shift, and go to state 24
+    TEXTO          shift, and go to state 3
+    '-'            shift, and go to state 6
+    '('            shift, and go to state 25
 
     expressao_relacional  go to state 69
-    expressao             go to state 25
+    expressao             go to state 27
 
 
 state 48
@@ -754,8 +749,8 @@ state 49
     TEXTO          shift, and go to state 3
     IF             shift, and go to state 4
     IMPRIMA        shift, and go to state 5
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     ';'            shift, and go to state 8
     '('            shift, and go to state 9
 
@@ -777,8 +772,8 @@ state 50
    27 expressao_logica: expressao_logica . AND expressao_relacional
    28                 | expressao_logica . OR expressao_relacional
 
-    AND  shift, and go to state 46
-    OR   shift, and go to state 47
+    OR   shift, and go to state 46
+    AND  shift, and go to state 47
     ')'  shift, and go to state 74
 
 
@@ -827,30 +822,26 @@ state 55
 
 state 56
 
-   26 expressao_logica: expressao_relacional AND expressao_logica .
-   27                 | expressao_logica . AND expressao_relacional
-   28                 | expressao_logica . OR expressao_relacional
-
-    AND  shift, and go to state 46
-    OR   shift, and go to state 47
-
-    AND       [reduce using rule 26 (expressao_logica)]
-    OR        [reduce using rule 26 (expressao_logica)]
-    $default  reduce using rule 26 (expressao_logica)
-
-
-state 57
-
    27 expressao_logica: expressao_logica . AND expressao_relacional
    28                 | expressao_logica . OR expressao_relacional
    29                 | expressao_relacional OR expressao_logica .
 
-    AND  shift, and go to state 46
-    OR   shift, and go to state 47
+    OR   error (nonassociative)
+    AND  error (nonassociative)
 
-    AND       [reduce using rule 29 (expressao_logica)]
-    OR        [reduce using rule 29 (expressao_logica)]
     $default  reduce using rule 29 (expressao_logica)
+
+
+state 57
+
+   26 expressao_logica: expressao_relacional AND expressao_logica .
+   27                 | expressao_logica . AND expressao_relacional
+   28                 | expressao_logica . OR expressao_relacional
+
+    OR   error (nonassociative)
+    AND  error (nonassociative)
+
+    $default  reduce using rule 26 (expressao_logica)
 
 
 state 58
@@ -1001,16 +992,16 @@ state 67
 
 state 68
 
-   27 expressao_logica: expressao_logica AND expressao_relacional .
+   28 expressao_logica: expressao_logica OR expressao_relacional .
 
-    $default  reduce using rule 27 (expressao_logica)
+    $default  reduce using rule 28 (expressao_logica)
 
 
 state 69
 
-   28 expressao_logica: expressao_logica OR expressao_relacional .
+   27 expressao_logica: expressao_logica AND expressao_relacional .
 
-    $default  reduce using rule 28 (expressao_logica)
+    $default  reduce using rule 27 (expressao_logica)
 
 
 state 70
@@ -1045,8 +1036,8 @@ state 73
     TEXTO          shift, and go to state 3
     IF             shift, and go to state 4
     IMPRIMA        shift, and go to state 5
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     ';'            shift, and go to state 8
     '('            shift, and go to state 9
 
@@ -1116,8 +1107,8 @@ state 80
     TEXTO          shift, and go to state 3
     IF             shift, and go to state 4
     IMPRIMA        shift, and go to state 5
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     ';'            shift, and go to state 8
     '('            shift, and go to state 9
 
@@ -1178,8 +1169,8 @@ state 85
     TEXTO          shift, and go to state 3
     IF             shift, and go to state 4
     IMPRIMA        shift, and go to state 5
-    NOT            shift, and go to state 6
-    '-'            shift, and go to state 7
+    '-'            shift, and go to state 6
+    NOT            shift, and go to state 7
     ';'            shift, and go to state 8
     '('            shift, and go to state 9
 
