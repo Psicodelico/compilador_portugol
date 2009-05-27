@@ -222,14 +222,14 @@ expressao_logica:
 
                 | expressao_relacional AND expressao_logica { 
                                                                     char command[50];
-                                                                    sprintf(command, "\trela_an(%s, %s, temp[%d]);\n", $1, $3, tp_count++);
+                                                                    sprintf(command, "\trela_an(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                                                     enqueue(strdup(command));
                                                                     sprintf(command, "temp[%d]", tp_count-1);
                                                                     $$ = strdup(command);
                                                             }
                 | expressao_relacional OR expressao_logica  {
                                                                     char command[50];
-                                                                    sprintf(command, "\trela_or(%s, %s, temp[%d]);\n", $1, $3, tp_count++);
+                                                                    sprintf(command, "\trela_or(%s, %s, &temp[%d]);\n", $1, $3, tp_count++);
                                                                     enqueue(strdup(command));
                                                                     sprintf(command, "temp[%d]", tp_count-1);
                                                                     $$ = strdup(command);
@@ -237,7 +237,7 @@ expressao_logica:
                 | NOT expressao_logica {
                                                 
                                             char command[50];
-                                            sprintf(command, "\trela_no(%s, NULL, temp[%d]);\n", $2, tp_count++);
+                                            sprintf(command, "\trela_no(%s, NULL, &temp[%d]);\n", $2, tp_count++);
                                             enqueue(strdup(command));
                                        }
 
@@ -317,8 +317,16 @@ int main(int argc, char **argv) {
 
     init_queue();
 
-    fprintf(file,"#include \"quadruplas-v1q.h\"\n\n");
-    fprintf(file,"int main(void) {\n\n");
+    fprintf(file,
+                "//\tGerado pelo compilador PORTUGOL versao 1q\n"
+                "//\tAutores: Ed Prado, Edinaldo Santos, Elton Oliveira,\n"
+                "//\t\t Marlon Chalegre, Rodrigo Castro\n"
+                "//\tEmail: {msgprado, truetypecode, elton.oliver,\n"
+                "//\t\tmarlonchalegre, rodrigomsc}@gmail.com\n"
+                "//\tData: 26/05/2009\n"
+                "\n#include \"quadruplas-v1q.h\"\n\n"
+                "int main(void)\n{\n"
+                );
 
     if(!file){
         printf("O arquivo nao pode ser aberto!!\n");
@@ -337,7 +345,7 @@ int main(int argc, char **argv) {
     yyparse();
     if (argc > 1) fclose(yyin);    
 
-    fprintf(file,"\n}\n");
+    fprintf(file,"}\n");
 
     fclose(file);
 }

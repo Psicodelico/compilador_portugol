@@ -1660,7 +1660,7 @@ yyreduce:
 #line 223 "Portugol.y"
     { 
                                                                     char command[50];
-                                                                    sprintf(command, "\trela_an(%s, %s, temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                                                    sprintf(command, "\trela_an(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                                                     enqueue(strdup(command));
                                                                     sprintf(command, "temp[%d]", tp_count-1);
                                                                     (yyval.texto) = strdup(command);
@@ -1671,7 +1671,7 @@ yyreduce:
 #line 230 "Portugol.y"
     {
                                                                     char command[50];
-                                                                    sprintf(command, "\trela_or(%s, %s, temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
+                                                                    sprintf(command, "\trela_or(%s, %s, &temp[%d]);\n", (yyvsp[(1) - (3)].texto), (yyvsp[(3) - (3)].texto), tp_count++);
                                                                     enqueue(strdup(command));
                                                                     sprintf(command, "temp[%d]", tp_count-1);
                                                                     (yyval.texto) = strdup(command);
@@ -1683,7 +1683,7 @@ yyreduce:
     {
                                                 
                                             char command[50];
-                                            sprintf(command, "\trela_no(%s, NULL, temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
+                                            sprintf(command, "\trela_no(%s, NULL, &temp[%d]);\n", (yyvsp[(2) - (2)].texto), tp_count++);
                                             enqueue(strdup(command));
                                        }
     break;
@@ -2003,8 +2003,16 @@ int main(int argc, char **argv) {
 
     init_queue();
 
-    fprintf(file,"#include \"quadruplas-v1q.h\"\n\n");
-    fprintf(file,"int main() {\n\n");
+    fprintf(file,
+                "//\tGerado pelo compilador PORTUGOL versao 1q\n"
+                "//\tAutores: Ed Prado, Edinaldo Santos, Elton Oliveira,\n"
+                "//\t\t Marlon Chalegre, Rodrigo Castro\n"
+                "//\tEmail: {msgprado, truetypecode, elton.oliver,\n"
+                "//\t\tmarlonchalegre, rodrigomsc}@gmail.com\n"
+                "//\tData: 26/05/2009\n"
+                "\n#include \"quadruplas-v1q.h\"\n\n"
+                "int main(void)\n{\n"
+                );
 
     if(!file){
         printf("O arquivo nao pode ser aberto!!\n");
@@ -2023,7 +2031,7 @@ int main(int argc, char **argv) {
     yyparse();
     if (argc > 1) fclose(yyin);    
 
-    fprintf(file,"\n}\n");
+    fprintf(file,"}\n");
 
     fclose(file);
 }

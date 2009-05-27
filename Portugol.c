@@ -1,7 +1,14 @@
+//	Gerado pelo compilador PORTUGOL versao 1q
+//	Autores: Ed Prado, Edinaldo Santos, Elton Oliveira,
+//		 Marlon Chalegre, Rodrigo Castro
+//	Email: {msgprado, truetypecode, elton.oliver,
+//		marlonchalegre, rodrigomsc}@gmail.com
+//	Data: 26/05/2009
+
 #include "quadruplas-v1q.h"
 
-int main() {
-
+int main(void)
+{
 	mov(1, NULL, &ts[0]);
 	mov(2.0, NULL, &ts[1]);
 	comp_eq(ts[1], 2.0, &temp[0]);
@@ -23,8 +30,8 @@ int main() {
 	comp_eq(ts[0], 1, &temp[9]);
 	comp_ne(ts[1], 2.0, &temp[10]);
 	comp_ge(ts[2], 3.0, &temp[11]);
-	rela_an(temp[10], temp[11], temp[12]);
-	rela_or(temp[9], temp[12], temp[13]);
+	rela_an(temp[10], temp[11], &temp[12]);
+	rela_or(temp[9], temp[12], &temp[13]);
 	jump_f(temp[13], NULL, l3);
 	comp_le(ts[3], 0, &temp[14]);
 	jump_f(temp[14], NULL, l4);
@@ -37,8 +44,8 @@ int main() {
 	call("imprima", 1, NULL);
 	comp_gt(ts[0], 2, &temp[15]);
 	comp_lt(ts[1], 3.0, &temp[16]);
-	rela_an(temp[15], temp[16], temp[17]);
-	rela_no(temp[17], NULL, temp[18]);
+	rela_an(temp[15], temp[16], &temp[17]);
+	rela_no(temp[17], NULL, &temp[18]);
 	jump_f(temp[18], NULL, l5);
 	param(222.2, NULL, NULL);
 	call("imprima", 1, NULL);
@@ -55,5 +62,4 @@ int main() {
 	nop(NULL, NULL, NULL);
 	param(ts[3], NULL, NULL);
 	call("imprima", 1, NULL);
-
 }
