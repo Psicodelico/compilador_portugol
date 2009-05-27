@@ -115,7 +115,7 @@
     #include <string.h>
     #include <stdlib.h>
     #include "Tabela.h"
-    #include "Queue.h"
+    #include "Fila.h"
 
     FILE *file;
     void yyerror(char *);
@@ -1614,7 +1614,7 @@ yyreduce:
                                         char command[50];
                                         sprintf(command, "\tparam(ts[%d], NULL, NULL);\n", (yyvsp[(2) - (3)].sp)); 
                                         enqueue(strdup(command));
-                                        enqueue(strdup(command));
+                                        //enqueue(strdup(command));
                                         sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
                                         enqueue(strdup(command));
                                     }

@@ -40,7 +40,6 @@ int main(void)
 	jump(NULL, NULL, l6);
  l4:
 	param(ts[2], NULL, NULL);
-	param(ts[2], NULL, NULL);
 	call("imprima", 1, NULL);
 	comp_gt(ts[0], 2.00, &temp[15]);
 	comp_lt(ts[1], 3.00, &temp[16]);

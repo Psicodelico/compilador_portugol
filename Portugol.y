@@ -4,7 +4,7 @@
     #include <string.h>
     #include <stdlib.h>
     #include "Tabela.h"
-    #include "Queue.h"
+    #include "Fila.h"
 
     FILE *file;
     void yyerror(char *);
@@ -183,7 +183,7 @@ sentenca:
                                         char command[50];
                                         sprintf(command, "\tparam(ts[%d], NULL, NULL);\n", $2); 
                                         enqueue(strdup(command));
-                                        enqueue(strdup(command));
+                                        //enqueue(strdup(command));
                                         sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
                                         enqueue(strdup(command));
                                     }
