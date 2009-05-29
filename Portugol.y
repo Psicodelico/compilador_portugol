@@ -5,18 +5,16 @@
     #include <stdlib.h>
     #include "Tabela.h"
     #include "Fila.h"
+    #include "Stack.h"
 
     FILE *file;
     void yyerror(char *);
     int yylex(void);
     void desempilhar(void);
-    int pop();
-    void push();
     int tp_count = 0;
     int l = 1;
     int count_if_else = 0;
-    int stack[100];
-    int stack_pt = -1;
+    char msg[80];
 %}
 
 %union{
@@ -31,6 +29,7 @@
 %token IF
 %token IMPRIMA
 %token MAIORIGUAL IGUAL MENORIGUAL DIFERENTE
+%right '='
 %left '<' '>' MENORIGUAL MAIORIGUAL IGUAL DIFERENTE
 %left '+' '-'
 %left '*' '/'
@@ -38,20 +37,27 @@
 %type <texto> expressao
 %type <texto> expressao_relacional
 %type <texto> expressao_logica
+%type <texto> atribuicao
 %expect 3
 %%
 
 programa:
-	instrucao 
-        | programa instrucao 
+        bloco_instrucao
         ;
 
-afirmacao:
+atribuicao:
         IDENTIFICADOR '=' expressao ';' {
                                             char command[50];
                                             sprintf(command,"\tmov(%s, NULL, &ts[%d]);\n", $3, $1);
                                             enqueue( strdup(command) );
+                                            $$ = $3;
 				        }
+        | IDENTIFICADOR '=' atribuicao ';' {
+                                            char command[50];
+                                            sprintf(command,"\tmov(%s, NULL, &ts[%d]);\n", $3, $1);
+                                            enqueue( strdup(command) );
+                                            $$ = $3;
+                                          }
         ;
 
 expressao_relacional:
@@ -266,7 +272,7 @@ instrucao:
 
         | expressao_logica
         | sentenca { if (count_if_else == 0) desempilhar(); }
-	| afirmacao { if (count_if_else == 0) desempilhar(); } 
+	| atribuicao { if (count_if_else == 0) desempilhar(); } 
         | expressao ';' { if (count_if_else == 0) desempilhar(); } 
 	| bloco_instrucao
         | ';' { if (count_if_else == 0) {
@@ -292,14 +298,6 @@ imprimir_label: {
                         fprintf(file, " l%d:\n", l++);
                 }
 %%
-
-void push(int value) {
-    stack[++stack_pt] = value;
-}
-
-int pop() {
-    return stack[stack_pt--];
-}
 
 void desempilhar(void) {
     char *value; 

@@ -4,6 +4,7 @@
     #include <stdlib.h>
     #include "quadruplas-v1q.h"
     void yyerror(char *);
+    extern char msg[80];
 %}
 %%
 
@@ -42,9 +43,13 @@ sqrt        {return SQRT;}
 
 [-+><()=/*] { return *yytext; }
 
-[ \t\n]*    {;/*Ignora espaço em branco */}
+[ \t\n\r]*    {;/*Ignora espaço em branco */}
 
-.           yyerror("Caracter Desconhecido");
+                
+.           {
+                sprintf(msg, "Caracter Desconhecido: '%s' (%d)", yytext, yytext[0]);
+                yyerror(msg);
+            }
 
 %%
 
