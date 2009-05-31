@@ -15,6 +15,8 @@
     int l = 1;
     int count_if_else = 0;
     char msg[80];
+    Stack *stack_if;
+    Stack *stack_enquanto;
 %}
 
 %union{
@@ -27,6 +29,7 @@
 %token <texto> TEXTO
 %token SQRT
 %token IF
+%token ENQUANTO
 %token IMPRIMA
 %token MAIORIGUAL IGUAL MENORIGUAL DIFERENTE
 %right '='
@@ -195,20 +198,47 @@ inicio_if: {
                 char command[50];
                 sprintf(command,"\tjump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
                 enqueue(strdup(command));
-                push(l-1);
+                push(stack_if, l-1);
                 count_if_else++;
            }
            ;
 
 label: {
             char command[50];
-            sprintf(command, " l%d:\n", pop());
+            sprintf(command, " l%d:\n", pop(stack_if));
             enqueue(strdup(command));
         }
 
 bloco: {
             enqueue("jump_incondicional");
        }
+
+label_enquanto_inicio: {
+                            char command[50];
+                            sprintf(command, " l%d:\n", l++);
+                            enqueue(strdup(command));
+                       }
+
+label_enquanto_fim: {
+                        int label = pop(stack_enquanto);
+                        char command[50];
+                        sprintf(command, "\tjump(NULL, NULL, l%d);\n", label-1);
+                        enqueue(strdup(command));
+                        sprintf(command, "l%d:\n", label); 
+                        enqueue(strdup(command));
+                    }
+
+inicio_enquanto: {
+                    char command[50];
+                    sprintf(command,"\tjump_f(temp[%d], NULL, l%d);\n", tp_count-1, l++);
+                    enqueue(strdup(command));
+                    push(stack_enquanto, l-1);
+                 }
+
+
+enquanto:
+        ENQUANTO label_enquanto_inicio '(' expressao_logica ')' inicio_enquanto instrucao label_enquanto_fim
+        ;
 
 selecao: 
 	IF '(' expressao_logica ')' inicio_if THEN instrucao label
@@ -269,7 +299,9 @@ instrucao:
                         fflush(file);
                     }
                 }
-
+        | enquanto {
+                        desempilhar();
+                   }
         | expressao_logica
         | sentenca { if (count_if_else == 0) desempilhar(); }
 	| atribuicao { if (count_if_else == 0) desempilhar(); } 
@@ -319,10 +351,11 @@ void yyerror(char *s) {
 }
 
 int main(int argc, char **argv) {
-
     file = fopen("Portugol.c","w");
 
     init_queue();
+    stack_if = init_stack();
+    stack_enquanto = init_stack();
 
     fprintf(file,
                 "//\tGerado pelo compilador PORTUGOL versao 1q\n"
