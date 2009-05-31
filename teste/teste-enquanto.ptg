@@ -1,0 +1,16 @@
+inicio;
+    A = 3;
+    B = 3;
+    enquanto (A > 0)
+        inicio;
+            enquanto (B > 0)
+                inicio;
+                    imprima B;
+                    B = B - 1;
+                fim;
+            imprima A;
+            B = 3;
+            A = A - 1;
+        fim;
+        imprima 0;
+fim;
