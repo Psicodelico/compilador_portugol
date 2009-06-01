@@ -35,7 +35,7 @@
 %token SQRT
 %token IF
 %token ENQUANTO PARA
-%token IMPRIMA
+%token IMPRIMA ABORTE SAIA
 %token MAIORIGUAL IGUAL MENORIGUAL DIFERENTE
 %right '='
 %left '<' '>' MENORIGUAL MAIORIGUAL IGUAL DIFERENTE
@@ -364,6 +364,20 @@ expressao_logica:
                 | '(' expressao_logica ')' { $$ = $2; }
                 ;
 
+aborte:
+      ABORTE ';' {
+                    enqueue(queue_geral, "\texit(1);\n");
+                 }
+      ;
+
+saia:
+    SAIA '(' TEXTO ')' ';' {
+                                char command[50];
+                                sprintf(command, "\texit(%d);\n", atoi($3));
+                                enqueue(queue_geral, strdup(command));
+                           }
+    ;
+
 instrucao:
 	selecao { 
                     desempilhar();
@@ -373,12 +387,10 @@ instrucao:
                         fflush(file);
                     }
                 }
-        | enquanto {
-                        desempilhar();
-                   }
-        | para {
-                    desempilhar();
-               }
+        | enquanto { desempilhar(); }
+        | para { desempilhar(); }
+        | aborte { desempilhar(); }
+        | saia { desempilhar(); }
         | expressao_logica
         | sentenca { if (count_if_else == 0) desempilhar(); }
 	| atribuicao ';' { if (count_if_else == 0) desempilhar(); } 
@@ -444,7 +456,6 @@ int main(int argc, char **argv) {
     stack_para_label = init_stack();
     stack_para_atribuicao = init_stack();
     queue_geral = init_queue();
-    //queue_para = init_queue();
 
     fprintf(file,
                 "//\tGerado pelo compilador PORTUGOL versao 1q\n"
@@ -453,7 +464,8 @@ int main(int argc, char **argv) {
                 "//\tEmail: {msgprado, truetypecode, elton.oliver,\n"
                 "//\t\tmarlonchalegre, rodrigomsc}@gmail.com\n"
                 "//\tData: 26/05/2009\n"
-                "\n#include \"quadruplas-v1q.h\"\n\n"
+                "\n#include <stdlib.h>\n"
+                "#include \"quadruplas-v1q.h\"\n\n"
                 "int main(void)\n{\n"
                 );
 

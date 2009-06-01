@@ -20,6 +20,8 @@ sqrt        {return SQRT;}
 "para"      { return PARA; }
 "senao"     { return ELSE; }
 "imprima"   { return IMPRIMA; }
+"aborte"    { return ABORTE; }
+"saia"      { return SAIA; }
 "e"         { return AND; }
 "ou"        { return OR; }
 "nao"       { return NOT; }
