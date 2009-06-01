@@ -1,15 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-typedef struct queue{
+typedef struct queue_elmt {
 
     char* value;
-    struct queue *next;
+    struct queue_elmt *next;
 
+} Queue_elmt;
+
+typedef struct queue {
+    Queue_elmt *first;
+    Queue_elmt *last;
 } Queue;
 
+Queue* init_queue(void);
 Queue* newQueue(void);
-void enqueue(char* value);
-char* dequeue(void);
-int is_empty(void);
-void init_queue(void);
+void enqueue(Queue *q, char* value);
+char* dequeue(Queue *q);
+int is_empty(Queue *q);

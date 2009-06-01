@@ -17,6 +17,7 @@ sqrt        {return SQRT;}
 "se"        { return IF; }
 "entao"     { return THEN; }
 "enquanto"  { return ENQUANTO; }
+"para"      { return PARA; }
 "senao"     { return ELSE; }
 "imprima"   { return IMPRIMA; }
 "e"         { return AND; }

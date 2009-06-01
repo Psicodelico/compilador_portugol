@@ -29,19 +29,19 @@ Stack *init_stack() {
     return s;
 }
 
-void push(Stack *s, int value) {
+void push(Stack *s, void *value) {
     if (!is_stack_full(s))
         s->stack[++s->pt] = value;
     else
         printf("Error: stack full.\n");
 }
 
-int pop(Stack *s) {
+void *pop(Stack *s) {
     if (!is_stack_empty(s))
         return s->stack[s->pt--];
     else {
         printf("Error: stack empty.\n");
-        return -1;
+        return (void *)-1;
     }
 }
 
