@@ -2,7 +2,7 @@
     #include "y.tab.h"
     #include "Tabela.h"
     #include <stdlib.h>
-    #include "quadruplas-v1q.h"
+    #include "quadruplas.h"
     void yyerror(char *);
     extern char msg[80];
 %}
