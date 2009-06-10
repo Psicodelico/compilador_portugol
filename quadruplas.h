@@ -8,57 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
-#define STACK_SIZE 200
-#define FUNC_NAME_SIZE 32
-#define MAX_PARAM 4
-#define MAX_SVAL 256
-
-/* Tipos de Base */
-typedef enum
-{
-    tipoIndef,
-    tipoInt,
-    tipoFloat,
-    tipoStr,
-    tipoVoid
-} tipoBase;
-
-typedef enum
-{
-    tipoRetFuncInt,
-    tipoRetFuncFloat,
-    tipoRetFuncDouble,
-    tipoRetFuncChar,
-    tipoRetFuncStr,
-    tipoRetFuncVoid,
-    tipoRetFuncPVoid
-} tipoRetFunc;
-
-/* Super Tipo */
-typedef struct
-{
-      tipoBase tipo;
-      int    ival;
-      float  fval;
-      char   sval[MAX_SVAL];
-} superTipo;
-
-/* Super Func */
-typedef struct
-{
-      tipoRetFunc tipoRet;
-      tipoBase tipoParam[MAX_PARAM];
-      int numParam;
-      char   *idNome;
-      int    (*ifunc)();   //ponteiro para funcao que retorna inteiro
-      float  (*ffunc)();   //ponteiro para funcao que retorna float
-      double (*dfunc)();   //ponteiro para funcao que retorna double
-      char   (*cfunc)();   //ponteiro para funcao que retorna char
-      char   *(*sfunc)();  //ponteiro para funcao que retorna ponteiro para char
-      void   (*vfunc)();   //ponteiro para a funcao que retorna void
-      void   *(*pfunc)();  //ponteiro para a funcao que retorna ponteiro para void
-} superFunc;
+#include "Tabela.h"
 
 #include "saida.h"
 
@@ -113,14 +63,14 @@ void rela_no(superTipo  q1, superTipo  *nul1, superTipo  *qres);   // *qres = (!
 void param(superTipo q1, void *nul1, void *nul2); // push(q1)
 void call(char *q1, int q2, superTipo  *qres);    // *qres = f_name(a[1], ..., a[q2]); where q1:f_name, q2:quantity of param
 
-void push(superTipo g); // poe na pilha de execucao
-superTipo *pop(void);   // tira da pilha de execucao
+void pushElemento(superTipo g); // poe na pilha de execucao
+superTipo *popElemento(void);   // tira da pilha de execucao
 
 /* ------------------------------------------------------------------------------------------------- */
 
 /* auxiliar functions */
 //---------------------------
-void push(superTipo g) // poe na pilha de execucao geral //push to stack
+void pushElemento(superTipo g) // poe na pilha de execucao geral //push to stack
 {
     gstack[gsi]=g; //copia por valor
     gsi++;
@@ -131,7 +81,7 @@ void push(superTipo g) // poe na pilha de execucao geral //push to stack
     }
 }
 
-superTipo *pop(void)    // tira da pilha de execucao geral //pop from stack
+superTipo *popElemento(void)    // tira da pilha de execucao geral //pop from stack
 {
     superTipo *r;
     if(gsi<=0)
@@ -640,7 +590,7 @@ void rela_no(superTipo  q1, superTipo  *nul1, superTipo  *qres)
 
 void param(superTipo q1, void *nul1, void *nul2)
 {
-    push(q1);
+    pushElemento(q1);
 }
 
 void call(char *q1, int i, superTipo  *qres)
@@ -655,7 +605,7 @@ void call(char *q1, int i, superTipo  *qres)
     }
 
     for(j=0; j<i && j<MAX_PARAM; j++)
-        g[j]=pop();    //pop all parameters
+        g[j]=popElemento();    //pop all parameters
 
     /* lista de funcoes */
     for(idx=0; idx<MAX_TF; idx++)

@@ -1,10 +1,14 @@
+variavel [a-zA-Z]([a-zA-Z0-9]|_)*
+tipo ("int"|"real")
+declaracao {tipo} {variavel}
+
 %{
     #include "y.tab.h"
-    #include "Tabela.h"
     #include <stdlib.h>
     #include "quadruplas.h"
     void yyerror(char *);
     extern char msg[80];
+    
 %}
 %%
 
@@ -27,10 +31,16 @@ sqrt        {return SQRT;}
 "nao"       { return NOT; }
 ;           { return *yytext;}
 
-[A-Z] {
-            yylval.sp = ((char) *yytext) - 65;
+{tipo}[ \n\t\r]{variavel} { tabelaSimb *simb = achaOuAdicionaId(yytext);
+                            yylval.sp = simb->idx; 
+                            return IDENTIFICADOR;
+                          }
+
+{variavel} {
+            tabelaSimb *simb = achaId(yytext);
+            yylval.sp = simb->idx; 
             return IDENTIFICADOR;
-      }
+           }
 
 ([0-9]+|([0-9]*\.[0-9]+)) {
                             char buf[40];

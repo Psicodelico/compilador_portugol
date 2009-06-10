@@ -7,7 +7,21 @@
 */
 
 #define MAX_SIMB 200
-#define MAX_SVAL 128
+#define STACK_SIZE 200
+#define FUNC_NAME_SIZE 32
+#define MAX_PARAM 4
+#define MAX_SVAL 256
+
+/* Tipos de Base */
+//char *sTipoBase[4]={"tipoIndef", "tipoInt", "tipoFloat", "tipoStr"};
+typedef enum
+{
+    tipoIndef,
+    tipoInt,
+    tipoFloat,
+    tipoStr,
+    tipoVoid
+} tipoBase;
 
 /* Tipos de Dados da Tabela de Simbolos */
 //char *sTipoDado[14]={"tipoIdIndef", "tipoConInt", "tipoConFloat", "tipoConStr", "tipoIdInt", "tipoIdFloat", "tipoIdStr", "tipoIdFuncInt", "tipoIdFuncFloat", "tipoIdFuncDouble", "tipoIdFuncChar", "tipoIdFuncStr", "tipoIdFuncVoid", "tipoIdFuncPVoid"};
@@ -29,18 +43,8 @@ typedef enum
     tipoIdFuncChar,
     tipoIdFuncStr,
     tipoIdFuncVoid,
-    tipoIdFuncPVoid,
+    tipoIdFuncPVoid
 } tipoDado;
-
-/* Tipos de Base */
-//char *sTipoBase[4]={"tipoIndef", "tipoInt", "tipoFloat", "tipoStr"};
-typedef enum
-{
-    tipoIndef,
-    tipoInt,
-    tipoFloat,
-    tipoStr
-} tipoBase;
 
 /* Tipos de Nodos */
 typedef enum
@@ -48,6 +52,42 @@ typedef enum
     tipoSimb,
     tipoOper
 } tipoNodo;
+
+typedef enum
+{
+    tipoRetFuncInt,
+    tipoRetFuncFloat,
+    tipoRetFuncDouble,
+    tipoRetFuncChar,
+    tipoRetFuncStr,
+    tipoRetFuncVoid,
+    tipoRetFuncPVoid
+} tipoRetFunc;
+
+/* Super Tipo */
+typedef struct
+{
+      tipoBase tipo;
+      int    ival;
+      float  fval;
+      char   sval[MAX_SVAL];
+} superTipo;
+
+/* Super Func */
+typedef struct
+{
+      tipoRetFunc tipoRet;
+      tipoBase tipoParam[MAX_PARAM];
+      int numParam;
+      char   *idNome;
+      int    (*ifunc)();   //ponteiro para funcao que retorna inteiro
+      float  (*ffunc)();   //ponteiro para funcao que retorna float
+      double (*dfunc)();   //ponteiro para funcao que retorna double
+      char   (*cfunc)();   //ponteiro para funcao que retorna char
+      char   *(*sfunc)();  //ponteiro para funcao que retorna ponteiro para char
+      void   (*vfunc)();   //ponteiro para a funcao que retorna void
+      void   *(*pfunc)();  //ponteiro para a funcao que retorna ponteiro para void
+} superFunc;
 
 /* tabela de simbolos */
 typedef struct
@@ -92,8 +132,8 @@ tabelaSimb *achaFloat(float fv);
 tabelaSimb *achaStr(char *sv);
 tabelaSimb *achaFuncs(tabelaSimb *ultima);
 
-extern FILE *yyin, *yyout;
-extern FILE *fhead;
+//extern FILE *yyin, *yyout;
+//extern FILE *fhead;
 char *geraLB(int *i);
 char *geraTP(int *i);
 int geraTF(void); //tabela de funcoes
