@@ -31,7 +31,8 @@ sqrt        {return SQRT;}
 "nao"       { return NOT; }
 ;           { return *yytext;}
 
-{tipo}[ \n\t\r]{variavel} { tabelaSimb *simb = achaOuAdicionaId(yytext);
+{tipo}[ \n\t\r]{variavel} { 
+                            tabelaSimb *simb = achaOuAdicionaId(yytext);
                             yylval.sp = simb->idx; 
                             return IDENTIFICADOR;
                           }
