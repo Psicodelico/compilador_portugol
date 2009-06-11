@@ -128,6 +128,7 @@ typedef struct uNodo
 tabelaSimb tabSimb[MAX_SIMB];
 tabelaSimb *achaId(char *nome);
 tabelaSimb *achaInt(int iv);
+tabelaSimb* achaOuAdicionaId(char *nome);
 tabelaSimb *achaFloat(float fv);
 tabelaSimb *achaStr(char *sv);
 tabelaSimb *achaFuncs(tabelaSimb *ultima);
