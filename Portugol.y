@@ -12,6 +12,7 @@
     int yylex(void);
     int *copy_int(int *value);
     void desempilhar(void);
+    int yylineno;
     int tp_count = 0;
     int *l;
     int count_if_else = 0;
@@ -26,13 +27,13 @@
 
 %union{
     char *texto;
-    int sp;
 }
 
-%token <sp> IDENTIFICADOR
+%token <tb> IDENTIFICADOR
 %token INICIO FIM
-%token <texto> TEXTO
-%token SQRT
+%token <tb> TEXTO
+%token <tipo> TIPO
+%token SQRT INT FLOAT
 %token IF
 %token ENQUANTO PARA
 %token IMPRIMA ABORTE SAIA
@@ -42,15 +43,24 @@
 %left '+' '-'
 %left '*' '/'
 %nonassoc UMINUS THEN ELSE AND OR NOT
-%type <texto> expressao
-%type <texto> expressao_relacional
-%type <texto> expressao_logica
-%type <texto> atribuicao
+%type <tb> expressao
+%type <tb> expressao_relacional
+%type <tb> expressao_logica
+%type <tb> atribuicao
 %expect 3
 %%
 
 programa:
         bloco_instrucao
+        ;
+
+declaracao:
+        INT IDENTIFICADOR {
+                                $2->tipoD = tipoDado.tipoIdInt; 
+                          }
+        | FLOAT IDENTIFICADOR {
+                                $2->tipoD = tipoDado.tipoIdFloat; 
+                            }
         ;
 
 atribuicao:
@@ -442,11 +452,12 @@ void desempilhar(void) {
 }
 
 void yyerror(char *s) {
-    fprintf(stderr, "%s\n", s);
+    fprintf(stderr, "line %d: %s\n", yylineno, s);
 }
 
 int main(int argc, char **argv) {
     file = fopen("Portugol.c","w");
+    iniciarTabelaSimb();
     
     l = malloc(sizeof(int));
     *l = 1;

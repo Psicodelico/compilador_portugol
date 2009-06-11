@@ -1,6 +1,6 @@
 variavel [a-zA-Z]([a-zA-Z0-9]|_)*
+num [0-9]
 tipo ("int"|"real")
-declaracao {tipo} {variavel}
 
 %{
     #include "y.tab.h"
@@ -8,16 +8,21 @@ declaracao {tipo} {variavel}
     #include "quadruplas.h"
     void yyerror(char *);
     extern char msg[80];
-    
 %}
 %%
 
-\/\/[^\n]*\n {;} 
+(\/\/[^\n]*\n|\n) { yylineno++; } 
 
-sqrt        {return SQRT;}
+sqrt        { return SQRT; }
 
-"inicio"    { return INICIO;}
+"inicio"    { return INICIO; }
 "fim"       { return FIM; }
+"int"       {
+                return INT; 
+            }
+"real"      {
+                return FLOAT; 
+            }
 "se"        { return IF; }
 "entao"     { return THEN; }
 "enquanto"  { return ENQUANTO; }
@@ -31,25 +36,24 @@ sqrt        {return SQRT;}
 "nao"       { return NOT; }
 ;           { return *yytext;}
 
-{tipo}[ \n\t\r]{variavel} { 
-                            tabelaSimb *simb = achaOuAdicionaId(yytext);
-                            yylval.sp = simb->idx; 
-                            return IDENTIFICADOR;
-                          }
-
-{variavel} {
-            tabelaSimb *simb = achaId(yytext);
-            yylval.sp = simb->idx; 
-            return IDENTIFICADOR;
+{variavel} { 
+                yylval.tb = achaId(yytext);
+                return IDENTIFICADOR;
            }
 
-([0-9]+|([0-9]*\.[0-9]+)) {
-                            char buf[40];
-                            //float in = atof(yytext);
-                            sprintf(buf, "%.2f", atof(yytext));
-                            yylval.texto = strdup(buf);
-                            return TEXTO;
-                          }
+{num}+     {                    
+                int val = atoi(yytext);
+                yylval.tb = achaInt(val);
+                return TEXTO;
+           } 
+
+{num}*\.{num}+ {
+                    char buf[40];
+                    //float in = atof(yytext);
+                    sprintf(buf, "%.2f", atof(yytext));
+                    yylval.texto = strdup(buf);
+                    return TEXTO;
+               }
 
 "<="        {return MENORIGUAL;}
 ">="        {return MAIORIGUAL;}

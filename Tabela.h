@@ -132,6 +132,7 @@ tabelaSimb* achaOuAdicionaId(char *nome);
 tabelaSimb *achaFloat(float fv);
 tabelaSimb *achaStr(char *sv);
 tabelaSimb *achaFuncs(tabelaSimb *ultima);
+void iniciarTabelaSimb();
 
 //extern FILE *yyin, *yyout;
 //extern FILE *fhead;
