@@ -90,21 +90,23 @@ typedef struct
 } superFunc;
 
 /* tabela de simbolos */
-typedef struct
+typedef struct tabelaSimb
 {
       tipoDado tipoD;
       int idx;              /* ts[idx] ou tf[idx]*/
       int uso;              //verdadeiro se ja usou
+      int load;             //verdadeiro se ja carregou na tabela de simbolos de execucao
       char *idNome;         //nome da variavel ou funcao em Portugol
       char *idFunc;         //nome da funcao em C
       int ival;             //valor da constante inteira
       float fval;           //valor da constante real
-      char sval[MAX_SVAL];  //valor da constante texto
-      int (*ifunc)();      //ponteiro para funcao que retorna inteiro
-      float (*ffunc)();    //ponteiro para funcao que retorna double
-      double (*dfunc)();   //ponteiro para funcao que retorna double
-      char *(*sfunc)();    //ponteiro para funcao que retorna ponteiro para char
-      void (*vfunc)();     //ponteiro para a funcao que retorna void
+      char *str;            //valor da constante texto
+      char *sval;           //valor para geracao de codigo 
+      int (*ifunc)();       //ponteiro para funcao que retorna inteiro
+      float (*ffunc)();     //ponteiro para funcao que retorna double
+      double (*dfunc)();    //ponteiro para funcao que retorna double
+      char *(*sfunc)();     //ponteiro para funcao que retorna ponteiro para char
+      void (*vfunc)();      //ponteiro para a funcao que retorna void
 } tabelaSimb;
 
 /* operadores */
@@ -128,7 +130,6 @@ typedef struct uNodo
 tabelaSimb tabSimb[MAX_SIMB];
 tabelaSimb *achaId(char *nome);
 tabelaSimb *achaInt(int iv);
-tabelaSimb* achaOuAdicionaId(char *nome);
 tabelaSimb *achaFloat(float fv);
 tabelaSimb *achaStr(char *sv);
 tabelaSimb *achaFuncs(tabelaSimb *ultima);

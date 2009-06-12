@@ -1,3 +1,4 @@
 inicio;
-A = B = 3;
+    int a;
+    a = 3;
 fim;

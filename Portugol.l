@@ -3,15 +3,16 @@ num [0-9]
 tipo ("int"|"real")
 
 %{
+    #include "quadruplas.h"
     #include "y.tab.h"
     #include <stdlib.h>
-    #include "quadruplas.h"
     void yyerror(char *);
     extern char msg[80];
+
 %}
 %%
 
-(\/\/[^\n]*\n|\n) { yylineno++; } 
+((\/\/[^\n]*\n)|\n) { yylineno++; } 
 
 sqrt        { return SQRT; }
 
@@ -48,10 +49,8 @@ sqrt        { return SQRT; }
            } 
 
 {num}*\.{num}+ {
-                    char buf[40];
-                    //float in = atof(yytext);
-                    sprintf(buf, "%.2f", atof(yytext));
-                    yylval.texto = strdup(buf);
+                    float val = atof(yytext);
+                    yylval.tb = achaFloat(val);
                     return TEXTO;
                }
 
