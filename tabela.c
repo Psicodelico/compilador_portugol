@@ -31,8 +31,8 @@ void geraSaidaH() {
                 "superTipo ts[MAX_TS];\n"
                 "superTipo tc[MAX_TC];\n"
                 "superTipo tp[MAX_TP];\n"
-                "superTipo tf[MAX_TF];",
-                idxId, idxCon, 100, idxFunc 
+                "superFunc tf[MAX_TF];\n",
+                idxId, idxCon, 100, 1/*idxFunc*/ 
                 );
     fclose(file);
 
@@ -57,6 +57,7 @@ tabelaSimb* achaId(char *nome){
                 /* ta livre? */
 	        if (!sp->uso) { 
                     sp->uso = 1;
+                    sp->load = 0;
                     sp->tipoD = tipoIdIndef;
 		    sp->idNome = strdup(nome); //coloca na tabela de simbolos
                     sp->idx = idxId++;

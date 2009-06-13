@@ -16,7 +16,9 @@
     tipoDado defineTipo(tabelaSimb *s1, tabelaSimb *s2);
     tabelaSimb *alloc_tabelaSimb();
     tabelaSimb *mnemonico(tabelaSimb *s1, tabelaSimb *s2, char buffer[]);
+    void geraSaidaTemplate(FILE *file);
     void load(tabelaSimb *s);
+    void verificaUso(tabelaSimb *s);
     int yylineno;
     int tp_count = 0;
     int *l;
@@ -63,18 +65,21 @@ programa:
 
 declaracao:
         INT ATOMO {
+                                verificaUso($2); 
                                 $2->tipoD = tipoIdInt; 
                                 $2->load = 1;
                                 sprintf(command, "\tloadi(0, NULL, &%s);\n", $2->tval);
                                 enqueue(queue_geral, strdup(command));
                           }
         | FLOAT ATOMO {
+                                verificaUso($2); 
                                 $2->tipoD = tipoIdFloat; 
                                 $2->load = 1;
                                 sprintf(command, "\tloadf(0.00, NULL, &%s);\n", $2->tval);
                                 enqueue(queue_geral, strdup(command));
                               }
         | TEXTO ATOMO {
+                                verificaUso($2); 
                                 $2->tipoD = tipoIdStr; 
                                 $2->load = 1;
                                 sprintf(command, "\tloads(\"\", NULL, &%s);\n", $2->tval);
@@ -507,6 +512,35 @@ void yyerror(char *s) {
     exit(1);
 }
 
+void verificaUso(tabelaSimb *s) {
+    char error[200];
+    sprintf(error, "Erro: variavel %s ja foi declarada.", s->idNome);
+    if (s->load)
+        yyerror(error);
+}
+
+void geraSaidaTemplate(FILE *file) {
+    fprintf(file,
+                "//\tGerado pelo compilador PORTUGOL versao 1q\n"
+                "//\tAutores: Ed Prado, Edinaldo Carvalho, Elton Oliveira,\n"
+                "//\t\t Marlon Chalegre, Rodrigo Castro\n"
+                "//\tEmail: {msgprado, truetypecode, elton.oliver,\n"
+                "//\t\tmarlonchalegre, rodrigomsc}@gmail.com\n"
+                "//\tData: 26/05/2009\n"
+                "\n#include <stdlib.h>\n"
+                "#include \"quadruplas.h\"\n"
+                "#include \"saida.h\"\n\n"
+                "void filltf()\n{\n"
+                "\ttf[0].tipoRet = tipoRetFuncVoid;\n"
+                "\ttf[0].vfunc = (void *)printf;\n"
+                "\ttf[0].idNome = malloc(8);\n"
+                "\tstrcpy(tf[0].idNome, \"imprima\");\n"
+                "}\n\n"
+                "int main(void)\n{\n"
+                "\tfilltf();\n"
+                );
+}
+
 int main(int argc, char **argv) {
     file = fopen("Portugol.c","w");
     iniciarTabelaSimb();
@@ -524,20 +558,8 @@ int main(int argc, char **argv) {
         printf("O arquivo nao pode ser aberto!\n");
         exit(1);
     }
-    fprintf(file,
-                "//\tGerado pelo compilador PORTUGOL versao 1q\n"
-                "//\tAutores: Ed Prado, Edinaldo Carvalho, Elton Oliveira,\n"
-                "//\t\t Marlon Chalegre, Rodrigo Castro\n"
-                "//\tEmail: {msgprado, truetypecode, elton.oliver,\n"
-                "//\t\tmarlonchalegre, rodrigomsc}@gmail.com\n"
-                "//\tData: 26/05/2009\n"
-                "\n#include <stdlib.h>\n"
-                "#include \"quadruplas.h\"\n"
-                "#include \"saida.h\"\n\n"
-                "int main(void)\n{\n"
-                );
-
     
+    geraSaidaTemplate(file);
 
     FILE *yyin;
     if (argc > 1) {
