@@ -35,11 +35,12 @@
     tabelaSimb *tb;
 }
 
-%token <tb> IDENTIFICADOR
 %token INICIO FIM
-%token <tb> TEXTO
+//%token <tb> IDENTIFICADOR
+//%token <tb> TEXTO
+%token <tb> ATOMO 
 %token <tipo> TIPO
-%token SQRT INT FLOAT
+%token SQRT INT FLOAT TEXTO 
 %token IF
 %token ENQUANTO PARA
 %token IMPRIMA ABORTE SAIA
@@ -61,22 +62,31 @@ programa:
         ;
 
 declaracao:
-        INT IDENTIFICADOR {
+        INT ATOMO {
                                 $2->tipoD = tipoIdInt; 
-                                sprintf(command, "\tloadi(0, NULL, &%s);\n", $2->sval);
+                                $2->load = 1;
+                                sprintf(command, "\tloadi(0, NULL, &%s);\n", $2->tval);
                                 enqueue(queue_geral, strdup(command));
                           }
-        | FLOAT IDENTIFICADOR {
+        | FLOAT ATOMO {
                                 $2->tipoD = tipoIdFloat; 
-                                sprintf(command, "\nloadf(0.00, NULL, &%s);\n", $2->sval);
+                                $2->load = 1;
+                                sprintf(command, "\tloadf(0.00, NULL, &%s);\n", $2->tval);
                                 enqueue(queue_geral, strdup(command));
                               }
+        | TEXTO ATOMO {
+                                $2->tipoD = tipoIdStr; 
+                                $2->load = 1;
+                                sprintf(command, "\tloads(\"\", NULL, &%s);\n", $2->tval);
+                                enqueue(queue_geral, strdup(command));
+                            }
+
         ;
 
 atribuicao:
-        IDENTIFICADOR '=' expressao {
+        ATOMO '=' expressao {
                                         validaTipoAtribuicao($1, $3);
-                                        sprintf(command,"\tmov(%s, NULL, &%s);\n", $3->sval, $1->sval);
+                                        sprintf(command,"\tmov(%s, NULL, &%s);\n", $3->tval, $1->tval);
                                         enqueue(queue_geral, strdup(command) );
                                         $$ = $3;
 				    }
@@ -89,40 +99,40 @@ atribuicao:
 
 expressao_relacional:
         expressao '>' expressao {
-                                        sprintf(command,"\tcomp_gt(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                        sprintf(command,"\tcomp_gt(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                         $$ = mnemonico($1, $3, strdup(command));
                                 }
 
 	| expressao '<' expressao {
-                                        sprintf(command, "\tcomp_lt(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                        sprintf(command, "\tcomp_lt(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                         $$ = mnemonico($1, $3, strdup(command));
                                   }
 
 	| expressao MENORIGUAL expressao {
-                                            sprintf(command, "\tcomp_le(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                            sprintf(command, "\tcomp_le(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                             $$ = mnemonico($1, $3, strdup(command));
                                          }
 
 	| expressao MAIORIGUAL expressao {
-                                            sprintf(command, "\tcomp_ge(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                            sprintf(command, "\tcomp_ge(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                             $$ = mnemonico($1, $3, strdup(command));
                                          }
 
 	| expressao IGUAL expressao {
-                                        sprintf(command, "\tcomp_eq(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                        sprintf(command, "\tcomp_eq(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                         $$ = mnemonico($1, $3, strdup(command));
                                     }
 
         | expressao DIFERENTE expressao {
-                                            sprintf(command, "\tcomp_ne(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                            sprintf(command, "\tcomp_ne(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                             $$ = mnemonico($1, $3, strdup(command));
                                         }
         ;
 
 expressao:
-        TEXTO                       { 
+        ATOMO                       { 
                                         tabelaSimb *s = alloc_tabelaSimb();
-                                        s->sval = strdup($1->sval);
+                                        s->tval = strdup($1->tval);
                                         s->tipoD = $1->tipoD;
                                         if (!$1->load) {
                                             load($1);
@@ -131,36 +141,36 @@ expressao:
                                         $$ = s; 
                                     }
 
-        | IDENTIFICADOR             { 
+        /*| IDENTIFICADOR             { 
                                         tabelaSimb *s = alloc_tabelaSimb();
-                                        s->sval = strdup($1->sval);
+                                        s->tval = strdup($1->tval);
                                         s->tipoD = $1->tipoD;
 
                                         $$ = s;
-                                    }
+                                    }*/
 
         | expressao '+' expressao   {
-                                        sprintf(command,"\tadd(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                        sprintf(command,"\tadd(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                         $$ = mnemonico($1, $3, strdup(command));
                                     }
 
         | expressao '-' expressao   {
-                                        sprintf(command,"\tsub(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                        sprintf(command,"\tsub(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                         $$ = mnemonico($1, $3, strdup(command));
                                     }
 
         | expressao '*' expressao   { 
-                                        sprintf(command,"\tmult(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                        sprintf(command,"\tmult(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                         $$ = mnemonico($1, $3, strdup(command));
                                     }
 
         | expressao '/' expressao   {
-                                        sprintf(command,"\tdivi(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                        sprintf(command,"\tdivi(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                         $$ = mnemonico($1, $3, strdup(command));
                                     }
 
         | '-' expressao %prec UMINUS {
-                                        sprintf(command,"\tuminus(%s, NULL, &tp[%d]);\n", $2->sval, tp_count++);
+                                        sprintf(command,"\tuminus(%s, NULL, &tp[%d]);\n", $2->tval, tp_count++);
                                         $$ = mnemonico($2, NULL, strdup(command));
                                      }
 
@@ -168,19 +178,19 @@ expressao:
         ;
 
 sentenca:
-        IMPRIMA TEXTO ';' {
-                            sprintf(command, "\tparam(%s, NULL, NULL);\n", $2->sval); 
+        IMPRIMA ATOMO ';' {
+                            sprintf(command, "\tparam(%s, NULL, NULL);\n", $2->tval); 
                             enqueue(queue_geral,strdup(command));
                             sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
                             enqueue(queue_geral,strdup(command));
                           }
-        | IMPRIMA IDENTIFICADOR ';' {
+        /*| IMPRIMA IDENTIFICADOR ';' {
 
-                                        sprintf(command, "\tparam(%s, NULL, NULL);\n", $2->sval); 
+                                        sprintf(command, "\tparam(%s, NULL, NULL);\n", $2->tval); 
                                         enqueue(queue_geral,strdup(command));
                                         sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
                                         enqueue(queue_geral,strdup(command));
-                                    }
+                                    }*/
         ;
 
 label_para_inicio: {
@@ -302,23 +312,23 @@ expressao_logica:
                                      }
 
                 | expressao_relacional AND expressao_logica {
-                                                                sprintf(command, "\trela_an(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                                                sprintf(command, "\trela_an(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                                                 $$ = mnemonico($1, $3, strdup(command));
                                                             }
                 | expressao_logica AND expressao_relacional { 
-                                                                sprintf(command, "\trela_an(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                                                sprintf(command, "\trela_an(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                                                 $$ = mnemonico($1, $3, strdup(command));
                                                             }
                 | expressao_logica OR expressao_relacional {
-                                                                sprintf(command, "\trela_or(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                                                sprintf(command, "\trela_or(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                                                 $$ = mnemonico($1, $3, strdup(command));
                                                            }
                 | expressao_relacional OR expressao_logica {
-                                                                sprintf(command, "\trela_or(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                                                sprintf(command, "\trela_or(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
                                                                 $$ = mnemonico($1, $3, strdup(command));
                                                            }
                 | NOT expressao_logica {
-                                            sprintf(command, "\trela_no(%s, NULL, &tp[%d]);\n", $2->sval, tp_count++);
+                                            sprintf(command, "\trela_no(%s, NULL, &tp[%d]);\n", $2->tval, tp_count++);
                                             $$ = mnemonico($2, NULL, strdup(command));
                                        }
 
@@ -332,7 +342,7 @@ aborte:
       ;
 
 saia:
-    SAIA '(' TEXTO ')' ';' {
+    SAIA '(' ATOMO ')' ';' {
                                 //sprintf(command, "\texit(%d);\n", ));
                                 //enqueue(queue_geral, strdup(command));
                            }
@@ -384,13 +394,13 @@ imprimir_label: {
 void load(tabelaSimb *s) {
     switch (s->tipoD) {
         case tipoConInt:
-            sprintf(command, "\tloadi(%d, NULL, &%s);\n", s->ival, s->sval);
+            sprintf(command, "\tloadi(%d, NULL, &%s);\n", s->ival, s->tval);
             break;
         case tipoConFloat:
-            sprintf(command, "\tloadf(%.2f, NULL, &%s);\n", s->fval, s->sval);
+            sprintf(command, "\tloadf(%.2f, NULL, &%s);\n", s->fval, s->tval);
             break;
         case tipoConStr:
-            sprintf(command, "\tloads(%s, NULL, &%s);\n", s->str, s->sval);
+            sprintf(command, "\tloads(\"%s\", NULL, &%s);\n", s->sval, s->tval);
             break;
         default:
             return;
@@ -414,7 +424,7 @@ tabelaSimb *mnemonico(tabelaSimb *s1, tabelaSimb *s2, char cmd[100]) {
     enqueue(queue_geral, cmd);
 
     sprintf(command, "tp[%d]", tp_count-1);
-    s->sval = strdup(command);
+    s->tval = strdup(command);
     s->load = 1;
     return s;
 }
@@ -510,6 +520,10 @@ int main(int argc, char **argv) {
     stack_para_atribuicao = init_stack();
     queue_geral = init_queue();
 
+    if(!file){
+        printf("O arquivo nao pode ser aberto!\n");
+        exit(1);
+    }
     fprintf(file,
                 "//\tGerado pelo compilador PORTUGOL versao 1q\n"
                 "//\tAutores: Ed Prado, Edinaldo Carvalho, Elton Oliveira,\n"
@@ -518,14 +532,12 @@ int main(int argc, char **argv) {
                 "//\t\tmarlonchalegre, rodrigomsc}@gmail.com\n"
                 "//\tData: 26/05/2009\n"
                 "\n#include <stdlib.h>\n"
-                "#include \"quadruplas-v1q.h\"\n\n"
+                "#include \"quadruplas.h\"\n"
+                "#include \"saida.h\"\n\n"
                 "int main(void)\n{\n"
                 );
 
-    if(!file){
-        printf("O arquivo nao pode ser aberto!!\n");
-        exit(1);
-    }
+    
 
     FILE *yyin;
     if (argc > 1) {
@@ -542,4 +554,5 @@ int main(int argc, char **argv) {
     fprintf(file,"}\n");
 
     fclose(file);
+    geraSaidaH();
 }

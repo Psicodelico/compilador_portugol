@@ -15,15 +15,11 @@ tipo ("int"|"real")
 ((\/\/[^\n]*\n)|\n) { yylineno++; } 
 
 sqrt        { return SQRT; }
-
 "inicio"    { return INICIO; }
 "fim"       { return FIM; }
-"int"       {
-                return INT; 
-            }
-"real"      {
-                return FLOAT; 
-            }
+"int"       { return INT; }
+"real"      { return FLOAT; }
+"texto"     { return TEXTO; }
 "se"        { return IF; }
 "entao"     { return THEN; }
 "enquanto"  { return ENQUANTO; }
@@ -39,20 +35,31 @@ sqrt        { return SQRT; }
 
 {variavel} { 
                 yylval.tb = achaId(yytext);
-                return IDENTIFICADOR;
+                return ATOMO;
            }
 
 {num}+     {                    
                 int val = atoi(yytext);
                 yylval.tb = achaInt(val);
-                return TEXTO;
+                return ATOMO;
            } 
 
 {num}*\.{num}+ {
                     float val = atof(yytext);
                     yylval.tb = achaFloat(val);
-                    return TEXTO;
+                    return ATOMO;
                }
+
+\"[^"\n]*["\n] {
+                    char *val = strdup(yytext+1);
+                    if (val[yyleng-2] != '"')
+                        yyerror("String terminada incorretamente.");
+                    else
+                        val[yyleng-2] = '\0';
+                    yylval.tb = achaStr(val);
+                    return ATOMO;
+               }
+
 
 "<="        {return MENORIGUAL;}
 ">="        {return MAIORIGUAL;}

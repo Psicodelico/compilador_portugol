@@ -100,8 +100,8 @@ typedef struct tabelaSimb
       char *idFunc;         //nome da funcao em C
       int ival;             //valor da constante inteira
       float fval;           //valor da constante real
-      char *str;            //valor da constante texto
-      char *sval;           //valor para geracao de codigo 
+      char *sval;           //valor da constante texto
+      char *tval;           //valor para geracao de codigo 
       int (*ifunc)();       //ponteiro para funcao que retorna inteiro
       float (*ffunc)();     //ponteiro para funcao que retorna double
       double (*dfunc)();    //ponteiro para funcao que retorna double
@@ -143,6 +143,8 @@ int geraTF(void); //tabela de funcoes
 int geraTC(void); //tabela de constantes
 int geraTS(void); //tabela de variaveis
 char *nomeTipo(nodo *p); //retorna o nome do tipoDado ou tipoBase
+
+void geraSaidaH();
 
 void addFuncDouble(char *id, double (*func)(), char *idF);
 void addFuncVoid(char *id, void (*func)(), char *idF);
