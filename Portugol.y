@@ -237,7 +237,7 @@ retirar_segunda_atribuicao:
 marcar_inicio_atribuicao:
                         {
                             push(stack_para_label, (void *) copy_int(l));
-                            sprintf(command,"\tjump_f(temp[%d], NULL, l%d);\n", tp_count-1, (*l)++);
+                            sprintf(command,"\tjump_f(tp[%d], NULL, l%d);\n", tp_count-1, (*l)++);
                             enqueue(queue_geral,strdup(command));
                             enqueue(queue_geral, "inicio_atribuicao_para"); 
                         }
@@ -263,7 +263,7 @@ label_enquanto_fim: {
                     ;
 inicio_enquanto: {
                     push(stack_enquanto,(void *) copy_int(l));
-                    sprintf(command,"\tjump_f(temp[%d], NULL, l%d);\n", tp_count-1, (*l)++);
+                    sprintf(command,"\tjump_f(tp[%d], NULL, l%d);\n", tp_count-1, (*l)++);
                     enqueue(queue_geral,strdup(command));
                  }
                  ;
@@ -273,7 +273,7 @@ enquanto:
 
 inicio_selecao: {
                 push(stack_if, (void *) copy_int(l));
-                sprintf(command,"\tjump_f(temp[%d], NULL, l%d);\n", tp_count-1, (*l)++);
+                sprintf(command,"\tjump_f(tp[%d], NULL, l%d);\n", tp_count-1, (*l)++);
                 enqueue(queue_geral,strdup(command));
                 count_if_else++;
            }
@@ -314,11 +314,11 @@ expressao_logica:
                                                                 $$ = mnemonico($1, $3, strdup(command));
                                                            }
                 | expressao_relacional OR expressao_logica {
-                                                                sprintf(command, "\trela_or(%s, %s, &temp[%d]);\n", $1->sval, $3->sval, tp_count++);
+                                                                sprintf(command, "\trela_or(%s, %s, &tp[%d]);\n", $1->sval, $3->sval, tp_count++);
                                                                 $$ = mnemonico($1, $3, strdup(command));
                                                            }
                 | NOT expressao_logica {
-                                            sprintf(command, "\trela_no(%s, NULL, &temp[%d]);\n", $2->sval, tp_count++);
+                                            sprintf(command, "\trela_no(%s, NULL, &tp[%d]);\n", $2->sval, tp_count++);
                                             $$ = mnemonico($2, NULL, strdup(command));
                                        }
 
