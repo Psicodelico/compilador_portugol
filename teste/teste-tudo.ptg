@@ -1,0 +1,103 @@
+// Compilador PORTUGOL v.3q
+// Autor: Ruben Carlo Benante
+// Email: benante@gmail.com
+// Data: 24/05/2009
+//
+// toda a linguagem
+
+//#debug _ARVORE
+//#debug _TABELA
+
+//comentario
+inicio; //inicio
+texto S;
+texto T;
+int variavel_3E;
+int A; //declaracao de inteiro
+int C;
+int B;
+//int D;
+real D;
+real M;
+real N;
+real P;
+real O;
+
+S="";
+M=-C+0.0;
+
+A= 1;
+D=0.0;
+
+A=10/100; //0.1 arredonda ou trunca?
+B=99/100; //0.99 arredonda ou trunca?
+M= 1.0/2;
+imprima ("%d\n", A);
+imprima ("%d\n", B);
+imprima ("%f\n", M);
+
+S="oi"; //atribuicao string
+A=1; //atribuicao inteira
+O=2.2; //atribuicao flutuante
+;
+T=S;
+B=A;
+P=O;
+;
+imprima ("%s\n", S); //"oi"
+imprima ("%d\n", A); //inteiro 1
+imprima ("%f\n", O); //flutuante 2.2
+;
+imprima ("%f\n", 1.1);
+imprima ("%d\n", 1);
+imprima ("%s\n", "alo #conStr");
+;
+//erro: B=2.0; //atribuicao flutuante em identificador inteiro
+//erro: N=1; //atribuicao inteira em identificador real
+D=1.1; //repetindo a constante 1.1
+;
+D=1.0 + 1 * (2 / -3 + 4.0) - A * B + C; //expressao com inteiros, flutuantes e variaveis
+se(A==1 ou (B!=2.0 e C>=3.0)) entao //relacionais e e ou, logicos ==, !=, >=
+    se (D<=0) entao //ambiguidade se-entao-entao-senao, logico <=
+        inicio;
+        imprima ("%f\n", 111.1); //imprima
+        saia(1+1);
+        fim;
+    senao
+        inicio; //bloco de comandos
+        imprima ("%d\n", C);
+        se(nao (A>2 e B<3.0)) entao //relacional nao, logicos > e <
+            imprima ("%f\n", 222.2);
+        fim; //fim do bloco de comandos
+; //faz nada (nop)
+imprima ("%d\n", A);
+M=leia();
+se(M==0) entao
+    aborte;
+;
+N=leia();
+//leia (A); //    Linha:76. Erro semantico: Chamada da funcao leia <tipoIdFloat> com argumento de tipo incorreto. leia <tipoIdInt>.
+enquanto (M<5) //enquanto
+    inicio;
+    imprima ("%f\n", M);
+    M=M+1;
+    fim;
+;
+;
+;
+;
+M=raiz(9.0);
+N=exp(1.0);
+imprima ("raiz(9)=%f, ", M);
+imprima ("exp(1) (ou e^1)=%f, ",N);
+
+variavel_3E = 3 % 2;
+imprima ("variavel_3E=%d\n", variavel_3E);  //erro: _variavel. Iniciar com sublinhado esta reservado.
+;
+int i;
+M=5.0;
+para(i=2; i<M; i=i+1;)
+    imprima ("laco: %d, ", i);
+imprima ("%s","\n");
+saia(0);
+fim; //fim
