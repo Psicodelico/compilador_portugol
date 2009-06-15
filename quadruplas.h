@@ -654,25 +654,12 @@ void call(char *q1, int i, superTipo  *qres)
     }
     else if (!strcmp(tf[idx].idNome, "leia")) {
         if (i > 1) {
-            fprintf(stderr, "ASM Error: function scanf takes exactly one argument.\n");
+            fprintf(stderr, "ASM Error: function scanf can't take any argument.\n");
             exit(1);
         }
 
-        switch (g[0]->tipo) {
-            case tipoInt:
-                (*tf[idx].vfunc)("%d", &g[0]->ival); //scanf("%f",&ts[1]);
-                break;
-            case tipoFloat:
-                (*tf[idx].vfunc)("%f", &g[0]->fval); //scanf("%f",&ts[1]);
-                break;
-            case tipoStr:
-                (*tf[idx].vfunc)("%s", g[0]->sval); //scanf("%f",&ts[1]);
-                break;
-            default:
-                fprintf(stderr, "ASM Error: Invalid argument type to function leia.\n");
-                exit(1);
-                break;
-        }
+        (*tf[idx].vfunc)("%f", &qres->fval); //scanf("%f",&ts[1]);
+        qres->tipo = tipoFloat;
     }
     else if (!strcmp(tf[idx].idNome, "saia")) {
         if(g[0]->tipo==tipoStr) {

@@ -684,7 +684,15 @@ void criar_filltf() {
                 case tipoIdFuncFloat:
                     break;
                 case tipoIdFuncDouble:
-                    if (!strcmp(sp->idNome, "sqrt")) {
+                    if (!strcmp(sp->idNome, "leia")) {
+                        fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
+                                      "\ttf[%d].vfunc = (void *) scanf;\n"
+                                      "\ttf[%d].idNome = malloc(5);\n"
+                                      "\tstrcpy(tf[%d].idNome, \"leia\");\n",
+                                      sp->idx, sp->idx, sp->idx, sp->idx
+                        );
+                    }
+                    else if (!strcmp(sp->idNome, "sqrt")) {
                         fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
                                       "\ttf[%d].dfunc = (void *) sqrt;\n"
                                       "\ttf[%d].idNome = malloc(5);\n"
@@ -730,14 +738,7 @@ void criar_filltf() {
                                       sp->idx, sp->idx, sp->idx, sp->idx
                         );
                     }
-                    else if (!strcmp(sp->idNome, "leia")) {
-                        fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncVoid;\n"
-                                      "\ttf[%d].vfunc = (void *) scanf;\n"
-                                      "\ttf[%d].idNome = malloc(5);\n"
-                                      "\tstrcpy(tf[%d].idNome, \"leia\");\n",
-                                      sp->idx, sp->idx, sp->idx, sp->idx
-                        );
-                    }
+                    
                     else if (!strcmp(sp->idNome, "saia")) {
                         fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncVoid;\n"
                                       "\ttf[%d].vfunc = (void *) exit;\n"

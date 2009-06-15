@@ -165,13 +165,13 @@ tabelaSimb* achaFuncs(char *nome){
                     sp->tval = strdup(buffer);
                     /*built-in functions*/
                     if (!strcmp(sp->idNome, "imprima") ||
-                        !strcmp(sp->idNome, "saia") ||
-                        !strcmp(sp->idNome, "leia")) {
+                        !strcmp(sp->idNome, "saia")) { 
                         sp->tipoD = tipoIdFuncVoid;
                     }
                     else if (!strcmp(sp->idNome, "sqrt") ||
                              !strcmp(sp->idNome, "exp") ||
                              !strcmp(sp->idNome, "log") ||
+                             !strcmp(sp->idNome, "leia") || 
                              !strcmp(sp->idNome, "pow")) {
                         sp->tipoD = tipoIdFuncDouble;
                     }
