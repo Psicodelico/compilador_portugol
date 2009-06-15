@@ -164,7 +164,9 @@ tabelaSimb* achaFuncs(char *nome){
                     sprintf(buffer, "tf[%d]", sp->idx);
                     sp->tval = strdup(buffer);
                     /*built-in functions*/
-                    if (!strcmp(sp->idNome, "imprima")) {
+                    if (!strcmp(sp->idNome, "imprima") ||
+                        !strcmp(sp->idNome, "saia") ||
+                        !strcmp(sp->idNome, "leia")) {
                         sp->tipoD = tipoIdFuncVoid;
                     }
                     else if (!strcmp(sp->idNome, "sqrt") ||

@@ -147,6 +147,25 @@ expressao:
 
                                         $$ = s; 
                                     }
+        | FUNCAO lista_parametros ')' {
+                                        tabelaSimb *s = alloc_tabelaSimb();
+                                        if ($1->tipoD == tipoIdFuncVoid) {
+                                            sprintf(command, "\tcall(\"%s\", 1, NULL);\n", $1->idNome, tp_count++);
+                                            enqueue(queue_geral, strdup(command));
+                                            s->tval = "";
+                                        }
+                                        else {
+                                            sprintf(command, "\tcall(\"%s\", 1, &tp[%d]);\n", $1->idNome, tp_count++);
+                                            enqueue(queue_geral, strdup(command));
+                                            sprintf(command, "tp[%d]", tp_count-1);
+                                            s->tval = strdup(command);
+                                        }
+                                        $1->numParam = numParam;
+                                        numParam = 0;
+                                        
+                                        s->tipoD = $1->tipoD;
+                                        $$ = s;
+                                      }
 
         /*| IDENTIFICADOR             { 
                                         tabelaSimb *s = alloc_tabelaSimb();
@@ -207,25 +226,42 @@ sentenca:
 
 lista_parametros:
                 /* Lista vazia. Funcao sem parametros. */
+                | '&'ATOMO {
+                            if (!$2->load) {
+                                load($2);
+                            }
+                            sprintf(command, "\tparam(NULL, NULL, &%s);\n", $2->tval);
+                            enqueue(queue_geral, strdup(command));
+                            numParam++;
+
+                           }
                 | ATOMO {
                             if (!$1->load) {
                                 load($1);
                             }
-                            sprintf(command, "\tparam(%s, NULL, NULL);\n", $1->tval);
+                            sprintf(command, "\tparam(&%s, NULL, NULL);\n", $1->tval);
                             enqueue(queue_geral, strdup(command));
                             numParam++;
                         }
+                | '&'ATOMO ',' lista_parametros {
+                                                    if (!$2->load) {
+                                                        load($2);
+                                                    }
+                                                    sprintf(command, "\tparam(NULL, NULL, &%s);\n", $2->tval);
+                                                    enqueue(queue_geral, strdup(command));
+                                                    numParam++;
+                                                }
                 | ATOMO ',' lista_parametros {
                                                 if (!$1->load) {
                                                     load($1);
                                                 }
-                                                sprintf(command, "\tparam(%s, NULL, NULL);\n", $1->tval);
+                                                sprintf(command, "\tparam(&%s, NULL, NULL);\n", $1->tval);
                                                 enqueue(queue_geral, strdup(command));
                                                 numParam++;
                                              }
                 ;
 
-funcao:
+/*funcao:
       FUNCAO lista_parametros ')' {
                                     sprintf(command, "\tcall(\"%s\", 1, NULL);\n", $1->idNome);
                                     enqueue(queue_geral, strdup(command));
@@ -233,7 +269,7 @@ funcao:
                                     numParam = 0;
                                   }
       ;
-
+*/
 label_para_inicio: {
                         sprintf(command, " l%d:\n", (*l)++);
                         enqueue(queue_geral, strdup(command));
@@ -397,7 +433,7 @@ saia:
                                         yyerror("Parametro deve ser um inteiro.");
                                         break;
                                 }
-                                sprintf(command, "call(\t\"saia\", 1, NULL);\n");
+                                sprintf(command, "\tcall(\"exit\", 1, NULL);\n");
                                 enqueue(queue_geral, strdup(command));
                            }
     ;
@@ -416,7 +452,7 @@ instrucao:
         | aborte { if (count_if_else == 0) desempilhar(); }
         | saia { if (count_if_else == 0) desempilhar(); }
         | expressao_logica
-        | funcao ';' { if (count_if_else == 0) desempilhar(); }
+        //| funcao ';' { if (count_if_else == 0) desempilhar(); }
         | sentenca { if (count_if_else == 0) desempilhar(); }
         | declaracao ';' { if (count_if_else == 0) desempilhar(); }
 	| atribuicao ';' { if (count_if_else == 0) desempilhar(); } 
@@ -492,17 +528,20 @@ tabelaSimb *alloc_tabelaSimb() {
 void validaTipoAtribuicao(tabelaSimb *s1, tabelaSimb *s2) {
     switch (s1->tipoD) {
         case tipoIdInt:
-            if (s2->tipoD != tipoIdInt && s2->tipoD != tipoConInt) {
+            if (s2->tipoD != tipoIdInt && s2->tipoD != tipoConInt &&
+                s2->tipoD != tipoIdFuncInt) {
                 yyerror("Atribuicao invalida.");
             }
             break;
         case tipoIdFloat:
-            if (s2->tipoD != tipoIdFloat && s2->tipoD != tipoConFloat) {
+            if (s2->tipoD != tipoIdFloat && s2->tipoD != tipoConFloat &&
+                s2->tipoD != tipoIdFuncFloat && s2->tipoD != tipoIdFuncDouble) {
                 yyerror("Atribuicao invalida.");
             }
             break;
         case tipoIdStr:
-            if (s2->tipoD != tipoIdStr && s2->tipoD != tipoConStr) {
+            if (s2->tipoD != tipoIdStr && s2->tipoD != tipoConStr &&
+                s2->tipoD != tipoIdFuncStr) {
                 yyerror("Atribuicao invalida.");
             }
             break;
@@ -514,7 +553,46 @@ void validaTipoAtribuicao(tabelaSimb *s1, tabelaSimb *s2) {
 tipoDado defineTipo(tabelaSimb *s1, tabelaSimb *s2) {
     tipoDado tipo;
 
-    if ((s1->tipoD == tipoConFloat || s1->tipoD == tipoIdFloat) &&
+    switch (s1->tipoD) {
+        case tipoConFloat:
+        case tipoIdFloat:
+        case tipoIdFuncFloat:
+        case tipoIdFuncDouble:
+            if (s2->tipoD != tipoConStr && s2->tipoD != tipoIdStr &&
+                s2->tipoD != tipoIdFuncStr) {
+                tipo = tipoConFloat;
+            }
+            break;
+        case tipoConInt:
+        case tipoIdInt:
+        case tipoIdFuncInt:
+            if (s2->tipoD == tipoConStr || s2->tipoD == tipoIdStr || 
+                s2->tipoD == tipoIdFuncStr) {
+                yyerror("Tipos incompativeis");
+            }
+            else if (s2->tipoD == tipoConFloat || s2->tipoD == tipoIdFloat ||
+                     s2->tipoD == tipoIdFuncDouble || s2->tipoD == tipoIdFuncFloat) {
+                tipo = tipoConFloat;
+            }
+            else
+                tipo = tipoConInt;
+            break;
+        case tipoConStr:
+        case tipoIdStr:
+        case tipoIdFuncStr:
+            if (s2->tipoD == tipoIdStr || s2->tipoD == tipoConStr ||
+                s2->tipoD == tipoIdFuncStr) {
+                tipo = tipoConStr;
+            }
+            else
+                yyerror("Tipos incompativeis");
+            break; 
+        default:
+            yyerror("Tipo nao reconhecido");
+
+    }
+
+/*    if ((s1->tipoD == tipoConFloat || s1->tipoD == tipoIdFloat) &&
         (s2->tipoD != tipoConStr && s2->tipoD != tipoIdStr)) {
         tipo = tipoConFloat;
     }
@@ -532,7 +610,7 @@ tipoDado defineTipo(tabelaSimb *s1, tabelaSimb *s2) {
     }
     else {
         yyerror("Tipos incompativeis");
-    }
+    }*/
 
     return tipo;
 }
@@ -580,10 +658,10 @@ void geraSaidaTemplate(FILE *file) {
                 "\n#include <stdlib.h>\n"
                 "#include \"quadruplas.h\"\n"
                 "#include \"saida.h\"\n\n"
-                "void filltf()\n\n;"
+                "void filltf();\n\n"
                 
                 "int main(void)\n{\n"
-                "\tfilltf();\n"
+                "\tfilltf();\n\n"
                 );
 }
 
@@ -603,7 +681,7 @@ void criar_filltf() {
                 case tipoIdFuncDouble:
                     if (!strcmp(sp->idNome, "sqrt")) {
                         fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
-                                      "\ttf[%d].vfunc = (void *) sqrt;\n"
+                                      "\ttf[%d].dfunc = (void *) sqrt;\n"
                                       "\ttf[%d].idNome = malloc(5);\n"
                                       "\tstrcpy(tf[%d].idNome, \"sqrt\");\n",
                                       sp->idx, sp->idx, sp->idx, sp->idx
@@ -611,7 +689,7 @@ void criar_filltf() {
                     }
                     else if (!strcmp(sp->idNome, "exp")) {
                         fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
-                                      "\ttf[%d].vfunc = (void *) sqrt;\n"
+                                      "\ttf[%d].dfunc = (void *) exp;\n"
                                       "\ttf[%d].idNome = malloc(4);\n"
                                       "\tstrcpy(tf[%d].idNome, \"exp\");\n",
                                       sp->idx, sp->idx, sp->idx, sp->idx
@@ -619,7 +697,7 @@ void criar_filltf() {
                     }
                     else if (!strcmp(sp->idNome, "log")) {
                         fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
-                                      "\ttf[%d].vfunc = (void *) sqrt;\n"
+                                      "\ttf[%d].dfunc = (void *) log;\n"
                                       "\ttf[%d].idNome = malloc(4);\n"
                                       "\tstrcpy(tf[%d].idNome, \"log\");\n",
                                       sp->idx, sp->idx, sp->idx, sp->idx
@@ -644,6 +722,14 @@ void criar_filltf() {
                                       "\ttf[%d].vfunc = (void *) scanf;\n"
                                       "\ttf[%d].idNome = malloc(5);\n"
                                       "\tstrcpy(tf[%d].idNome, \"leia\");\n",
+                                      sp->idx, sp->idx, sp->idx, sp->idx
+                        );
+                    }
+                    else if (!strcmp(sp->idNome, "saia")) {
+                        fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncVoid;\n"
+                                      "\ttf[%d].vfunc = (void *) exit;\n"
+                                      "\ttf[%d].idNome = malloc(5);\n"
+                                      "\tstrcpy(tf[%d].idNome, \"saia\");\n",
                                       sp->idx, sp->idx, sp->idx, sp->idx
                         );
                     }

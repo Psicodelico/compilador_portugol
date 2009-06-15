@@ -72,9 +72,6 @@ tipo ("int"|"real")
                         else if (!strcmp(val, "se")) {
                             return IF;
                         }
-                        else if (!strcmp(val, "saia")) {
-                            return SAIA;
-                        }
                         else if (!strcmp(val, "aborte")) {
                             return ABORTE;
                         }
@@ -97,9 +94,9 @@ tipo ("int"|"real")
 "=="        {return IGUAL;}
 "!="        {return DIFERENTE;}
 
-[-+><()=/*,] { return *yytext; }
+[-+><()=/*,&] { return *yytext; }
 
-[ \t\n\r]*    {;/*Ignora espaço em branco */}
+[ \t\r]*    {;/*Ignora espaço em branco */}
 
                 
 .           {
