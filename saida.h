@@ -7,9 +7,9 @@
 
 
 #define MAX_TS 1 /* Tabela de variaveis */
-#define MAX_TC 1 /* Tabela de constantes */
+#define MAX_TC 2 /* Tabela de constantes */
 #define MAX_TP 100 /* Tabela de temporarios */
-#define MAX_TF 2 /* Tabela de funcoes */
+#define MAX_TF 1 /* Tabela de funcoes */
 
 superTipo ts[MAX_TS];
 superTipo tc[MAX_TC];

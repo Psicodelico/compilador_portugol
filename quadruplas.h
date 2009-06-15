@@ -633,12 +633,24 @@ void call(char *q1, int i, superTipo  *qres)
     }
 
     if (!strcmp(tf[idx].idNome, "imprima")) {
-        if(g[0]->tipo==tipoStr)
+        if(g[0]->tipo!=tipoStr) {
+            fprintf(stderr, "ASM Error: function printf needs tipoStr as first arg.\n");
+            exit(1);
+        }
+        if(g[1]->tipo==tipoStr)
+            (*tf[idx].vfunc)(g[0]->sval, g[1]->sval); //printf("%s\n",sval);
+        else if(g[1]->tipo==tipoInt)
+            (*tf[idx].vfunc)(g[0]->sval, g[1]->ival); //printf("%d\n",ival);
+        else // tipoFloat
+            (*tf[idx].vfunc)(g[0]->sval, g[1]->fval); //printf("%.2f\n",fval);
+
+/*        if(g[0]->tipo==tipoStr)
             (*tf[idx].vfunc)("%s\n", g[0]->sval); //printf("%s\n",sval);
         else if(g[0]->tipo==tipoInt)
             (*tf[idx].vfunc)("%d\n", g[0]->ival); //printf("%d\n",ival);
         else // tipoFloat
             (*tf[idx].vfunc)("%f\n", g[0]->fval); //printf("%.2f\n",fval);
+*/
     }
     else if (!strcmp(tf[idx].idNome, "leia")) {
         if (i > 1) {

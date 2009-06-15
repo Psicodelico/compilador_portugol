@@ -150,12 +150,12 @@ expressao:
         | FUNCAO lista_parametros ')' {
                                         tabelaSimb *s = alloc_tabelaSimb();
                                         if ($1->tipoD == tipoIdFuncVoid) {
-                                            sprintf(command, "\tcall(\"%s\", 1, NULL);\n", $1->idNome, tp_count++);
+                                            sprintf(command, "\tcall(\"%s\", %d, NULL);\n", $1->idNome, numParam, tp_count++);
                                             enqueue(queue_geral, strdup(command));
                                             s->tval = "";
                                         }
                                         else {
-                                            sprintf(command, "\tcall(\"%s\", 1, &tp[%d]);\n", $1->idNome, tp_count++);
+                                            sprintf(command, "\tcall(\"%s\", %d, &tp[%d]);\n", $1->idNome, numParam, tp_count++);
                                             enqueue(queue_geral, strdup(command));
                                             sprintf(command, "tp[%d]", tp_count-1);
                                             s->tval = strdup(command);
@@ -208,22 +208,22 @@ expressao:
         | '(' expressao ')'         { $$ = $2; }
         ;
 
-sentenca:
+/*sentenca:
         IMPRIMA ATOMO ')' ';' {
                             sprintf(command, "\tparam(%s, NULL, NULL);\n", $2->tval); 
                             enqueue(queue_geral,strdup(command));
                             sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
                             enqueue(queue_geral,strdup(command));
                           }
-        /*| IMPRIMA IDENTIFICADOR ';' {
+        | IMPRIMA IDENTIFICADOR ';' {
 
                                         sprintf(command, "\tparam(%s, NULL, NULL);\n", $2->tval); 
                                         enqueue(queue_geral,strdup(command));
                                         sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
                                         enqueue(queue_geral,strdup(command));
-                                    }*/
+                                    }
         ;
-
+*/
 lista_parametros:
                 /* Lista vazia. Funcao sem parametros. */
                 | '&'ATOMO {
@@ -453,7 +453,7 @@ instrucao:
         | saia { if (count_if_else == 0) desempilhar(); }
         | expressao_logica
         //| funcao ';' { if (count_if_else == 0) desempilhar(); }
-        | sentenca { if (count_if_else == 0) desempilhar(); }
+//        | sentenca { if (count_if_else == 0) desempilhar(); }
         | declaracao ';' { if (count_if_else == 0) desempilhar(); }
 	| atribuicao ';' { if (count_if_else == 0) desempilhar(); } 
         | expressao ';' { if (count_if_else == 0) desempilhar(); } 
