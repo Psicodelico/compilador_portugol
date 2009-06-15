@@ -545,8 +545,13 @@ void validaTipoAtribuicao(tabelaSimb *s1, tabelaSimb *s2) {
                 yyerror("Atribuicao invalida.");
             }
             break;
+        case tipoIdIndef:
+            sprintf(command, "Variavel %s nao declarada.", s1->idNome);
+            yyerror(strdup(command));
+            break;
         default:
             yyerror("Atribuicao invalida.");
+            
     }
 }
 
@@ -700,6 +705,14 @@ void criar_filltf() {
                                       "\ttf[%d].dfunc = (void *) log;\n"
                                       "\ttf[%d].idNome = malloc(4);\n"
                                       "\tstrcpy(tf[%d].idNome, \"log\");\n",
+                                      sp->idx, sp->idx, sp->idx, sp->idx
+                        );
+                    }
+                    else if (!strcmp(sp->idNome, "pow")) {
+                        fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
+                                      "\ttf[%d].dfunc = (void *) pow;\n"
+                                      "\ttf[%d].idNome = malloc(4);\n"
+                                      "\tstrcpy(tf[%d].idNome, \"pow\");\n",
                                       sp->idx, sp->idx, sp->idx, sp->idx
                         );
                     }

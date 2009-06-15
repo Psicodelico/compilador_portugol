@@ -672,27 +672,18 @@ void call(char *q1, int i, superTipo  *qres)
         else /* tipoFloat */
             (*tf[idx].vfunc)((int)g[0]->fval); //exit(ival)
     }
-    else if (!strcmp(tf[idx].idNome, "sqrt")) {
+    else if (!strcmp(tf[idx].idNome, "sqrt") ||
+             !strcmp(tf[idx].idNome, "log") ||
+             !strcmp(tf[idx].idNome, "exp")) {
         if(g[0]->tipo==tipoStr) {
-            fprintf(stderr, "ASM Error: function sqrt cannot take <tipoStr> as arg.\n");
+            fprintf(stderr, "ASM Error: function %s cannot take <tipoStr> as arg.\n", tf[idx].idNome);
             exit(1);
         }
         else if(g[0]->tipo==tipoInt) {
-            qres->fval=(*tf[idx].dfunc)((float)g[0]->ival); //sqrt((float)ival)
+            qres->fval=(*tf[idx].dfunc)((float)g[0]->ival);
         }
         else /* tipoFloat */
-            qres->fval=(*tf[idx].dfunc)(g[0]->fval); //sqrt(fval)
-        qres->tipo=tipoFloat;
-    }
-    else if (!strcmp(tf[idx].idNome, "exp")) {
-        if(g[0]->tipo==tipoStr) {
-            fprintf(stderr, "ASM Error: function exp cannot take <tipoStr> as arg.\n");
-            exit(1);
-        }
-        else if(g[0]->tipo==tipoInt)
-            qres->fval=(*tf[idx].dfunc)((float)g[0]->ival); //exp((float)ival)
-        else /* tipoFloat */
-            qres->fval=(*tf[idx].dfunc)(g[0]->fval); //exp(fval)
+            qres->fval=(*tf[idx].dfunc)(g[0]->fval);
         qres->tipo=tipoFloat;
     }
     else if (!strcmp(tf[idx].idNome, "pow")) {

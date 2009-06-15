@@ -1,6 +1,6 @@
 variavel [a-zA-Z]([a-zA-Z0-9]|_)*
-num [0-9]
-tipo ("int"|"real")
+int [0-9]
+float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 
 %{
     #include "quadruplas.h"
@@ -47,13 +47,13 @@ tipo ("int"|"real")
                 return ATOMO;
            }
 
-{num}+     {                    
+{int}+     {                    
                 int val = atoi(yytext);
                 yylval.tb = achaInt(val);
                 return ATOMO;
            } 
 
-{num}*\.{num}+ {
+{float} {
                     float val = atof(yytext);
                     yylval.tb = achaFloat(val);
                     return ATOMO;

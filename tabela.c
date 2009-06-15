@@ -171,7 +171,8 @@ tabelaSimb* achaFuncs(char *nome){
                     }
                     else if (!strcmp(sp->idNome, "sqrt") ||
                              !strcmp(sp->idNome, "exp") ||
-                             !strcmp(sp->idNome, "log")) {
+                             !strcmp(sp->idNome, "log") ||
+                             !strcmp(sp->idNome, "pow")) {
                         sp->tipoD = tipoIdFuncDouble;
                     }
 		    return sp;
