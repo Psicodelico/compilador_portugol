@@ -24,6 +24,7 @@
     int *l;
     int count_if_else = 0;
     int count_para = 0;
+    int numParam = 0;
     char msg[80];
     Stack *stack_if;
     Stack *stack_enquanto;
@@ -40,7 +41,7 @@
 %token INICIO FIM
 //%token <tb> IDENTIFICADOR
 //%token <tb> TEXTO
-%token <tb> ATOMO 
+%token <tb> ATOMO FUNCAO 
 %token <tipo> TIPO
 %token SQRT INT FLOAT TEXTO 
 %token IF
@@ -49,6 +50,7 @@
 %token MAIORIGUAL IGUAL MENORIGUAL DIFERENTE
 %right '='
 %left '<' '>' MENORIGUAL MAIORIGUAL IGUAL DIFERENTE
+%left '%'
 %left '+' '-'
 %left '*' '/'
 %nonassoc UMINUS THEN ELSE AND OR NOT
@@ -174,6 +176,11 @@ expressao:
                                         $$ = mnemonico($1, $3, strdup(command));
                                     }
 
+        | expressao '%' expressao   {
+                                        sprintf(command,"\tmod(%s, %s, &tp[%d]);\n", $1->tval, $3->tval, tp_count++);
+                                        $$ = mnemonico($1, $3, strdup(command));
+                                    }
+
         | '-' expressao %prec UMINUS {
                                         sprintf(command,"\tuminus(%s, NULL, &tp[%d]);\n", $2->tval, tp_count++);
                                         $$ = mnemonico($2, NULL, strdup(command));
@@ -183,7 +190,7 @@ expressao:
         ;
 
 sentenca:
-        IMPRIMA ATOMO ';' {
+        IMPRIMA ATOMO ')' ';' {
                             sprintf(command, "\tparam(%s, NULL, NULL);\n", $2->tval); 
                             enqueue(queue_geral,strdup(command));
                             sprintf(command, "\tcall(\"imprima\", 1, NULL);\n");
@@ -197,6 +204,35 @@ sentenca:
                                         enqueue(queue_geral,strdup(command));
                                     }*/
         ;
+
+lista_parametros:
+                /* Lista vazia. Funcao sem parametros. */
+                | ATOMO {
+                            if (!$1->load) {
+                                load($1);
+                            }
+                            sprintf(command, "\tparam(%s, NULL, NULL);\n", $1->tval);
+                            enqueue(queue_geral, strdup(command));
+                            numParam++;
+                        }
+                | ATOMO ',' lista_parametros {
+                                                if (!$1->load) {
+                                                    load($1);
+                                                }
+                                                sprintf(command, "\tparam(%s, NULL, NULL);\n", $1->tval);
+                                                enqueue(queue_geral, strdup(command));
+                                                numParam++;
+                                             }
+                ;
+
+funcao:
+      FUNCAO lista_parametros ')' {
+                                    sprintf(command, "\tcall(\"%s\", 1, NULL);\n", $1->idNome);
+                                    enqueue(queue_geral, strdup(command));
+                                    $1->numParam = numParam;
+                                    numParam = 0;
+                                  }
+      ;
 
 label_para_inicio: {
                         sprintf(command, " l%d:\n", (*l)++);
@@ -259,7 +295,7 @@ marcar_inicio_atribuicao:
                         ;
 
 para:
-    PARA '(' atribuicao ';' label_para_inicio expressao_logica ';' marcar_inicio_atribuicao atribuicao retirar_segunda_atribuicao ')' instrucao posicionar_segunda_atribuicao
+    PARA atribuicao ';' label_para_inicio expressao_logica ';' marcar_inicio_atribuicao atribuicao retirar_segunda_atribuicao ')' instrucao posicionar_segunda_atribuicao
     ;
 
 label_enquanto_inicio: {
@@ -283,7 +319,7 @@ inicio_enquanto: {
                  }
                  ;
 enquanto:
-        ENQUANTO label_enquanto_inicio '(' expressao_logica ')' inicio_enquanto instrucao label_enquanto_fim
+        ENQUANTO label_enquanto_inicio expressao_logica ')' inicio_enquanto instrucao label_enquanto_fim
         ;
 
 inicio_selecao: {
@@ -306,8 +342,8 @@ bloco_selecao: {
                }
                ;
 selecao: 
-	IF '(' expressao_logica ')' inicio_selecao THEN instrucao label_selecao
-        | IF '(' expressao_logica ')' inicio_selecao THEN instrucao ELSE bloco_selecao label_selecao instrucao
+	IF expressao_logica ')' inicio_selecao THEN instrucao label_selecao
+        | IF expressao_logica ')' inicio_selecao THEN instrucao ELSE bloco_selecao label_selecao instrucao
 	;
 
 expressao_logica:
@@ -341,15 +377,28 @@ expressao_logica:
                 ;
 
 aborte:
-      ABORTE ';' {
-                    enqueue(queue_geral, "\texit(1);\n");
+      ABORTE ')' ';' {
+                    sprintf(command, "\thalt(NULL, NULL, NULL);\n");
+                    enqueue(queue_geral, strdup(command));
                  }
       ;
 
 saia:
-    SAIA '(' ATOMO ')' ';' {
-                                //sprintf(command, "\texit(%d);\n", ));
-                                //enqueue(queue_geral, strdup(command));
+    SAIA ATOMO ')' ';' {
+                                switch ($2->tipoD) {
+                                    case tipoConInt:
+                                        if (!$2->load)
+                                            load($2);
+                                    case tipoIdInt:
+                                        sprintf(command, "\tparam(%s, NULL, NULL);\n", $2->tval);
+                                        enqueue(queue_geral, strdup(command));
+                                        break;
+                                    default:
+                                        yyerror("Parametro deve ser um inteiro.");
+                                        break;
+                                }
+                                sprintf(command, "call(\t\"saia\", 1, NULL);\n");
+                                enqueue(queue_geral, strdup(command));
                            }
     ;
 
@@ -364,9 +413,10 @@ instrucao:
                 }
         | enquanto { desempilhar(); }
         | para { desempilhar(); }
-        | aborte { desempilhar(); }
-        | saia { desempilhar(); }
+        | aborte { if (count_if_else == 0) desempilhar(); }
+        | saia { if (count_if_else == 0) desempilhar(); }
         | expressao_logica
+        | funcao ';' { if (count_if_else == 0) desempilhar(); }
         | sentenca { if (count_if_else == 0) desempilhar(); }
         | declaracao ';' { if (count_if_else == 0) desempilhar(); }
 	| atribuicao ';' { if (count_if_else == 0) desempilhar(); } 
@@ -530,15 +580,82 @@ void geraSaidaTemplate(FILE *file) {
                 "\n#include <stdlib.h>\n"
                 "#include \"quadruplas.h\"\n"
                 "#include \"saida.h\"\n\n"
-                "void filltf()\n{\n"
-                "\ttf[0].tipoRet = tipoRetFuncVoid;\n"
-                "\ttf[0].vfunc = (void *)printf;\n"
-                "\ttf[0].idNome = malloc(8);\n"
-                "\tstrcpy(tf[0].idNome, \"imprima\");\n"
-                "}\n\n"
+                "void filltf()\n\n;"
+                
                 "int main(void)\n{\n"
                 "\tfilltf();\n"
                 );
+}
+
+void criar_filltf() {
+    fprintf(file, "\nvoid filltf()\n{\n");
+                
+    tabelaSimb *sp = NULL;
+
+    for (sp = tabSimb; sp < &tabSimb[MAX_SIMB]; sp++) { 
+        /* Existe? */
+        if (sp->uso) {
+            switch (sp->tipoD) {
+                case tipoIdFuncInt:
+                    break;
+                case tipoIdFuncFloat:
+                    break;
+                case tipoIdFuncDouble:
+                    if (!strcmp(sp->idNome, "sqrt")) {
+                        fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
+                                      "\ttf[%d].vfunc = (void *) sqrt;\n"
+                                      "\ttf[%d].idNome = malloc(5);\n"
+                                      "\tstrcpy(tf[%d].idNome, \"sqrt\");\n",
+                                      sp->idx, sp->idx, sp->idx, sp->idx
+                        );
+                    }
+                    else if (!strcmp(sp->idNome, "exp")) {
+                        fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
+                                      "\ttf[%d].vfunc = (void *) sqrt;\n"
+                                      "\ttf[%d].idNome = malloc(4);\n"
+                                      "\tstrcpy(tf[%d].idNome, \"exp\");\n",
+                                      sp->idx, sp->idx, sp->idx, sp->idx
+                        );
+                    }
+                    else if (!strcmp(sp->idNome, "log")) {
+                        fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
+                                      "\ttf[%d].vfunc = (void *) sqrt;\n"
+                                      "\ttf[%d].idNome = malloc(4);\n"
+                                      "\tstrcpy(tf[%d].idNome, \"log\");\n",
+                                      sp->idx, sp->idx, sp->idx, sp->idx
+                        );
+                    }
+                    break;
+                case tipoIdFuncChar:
+                    break;
+                case tipoIdFuncStr:
+                    break;
+                case tipoIdFuncVoid: 
+                    if (!strcmp(sp->idNome, "imprima")) {
+                        fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncVoid;\n"
+                                      "\ttf[%d].vfunc = (void *) printf;\n"
+                                      "\ttf[%d].idNome = malloc(8);\n"
+                                      "\tstrcpy(tf[%d].idNome, \"imprima\");\n",
+                                      sp->idx, sp->idx, sp->idx, sp->idx
+                        );
+                    }
+                    else if (!strcmp(sp->idNome, "leia")) {
+                        fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncVoid;\n"
+                                      "\ttf[%d].vfunc = (void *) scanf;\n"
+                                      "\ttf[%d].idNome = malloc(5);\n"
+                                      "\tstrcpy(tf[%d].idNome, \"leia\");\n",
+                                      sp->idx, sp->idx, sp->idx, sp->idx
+                        );
+                    }
+                    break;
+                default:
+                    /* Nao eh uma funcao */
+                    break;
+            }
+        }
+    }
+
+    fprintf(file, "}\n");
 }
 
 int main(int argc, char **argv) {
@@ -573,8 +690,8 @@ int main(int argc, char **argv) {
     yyparse();
     if (argc > 1) fclose(yyin);    
 
-    fprintf(file,"}\n");
-
+    fprintf(file,"}\n\n");
+    criar_filltf();
     fclose(file);
     geraSaidaH();
 }

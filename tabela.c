@@ -32,7 +32,7 @@ void geraSaidaH() {
                 "superTipo tc[MAX_TC];\n"
                 "superTipo tp[MAX_TP];\n"
                 "superFunc tf[MAX_TF];\n",
-                idxId, idxCon, 100, 1/*idxFunc*/ 
+                idxId, idxCon, 100, idxFunc 
                 );
     fclose(file);
 
@@ -146,3 +146,39 @@ tabelaSimb* achaStr(char *valor){
 	yyerror("Espaco insuficiente.\n");
         return sp;
 }
+
+tabelaSimb* achaFuncs(char *nome){
+        tabelaSimb *sp = NULL;
+
+	for (sp = tabSimb; sp < &tabSimb[MAX_SIMB]; sp++) { 
+		/* Existe? */
+		if (sp->uso && sp->idNome && !strcmp(sp->idNome, nome))
+			return sp;
+                /* ta livre? */
+	        if (!sp->uso) { 
+                    sp->uso = 1;
+                    sp->load = 0;
+                    sp->tipoD = tipoIdIndef;
+		    sp->idNome = strdup(nome); //coloca na tabela de simbolos
+                    sp->idx = idxFunc++;
+                    sprintf(buffer, "tf[%d]", sp->idx);
+                    sp->tval = strdup(buffer);
+                    /*built-in functions*/
+                    if (!strcmp(sp->idNome, "imprima")) {
+                        sp->tipoD = tipoIdFuncVoid;
+                    }
+                    else if (!strcmp(sp->idNome, "sqrt") ||
+                             !strcmp(sp->idNome, "exp") ||
+                             !strcmp(sp->idNome, "log")) {
+                        sp->tipoD = tipoIdFuncDouble;
+                    }
+		    return sp;
+	        }
+	}
+       
+	//a tabela de simbolos tem uma quantidade max, cuidado para n estourar
+	yyerror("Espaco insuficiente.\n");
+        return sp;
+}
+
+

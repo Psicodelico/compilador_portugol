@@ -102,6 +102,7 @@ typedef struct tabelaSimb
       float fval;           //valor da constante real
       char *sval;           //valor da constante texto
       char *tval;           //valor para geracao de codigo 
+      int numParam;         //numero de parametros recebidos pela funcao
       int (*ifunc)();       //ponteiro para funcao que retorna inteiro
       float (*ffunc)();     //ponteiro para funcao que retorna double
       double (*dfunc)();    //ponteiro para funcao que retorna double
@@ -132,7 +133,7 @@ tabelaSimb *achaId(char *nome);
 tabelaSimb *achaInt(int iv);
 tabelaSimb *achaFloat(float fv);
 tabelaSimb *achaStr(char *sv);
-tabelaSimb *achaFuncs(tabelaSimb *ultima);
+tabelaSimb *achaFuncs(char *nome);
 void iniciarTabelaSimb();
 
 //extern FILE *yyin, *yyout;

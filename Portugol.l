@@ -6,28 +6,37 @@ tipo ("int"|"real")
     #include "quadruplas.h"
     #include "y.tab.h"
     #include <stdlib.h>
+    #include <string.h>
+
     void yyerror(char *);
     extern char msg[80];
 
+    void trim(char s[]) {
+        int size = strlen(s);
+        int i;
+        for (i = 0; s[i] != '\0' && s[i] != ' ' && s[i] != '\t'; i++);
+        if (i < size)
+            s[i] = '\0';
+    }
+
+//"imprima"   { return IMPRIMA; }
+//"para"      { return PARA; }
+//"enquanto"  { return ENQUANTO; }
+//"se"        { return IF; }
+//"aborte"    { return ABORTE; }
+//"saia"      { return SAIA; }
 %}
 %%
 
 ((\/\/[^\n]*\n)|\n) { yylineno++; } 
 
-sqrt        { return SQRT; }
 "inicio"    { return INICIO; }
 "fim"       { return FIM; }
 "int"       { return INT; }
 "real"      { return FLOAT; }
 "texto"     { return TEXTO; }
-"se"        { return IF; }
 "entao"     { return THEN; }
-"enquanto"  { return ENQUANTO; }
-"para"      { return PARA; }
 "senao"     { return ELSE; }
-"imprima"   { return IMPRIMA; }
-"aborte"    { return ABORTE; }
-"saia"      { return SAIA; }
 "e"         { return AND; }
 "ou"        { return OR; }
 "nao"       { return NOT; }
@@ -50,6 +59,29 @@ sqrt        { return SQRT; }
                     return ATOMO;
                }
 
+{variavel}[ \t]*\(  {
+                        char *val = strdup(yytext); 
+                        val[yyleng-1] = '\0';
+                        trim(val); /* Elimina espacos e tabulacoes extras */
+                        if (!strcmp(val, "para")) {
+                            return PARA;
+                        }
+                        else if (!strcmp(val, "enquanto")) {
+                            return ENQUANTO;
+                        }
+                        else if (!strcmp(val, "se")) {
+                            return IF;
+                        }
+                        else if (!strcmp(val, "saia")) {
+                            return SAIA;
+                        }
+                        else if (!strcmp(val, "aborte")) {
+                            return ABORTE;
+                        }
+                        yylval.tb = achaFuncs(val);
+                        return FUNCAO;
+                    }
+
 \"[^"\n]*["\n] {
                     char *val = strdup(yytext+1);
                     if (val[yyleng-2] != '"')
@@ -60,13 +92,12 @@ sqrt        { return SQRT; }
                     return ATOMO;
                }
 
-
 "<="        {return MENORIGUAL;}
 ">="        {return MAIORIGUAL;}
 "=="        {return IGUAL;}
 "!="        {return DIFERENTE;}
 
-[-+><()=/*] { return *yytext; }
+[-+><()=/*,] { return *yytext; }
 
 [ \t\n\r]*    {;/*Ignora espaço em branco */}
 
