@@ -9,7 +9,7 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
     #include "y.tab.h"
 
     void yyerror(char *);
-    extern char msg[80];
+    char msg[80];
 
 //"imprima"   { return IMPRIMA; }
 //"para"      { return PARA; }
@@ -28,8 +28,6 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 "e"         { return AND; }
 "ou"        { return OR; }
 "nao"       { return NOT; }
-"para"      { return PARA; }
-"enquanto"  { return ENQUANTO; }
 "saia"      { return SAIA; }
 "imprima"   { return IMPRIMA; }
 ;           { return *yytext; }
@@ -37,18 +35,23 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 {variavel} { 
                 int id = ((char) *yytext) - 65;
                 yylval.tb = &ts[id];
+                yylval.tb->id = id;
                 return ATOMO;
            }
-{int}+     {                    
+{int}+     {    printf("chegou lex\n");                
                 int val = atoi(yytext);
-                yylval.tb->tipo = tipoInt;
-                yylval.tb->val = val;
+                tabelaSimb *temp = nova_ts();
+                temp->tipo = tipoInt;
+                temp->val = val;
+                yylval.tb = temp;
                 return ATOMO;
            } 
 {float}    {
                 float val = atof(yytext);
-                yylval.tb->tipo = tipoFloat;
-                yylval.val = val;
+                tabelaSimb *temp = nova_ts();
+                temp->tipo = tipoFloat;
+                temp->val = val;
+                yylval.tb = temp;
                 return ATOMO;
            }
 
@@ -57,7 +60,7 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 "=="        {return IGUAL;}
 "!="        {return DIFERENTE;}
 
-[-+><()=/*%] { return *yytext; }
+[-+><()=/*%] { printf("+\n"); return *yytext; }
 
 [ \t\r]*    {;/*Ignora espaço em branco */}
 
