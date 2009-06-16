@@ -21,11 +21,7 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 
 ((\/\/[^\n]*\n)|\n) { yylineno++; } 
 
-"inicio"    { return INICIO; }
-"fim"       { return FIM; }
-"int"       { return INT; }
-"real"      { return FLOAT; }
-"texto"     { return TEXTO; }
+"se"        { return IF; }
 "entao"     { return THEN; }
 "senao"     { return ELSE; }
 "e"         { return AND; }
@@ -34,21 +30,21 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 ;           { return *yytext;}
 
 {variavel} { 
-                yylval.tb = achaId(yytext);
+                yylval. = achaId(yytext);
                 return ATOMO;
            }
 
 {int}+     {                    
                 int val = atoi(yytext);
-                yylval.tb = achaInt(val);
+                yylval.ival = val;
                 return ATOMO;
            } 
 
-{float} {
-                    float val = atof(yytext);
-                    yylval.tb = achaFloat(val);
-                    return ATOMO;
-               }
+{float}    {
+                float val = atof(yytext);
+                yylval.fval = val;
+                return ATOMO;
+           }
 
 {variavel}[ \t]*\(  {
                         char *val = strdup(yytext); 
