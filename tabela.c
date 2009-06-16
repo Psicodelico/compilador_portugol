@@ -47,7 +47,7 @@ void iniciarTabelaSimb() {
 
 /* Procura na tabela de simbolos, nela iremos colocar nossas palavras reservadas e variaveis que estao sendo criadas */
 /* se a palavra nao for encontrada ela e adicionada a tabela de simbolos*/
-tabelaSimb* achaId(char *nome){
+tabelaSimb* achaId(char *nome) {
         tabelaSimb *sp = NULL;
 
 	for (sp = tabSimb; sp < &tabSimb[MAX_SIMB]; sp++) { 
@@ -77,7 +77,8 @@ tabelaSimb* achaInt(int valor){
 
 	for(sp = tabSimb; sp < &tabSimb[MAX_SIMB]; sp++) { 
 		/* Existe? */
-		if (sp->uso && sp->ival == valor)
+		if (sp->uso && sp->ival == valor &&
+                    sp->tipoD == tipoConInt)
 	            return sp;
                 /* ta livre? */
 	        if (!sp->uso) { 
@@ -102,7 +103,8 @@ tabelaSimb* achaFloat(float valor){
 
 	for(sp = tabSimb; sp < &tabSimb[MAX_SIMB]; sp++) { 
 		/* Existe? */
-		if (sp->uso && sp->fval == valor)
+		if (sp->uso && sp->fval == valor &&
+                    sp->tipoD == tipoConFloat)
 	            return sp;
                 /* ta livre? */
 	        if (!sp->uso) { 
@@ -127,7 +129,8 @@ tabelaSimb* achaStr(char *valor){
 
 	for(sp = tabSimb; sp < &tabSimb[MAX_SIMB]; sp++) { 
 		/* Existe? */
-		if (sp->uso && sp->sval && !strcmp(sp->sval, valor))
+		if (sp->uso && sp->sval && !strcmp(sp->sval, valor) &&
+                    sp->tipoD == tipoConStr)
 	            return sp;
                 /* ta livre? */
 	        if (!sp->uso) { 
@@ -168,7 +171,7 @@ tabelaSimb* achaFuncs(char *nome){
                         !strcmp(sp->idNome, "saia")) { 
                         sp->tipoD = tipoIdFuncVoid;
                     }
-                    else if (!strcmp(sp->idNome, "sqrt") ||
+                    else if (!strcmp(sp->idNome, "raiz") ||
                              !strcmp(sp->idNome, "exp") ||
                              !strcmp(sp->idNome, "log") ||
                              !strcmp(sp->idNome, "leia") || 

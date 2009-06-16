@@ -147,7 +147,7 @@ expressao:
 
                                         $$ = s; 
                                     }
-        | FUNCAO lista_parametros ')' {
+        | FUNCAO '(' lista_parametros ')' {
                                         tabelaSimb *s = alloc_tabelaSimb();
                                         if ($1->tipoD == tipoIdFuncVoid) {
                                             sprintf(command, "\tcall(\"%s\", %d, NULL);\n", $1->idNome, numParam, tp_count++);
@@ -235,10 +235,10 @@ lista_parametros:
                             numParam++;
 
                            }
-                | ATOMO {
-                            if (!$1->load) {
-                                load($1);
-                            }
+                | expressao {
+                            //if (!$1->load) {
+                            //    load($1);
+                            //}
                             sprintf(command, "\tparam(&%s, NULL, NULL);\n", $1->tval);
                             enqueue(queue_geral, strdup(command));
                             numParam++;
@@ -251,10 +251,10 @@ lista_parametros:
                                                     enqueue(queue_geral, strdup(command));
                                                     numParam++;
                                                 }
-                | ATOMO ',' lista_parametros {
-                                                if (!$1->load) {
-                                                    load($1);
-                                                }
+                | expressao ',' lista_parametros {
+                                                //if (!$1->load) {
+                                                //    load($1);
+                                                //}
                                                 sprintf(command, "\tparam(&%s, NULL, NULL);\n", $1->tval);
                                                 enqueue(queue_geral, strdup(command));
                                                 numParam++;
@@ -331,7 +331,7 @@ marcar_inicio_atribuicao:
                         ;
 
 para:
-    PARA atribuicao ';' label_para_inicio expressao_logica ';' marcar_inicio_atribuicao atribuicao retirar_segunda_atribuicao ')' instrucao posicionar_segunda_atribuicao
+    PARA '(' atribuicao ';' label_para_inicio expressao_logica ';' marcar_inicio_atribuicao atribuicao retirar_segunda_atribuicao ')' instrucao posicionar_segunda_atribuicao
     ;
 
 label_enquanto_inicio: {
@@ -355,7 +355,7 @@ inicio_enquanto: {
                  }
                  ;
 enquanto:
-        ENQUANTO label_enquanto_inicio expressao_logica ')' inicio_enquanto instrucao label_enquanto_fim
+        ENQUANTO '(' label_enquanto_inicio expressao_logica ')' inicio_enquanto instrucao label_enquanto_fim
         ;
 
 inicio_selecao: {
@@ -378,8 +378,8 @@ bloco_selecao: {
                }
                ;
 selecao: 
-	IF expressao_logica ')' inicio_selecao THEN instrucao label_selecao
-        | IF expressao_logica ')' inicio_selecao THEN instrucao ELSE bloco_selecao label_selecao instrucao
+	IF '(' expressao_logica ')' inicio_selecao THEN instrucao label_selecao
+        | IF '(' expressao_logica ')' inicio_selecao THEN instrucao ELSE bloco_selecao label_selecao instrucao
 	;
 
 expressao_logica:
@@ -413,20 +413,20 @@ expressao_logica:
                 ;
 
 aborte:
-      ABORTE ')' ';' {
+     '(' ABORTE ')' ';' {
                     sprintf(command, "\thalt(NULL, NULL, NULL);\n");
                     enqueue(queue_geral, strdup(command));
                  }
       ;
 
 saia:
-    SAIA ATOMO ')' ';' {
-                                switch ($2->tipoD) {
+    SAIA '(' ATOMO ')' ';' {
+                                switch ($3->tipoD) {
                                     case tipoConInt:
-                                        if (!$2->load)
-                                            load($2);
+                                        if (!$3->load)
+                                            load($3);
                                     case tipoIdInt:
-                                        sprintf(command, "\tparam(%s, NULL, NULL);\n", $2->tval);
+                                        sprintf(command, "\tparam(%s, NULL, NULL);\n", $3->tval);
                                         enqueue(queue_geral, strdup(command));
                                         break;
                                     default:
@@ -692,11 +692,11 @@ void criar_filltf() {
                                       sp->idx, sp->idx, sp->idx, sp->idx
                         );
                     }
-                    else if (!strcmp(sp->idNome, "sqrt")) {
+                    else if (!strcmp(sp->idNome, "raiz")) {
                         fprintf(file, "\ttf[%d].tipoRet = tipoRetFuncDouble;\n"
                                       "\ttf[%d].dfunc = (void *) sqrt;\n"
                                       "\ttf[%d].idNome = malloc(5);\n"
-                                      "\tstrcpy(tf[%d].idNome, \"sqrt\");\n",
+                                      "\tstrcpy(tf[%d].idNome, \"raiz\");\n",
                                       sp->idx, sp->idx, sp->idx, sp->idx
                         );
                     }

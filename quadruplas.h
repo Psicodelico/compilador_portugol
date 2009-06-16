@@ -628,7 +628,7 @@ void call(char *q1, int i, superTipo  *qres)
             break;
     if(idx==MAX_TF)
     {
-        fprintf(stderr, "ASM Error: function not in tf[] table (loop exausted).\n");
+        fprintf(stderr, "ASM Error: function %s not in tf[] table (loop exausted).\n", tf[idx].idNome);
         exit(1);
     }
 
@@ -671,7 +671,7 @@ void call(char *q1, int i, superTipo  *qres)
         else /* tipoFloat */
             (*tf[idx].vfunc)((int)g[0]->fval); //exit(ival)
     }
-    else if (!strcmp(tf[idx].idNome, "sqrt") ||
+    else if (!strcmp(tf[idx].idNome, "raiz") ||
              !strcmp(tf[idx].idNome, "log") ||
              !strcmp(tf[idx].idNome, "exp")) {
         if(g[0]->tipo==tipoStr) {

@@ -96,7 +96,7 @@ imprima ("variavel_3E=%d\n", variavel_3E);  //erro: _variavel. Iniciar com subli
 ;
 int i;
 M=5.0;
-para(i=2; i<M; i=i+1;)
+para(i=2; i<M; i=i+1)
     imprima ("laco: %d, ", i);
 imprima ("%s","\n");
 saia(0);
