@@ -1,23 +1,14 @@
-variavel [a-zA-Z]([a-zA-Z0-9]|_)*
+variavel [A-Z]
 int [0-9]
 float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 
 %{
-    #include "quadruplas.h"
-    #include "y.tab.h"
     #include <stdlib.h>
     #include <string.h>
+    #include "y.tab.h"
 
     void yyerror(char *);
     extern char msg[80];
-
-    void trim(char s[]) {
-        int size = strlen(s);
-        int i;
-        for (i = 0; s[i] != '\0' && s[i] != ' ' && s[i] != '\t'; i++);
-        if (i < size)
-            s[i] = '\0';
-    }
 
 //"imprima"   { return IMPRIMA; }
 //"para"      { return PARA; }
@@ -25,8 +16,6 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 //"se"        { return IF; }
 //"aborte"    { return ABORTE; }
 //"saia"      { return SAIA; }
-
-
 %}
 %%
 
