@@ -1,9 +1,0 @@
-inicio;
-    para (A = 1; A < 3; A = A + 1)
-        inicio;
-            para (B = 10; B < 13; B = B + 1)
-                imprima B;
-            imprima A;
-        fim;
-    imprima 0;
-fim;
