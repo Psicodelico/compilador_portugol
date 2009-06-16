@@ -38,8 +38,7 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
                 yylval.tb->id = id;
                 return ATOMO;
            }
-{int}+     {    printf("chegou lex\n");                
-                int val = atoi(yytext);
+{int}+     {    int val = atoi(yytext);
                 tabelaSimb *temp = nova_ts();
                 temp->tipo = tipoInt;
                 temp->val = val;
@@ -60,7 +59,7 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 "=="        {return IGUAL;}
 "!="        {return DIFERENTE;}
 
-[-+><()=/*%] { printf("+\n"); return *yytext; }
+[-+><()=/*%] { return *yytext; }
 
 [ \t\r]*    {;/*Ignora espaço em branco */}
 

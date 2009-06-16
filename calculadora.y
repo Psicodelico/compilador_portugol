@@ -15,6 +15,7 @@
     int if_flag = 0;
     int then_flag = 0;
     int expl_val = 0;
+    extern FILE *yyout;
     %}
 
 %union {
@@ -42,7 +43,8 @@
 %%
 
 programa:
-        instrucao 
+        instrucao
+        | programa instrucao 
         ;
 
 atribuicao:
@@ -112,7 +114,6 @@ expressao:
 
         | expressao '+' expressao   {
 
-	  printf("chegou aqui\n");
 	  tabelaSimb *s = nova_ts();
 	  s->tipo = defineTipo($1, $3);
 	  s->val = $1->val + $3->val;
@@ -282,7 +283,9 @@ void yyerror(char *s) {
 
 int main(int argc, char **argv) {
     init_ts();
+    yyout = stdout;
     
+    /*    
     FILE *yyin;
     if (argc > 1) {
         if ((yyin = fopen(argv[1], "r")) == NULL) {
@@ -291,8 +294,8 @@ int main(int argc, char **argv) {
         }
         yyrestart(yyin); 
     }
-            
+    */      
     yyparse();
-    if (argc > 1) fclose(yyin);    
+    //    if (argc > 1) fclose(yyin);    
 
 }
