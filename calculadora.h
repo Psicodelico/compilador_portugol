@@ -1,6 +1,12 @@
+/*
+   Calculadora versao 2 - calculadora.h
+   Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+            Marlon Chalegre, Rodrigo Castro
+   Emails: {msgprado, truetypecode, elton.oliver,
+            marlonchalegre, rodrigomsc}@gmail.com
+*/
+
 #define MAX_TS 100
-
-
 
 typedef enum
 {
