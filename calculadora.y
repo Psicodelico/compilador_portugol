@@ -15,6 +15,7 @@
 %token <index> VARIAVEL
 %token <valor> VALOR
 %token SQRT
+%nonassoc UMINUS
 %left '+' '-'
 %left '*' '/'
 
@@ -26,8 +27,8 @@ programa:
         | programa afirmacao '\n'
         ;
 
-afirmacao: VARIAVEL '=' expressao { variaveis[$1] = $3; }
-        |  expressao { printf("= %g\n", $1); }
+afirmacao: VARIAVEL '=' expressao ';' { variaveis[$1] = $3; }
+        |  expressao ';' { printf("= %g\n", $1); }
         ;
 
 expressao:
@@ -42,6 +43,7 @@ expressao:
                                                 $$ = $1 / $3;
                                             }
                                       }
+        | '-' expressao %prec UMINUS { $$ = -($2); }
         | SQRT '(' expressao ')' { $$ = sqrt($3); }
         | '(' expressao ')'            { $$ = $2; }
         | VARIAVEL { $$ = variaveis[$1]; }

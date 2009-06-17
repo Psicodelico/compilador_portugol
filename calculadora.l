@@ -11,7 +11,7 @@
                                                 return VALOR;
                 }
 
-[-+()=/*\n]     { return *yytext; }
+[-+()=/*\n;]     { return *yytext; }
 
 [ \t]   ;       /*Ignora espaço em branco */
 
