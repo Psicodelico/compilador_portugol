@@ -653,7 +653,7 @@ void call(char *q1, int i, superTipo  *qres)
 */
     }
     else if (!strcmp(tf[idx].idNome, "leia")) {
-        if (i > 1) {
+        if (i != 0) {
             fprintf(stderr, "ASM Error: function scanf can't take any argument.\n");
             exit(1);
         }

@@ -37,6 +37,10 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 "real"      { return FLOAT; }
 "texto"     { return TEXTO; }
 "entao"     { return THEN; }
+"leia"      {
+              achaFuncs("leia");
+              return LEIA;
+            }
 "senao"     { return ELSE; }
 "e"         { return AND; }
 "ou"        { return OR; }
@@ -85,9 +89,6 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
                         }
                         else if (!strcmp(val, "aborte")) {
                             return ABORTE;
-                        }
-                        else if (!strcmp(val, "leia")) {
-                            return LEIA;
                         }
                         yylval.tb = achaFuncs(val);
                         return FUNCAO;
