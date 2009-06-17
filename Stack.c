@@ -1,3 +1,11 @@
+/*
+   Calculadora versao 2 - Stack.c
+   Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+            Marlon Chalegre, Rodrigo Castro
+   Emails: {msgprado, truetypecode, elton.oliver,
+            marlonchalegre, rodrigomsc}@gmail.com
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "Stack.h"
