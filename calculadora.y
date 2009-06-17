@@ -1,5 +1,12 @@
-
 %{
+    /*
+        Calculadora versao 3 - yacc
+        Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+                 Marlon Chalegre, Rodrigo Castro
+        Emails: {msgprado, truetypecode, elton.oliver,
+                 marlonchalegre, rodrigomsc}@gmail.com
+    */
+
     #include <stdio.h>
     #include <stdlib.h>
     #include <math.h>

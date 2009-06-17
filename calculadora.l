@@ -1,4 +1,12 @@
 %{
+    /*
+        Calculadora versao 3 - lex
+        Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+                 Marlon Chalegre, Rodrigo Castro
+        Emails: {msgprado, truetypecode, elton.oliver,
+                 marlonchalegre, rodrigomsc}@gmail.com
+    */
+
     #include "y.tab.h"
     #include <stdlib.h>
     void yyerror(char *);
