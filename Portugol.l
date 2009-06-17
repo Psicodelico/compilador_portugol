@@ -1,4 +1,12 @@
 %{
+    /*
+        Portugol versao 1 - lex
+        Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+                 Marlon Chalegre, Rodrigo Castro
+        Emails: {msgprado, truetypecode, elton.oliver,
+                 marlonchalegre, rodrigomsc}@gmail.com
+    */
+
     #include "y.tab.h"
     #include "Tabela.h"
     #include <stdlib.h>
