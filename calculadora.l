@@ -3,6 +3,15 @@ int [0-9]
 float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 
 %{
+
+    /*
+       Calculadora versao 2 - lex
+       Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+                Marlon Chalegre, Rodrigo Castro
+       Emails: {msgprado, truetypecode, elton.oliver,
+                marlonchalegre, rodrigomsc}@gmail.com
+    */
+
     #include <stdlib.h>
     #include <string.h>
     #include "calculadora.h"
@@ -10,13 +19,6 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 
     void yyerror(char *);
     char msg[80];
-
-//"imprima"   { return IMPRIMA; }
-//"para"      { return PARA; }
-//"enquanto"  { return ENQUANTO; }
-//"se"        { return IF; }
-//"aborte"    { return ABORTE; }
-//"saia"      { return SAIA; }
 %}
 %%
 
