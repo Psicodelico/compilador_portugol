@@ -1,7 +1,0 @@
-inicio;
-    Z = 12;
-    imprima Z;
-    Z = 21;
-    saia(10);
-    imprima Z;
-fim;
