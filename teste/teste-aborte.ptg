@@ -1,7 +1,0 @@
-inicio;
-    A = 4;
-    imprima A;
-    A = A + 3;
-    aborte;
-    imprima A;
-fim;

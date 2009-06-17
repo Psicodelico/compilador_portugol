@@ -1,5 +1,0 @@
-#/bin/sh
-flex Portugol.l
-bison -y -v -d Portugol.y
-gcc -c -lm Fila.c Stack.c tabela.c y.tab.c lex.yy.c
-gcc -lm Fila.o Stack.o tabela.o y.tab.o lex.yy.o -o Portugol
