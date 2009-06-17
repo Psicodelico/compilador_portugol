@@ -1,9 +1,9 @@
 /*
-    Compilador PORTUGOL v.2q
-    Autor: Ruben Carlo Benante
-    Email: benante@gmail.com
-    Data criação: 23/04/2009
-    Data modificação: 24/05/2009
+    Portugol versao 3 - Tabela.h
+    Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+             Marlon Chalegre, Rodrigo Castro
+    Emails: {msgprado, truetypecode, elton.oliver,
+             marlonchalegre, rodrigomsc}@gmail.com
 */
 
 #define MAX_SIMB 200

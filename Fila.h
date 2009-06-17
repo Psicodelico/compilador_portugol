@@ -1,8 +1,14 @@
-typedef struct queue_elmt {
+/*
+    Portugol versao 3 - Fila.h
+    Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+             Marlon Chalegre, Rodrigo Castro
+    Emails: {msgprado, truetypecode, elton.oliver,
+             marlonchalegre, rodrigomsc}@gmail.com
+*/
 
+typedef struct queue_elmt {
     char* value;
     struct queue_elmt *next;
-
 } Queue_elmt;
 
 typedef struct queue {

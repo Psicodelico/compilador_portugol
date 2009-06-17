@@ -1,3 +1,11 @@
+/*
+    Portugol versao 3 - Stack.h
+    Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+             Marlon Chalegre, Rodrigo Castro
+    Emails: {msgprado, truetypecode, elton.oliver,
+             marlonchalegre, rodrigomsc}@gmail.com
+*/
+
 #define STACK_MAX 50
 
 typedef struct {

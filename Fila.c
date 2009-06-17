@@ -1,21 +1,14 @@
+/*
+    Portugol versao 3 - Fila.c
+    Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+             Marlon Chalegre, Rodrigo Castro
+    Emails: {msgprado, truetypecode, elton.oliver,
+             marlonchalegre, rodrigomsc}@gmail.com
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "Fila.h"
-
-//Queue* first;
-//Queue* last;
-
-/*int main(void) {
-    printf("1\n");
-    Queue *q = init_queue();
-    printf("2\n");
-    enqueue(q, "a");
-    printf("3\n");
-    printf("dequeue: %s\n", dequeue(q));
-    printf("4\n");
-
-    return 0;
-}*/
 
 Queue *init_queue(void) {
     Queue *nova = (Queue *) malloc(sizeof(Queue));
