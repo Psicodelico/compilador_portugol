@@ -15,7 +15,6 @@
     int if_flag = 0;
     int then_flag = 0;
     int expl_val = 0;
-    extern FILE *yyout;
     %}
 
 %union {
@@ -24,9 +23,8 @@
 }
 
 %token <tb> ATOMO
-%token SQRT
+%token SQRT EXP AJUDA
 %token IF
-%token ENQUANTO PARA
 %token IMPRIMA SAIA
 %token MAIORIGUAL IGUAL MENORIGUAL DIFERENTE
 %right '='
@@ -63,12 +61,6 @@ atribuicao:
                                 $1->val = $3->val;
 			    }
 		}
-        /*| IDENTIFICADOR '=' atribuicao {
-                                            sprintf(command,"\tmov(%s, NULL, &ts[%d]);\n", $3, $1);
-                                            enqueue(queue_geral, strdup(command) );
-                                            $$ = $3;
-                                          }*/
-
         ;
 
 expressao_relacional:
@@ -148,7 +140,7 @@ expressao:
 
 	  }
 
-| expressao '%' expressao   {
+        | expressao '%' expressao   {
 	  tabelaSimb *s = nova_ts();
 	  s->tipo = defineTipo($1, $3);
 	  s->val = ((int)$1->val) % ((int)$3->val);
@@ -161,9 +153,55 @@ expressao:
 	  s->val = -($2->val);
 	  $$ = s;
                                      }
+        | SQRT '(' expressao ')' {
+          tabelaSimb *s = nova_ts();
+	  s->tipo = tipoFloat;
+	  s->val = sqrt($3->val);
+	  $$ = s;
+                                 }
 
+        | EXP '(' expressao ')' {
+          tabelaSimb *s = nova_ts();
+	  s->tipo = tipoFloat;
+	  s->val = exp($3->val);
+	  $$ = s;
+                                 }
         | '(' expressao ')'         { $$ = $2; }
         ;
+
+ajuda:
+     AJUDA {
+            printf("Projeto: Calc v2\n"
+                   "Disciplina Compiladores - UPE/POLI - Recife - Prof. Ruben C. Benante\n"
+                   "Eng. da computacao / 2009\n"
+                   "Autores: Ed Prado, Edinaldo Santos, Elton Oliveira, Marlon Chalegre, Rodrigo Castro\n\n"
+                   "Exemplos:\n\n"
+                   "\tOperacoes basicas:\n"
+                   "\tExemplo: 3 + 4;\n"
+                   "\tSao aceitas as operacoes '+' '-' '*' '/' '%' '-' (menos unario)\n"
+                   "\tParentesis podem ser usados para especificar a precedencia de uma expressao.\n\n"
+                   "\tOperadores relacionais:\n"
+                   "\tExemplo: 3 > 4\n"
+                   "\tSao aceitos os aperadores '>' '>=' '<' '<=' '==' '!='\n\n"
+                   "\tFuncao raiz:\n"
+                   "\tExemplo: raiz(n);\n"
+                   "\tCalcula a raiz quadrada de n. Onde n eh um numero inteiro ou real.\n\n"
+                   "\tFuncao exp:\n"
+                   "\tExemplo: exp(x);\n"
+                   "\tCalcula e elevado a x\n\n"
+                   "\tAtribuicao de variaveis:\n"
+                   "\tExemplo: A = 4;\n"
+                   "\tNome de variaveis sao formados por uma unica letra maiuscula.\n"
+                   "\tA ate L: variaveis inteiras\n"
+                   "\tM ate Z: variaveis reais\n\n"
+                   "\tControle de fluxo:\n"
+                   "\tExemplo: se (condicao) entao 3 + 3; senao 6 + 8;\n"
+                   "\tCalcula 3 + 3 se condicao for verdadeira. Caso contrario, calcula 6 + 8.\n\n"
+                   "\tFuncao imprima:\n"
+                   "\tExemplo: imprima 3 + 4;\n"
+                   "\tImprime valores constantesm expressoes ou variaveis (ou combinacoes destes).\n\n"
+                  );
+           }
 
 sentenca:
         IMPRIMA expressao ';'
@@ -179,8 +217,8 @@ end_if:
  ;
 
 selecao: 
-	     IF '(' expressao_logica ')'THEN if_then instrucao end_if
-	     | IF '(' expressao_logica ')'THEN if_then instrucao ELSE {then_flag = !expl_val;} instrucao end_if
+	     IF '(' expressao_logica ')' THEN if_then instrucao end_if
+	     | IF '(' expressao_logica ')' THEN if_then instrucao ELSE {then_flag = !expl_val;} instrucao end_if
 	;
 
 expressao_logica:
@@ -228,6 +266,7 @@ saia:
 
 instrucao:
 	selecao
+        | ajuda
         | saia
         | expressao_logica ';'
         | sentenca
@@ -283,19 +322,5 @@ void yyerror(char *s) {
 
 int main(int argc, char **argv) {
     init_ts();
-    yyout = stdout;
-    
-    /*    
-    FILE *yyin;
-    if (argc > 1) {
-        if ((yyin = fopen(argv[1], "r")) == NULL) {
-            printf("erro ao ler arquivo de entrada.\n");
-            exit(1);
-        }
-        yyrestart(yyin); 
-    }
-    */      
     yyparse();
-    //    if (argc > 1) fclose(yyin);    
-
 }

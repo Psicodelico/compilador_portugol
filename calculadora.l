@@ -30,6 +30,9 @@ float ([0-9]*\.[0-9]+)([eE][-+]?[0-9]+)?
 "nao"       { return NOT; }
 "saia"      { return SAIA; }
 "imprima"   { return IMPRIMA; }
+"raiz"      { return SQRT; }
+"exp"       { return EXP; }
+"ajuda"     { return AJUDA; }
 ;           { return *yytext; }
 
 {variavel} { 
