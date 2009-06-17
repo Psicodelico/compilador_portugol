@@ -1,5 +1,13 @@
 #define STACK_MAX 50
 
+/*
+    Calculadora versao 3 - Stack.h
+    Autores: Ed Prado, Edinaldo Carvalho, Elton Oliveira
+             Marlon Chalegre, Rodrigo Castro
+    Emails: {msgprado, truetypecode, elton.oliver,
+             marlonchalegre, rodrigomsc}@gmail.com
+*/
+
 typedef struct {
     void *stack[STACK_MAX];
     int pt;
