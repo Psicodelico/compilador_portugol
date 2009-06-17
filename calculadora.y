@@ -4,6 +4,7 @@
     #include <string.h>
     #include <stdlib.h>
     #include "calculadora.h"
+    #include "Stack.h"
 
     FILE *file;
     void yyerror(char *);
@@ -15,6 +16,8 @@
     int if_flag = 0;
     int then_flag = 0;
     int expl_val = 0;
+    int count_if = 0;
+    Stack *if_stack;
     %}
 
 %union {
@@ -200,6 +203,9 @@ ajuda:
                    "\tFuncao imprima:\n"
                    "\tExemplo: imprima 3 + 4;\n"
                    "\tImprime valores constantesm expressoes ou variaveis (ou combinacoes destes).\n\n"
+                   "\tFuncao saia:\n"
+                   "\tExemplo: saia\n"
+                   "\tTermina a execucao da calculadora.\n"
                   );
            }
 
@@ -209,16 +215,24 @@ sentenca:
         ;
 
 if_then:
-	     { if_flag = 1;
-	   then_flag = expl_val;}
+	   {
+            count_if++;
+            if_flag = 1;
+	    then_flag = expl_val;
+            push(if_stack, then_flag);
+           }
 	     ;
 end_if:
-	     {if_flag = 0; then_flag = 0;}
+	   {
+            if (--count_if == 0)
+                if_flag = 0;
+            then_flag = 0;
+           }
  ;
 
 selecao: 
 	     IF '(' expressao_logica ')' THEN if_then instrucao end_if
-	     | IF '(' expressao_logica ')' THEN if_then instrucao ELSE {then_flag = !expl_val;} instrucao end_if
+	   | IF '(' expressao_logica ')' THEN if_then instrucao ELSE {then_flag = !pop(if_stack);} instrucao end_if
 	;
 
 expressao_logica:
@@ -261,7 +275,7 @@ expressao_logica:
                 ;
 
 saia:
-    SAIA ';' { exit(0); }
+    SAIA { exit(0); }
     ;
 
 instrucao:
@@ -322,5 +336,6 @@ void yyerror(char *s) {
 
 int main(int argc, char **argv) {
     init_ts();
+    if_stack = init_stack();
     yyparse();
 }
